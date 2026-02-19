@@ -2,7 +2,33 @@
 
 JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR)
 
+// Soundboard should publish audio by default on join.
+options.startAudioMuted = 0
+options.startWithAudioMuted = false
+
 JitsiMeetJS.init(options)
+const publishedLocalTracks = new WeakSet()
+
+const publishLocalTrack = async (track) => {
+  if (!room || !roomJoined || !track || publishedLocalTracks.has(track)) {
+    return
+  }
+  try {
+    if (track.getType() === 'audio' && track.isMuted()) {
+      await track.unmute()
+    }
+    await room.addTrack(track)
+    publishedLocalTracks.add(track)
+    log(`Published local ${track.getType()} track.`)
+  } catch (error) {
+    const details = String(error?.message || error?.name || error || 'unknown')
+    log(`Failed to publish ${track.getType()} track: ${details}`)
+    log(
+      'If room AV moderation is enabled, a moderator must allow participant media to publish audio.'
+    )
+    console.error('Failed to publish local track:', error)
+  }
+}
 
 /**
  * Handles local tracks.
@@ -24,6 +50,7 @@ function onLocalTracks({ type, tracks }) {
         console.log(
           `local ${localTracks[type][i].getType()} track stopped - disposing...`
         )
+        publishedLocalTracks.delete(localTracks[type][i])
         localTracks[type][i].dispose()
       }
     )
@@ -33,7 +60,7 @@ function onLocalTracks({ type, tracks }) {
         console.log(`track audio output device was changed to ${deviceId}`)
     )
     if (roomJoined) {
-      room.addTrack(localTracks[type][i])
+      publishLocalTrack(localTracks[type][i])
     }
   }
 }
@@ -250,15 +277,15 @@ function conferenceInit() {
    */
   function disconnect() {
     console.log('disconnect!')
-    connection.removeEventListener(
+    con.removeEventListener(
       JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
       onConnectionSuccess
     )
-    connection.removeEventListener(
+    con.removeEventListener(
       JitsiMeetJS.events.connection.CONNECTION_FAILED,
       onConnectionFailed
     )
-    connection.removeEventListener(
+    con.removeEventListener(
       JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
       disconnect
     )
@@ -301,6 +328,10 @@ function roomInit() {
     roomJoined = true
 
     setTimeout(initSoundboardTrack, 2000)
+
+    Object.values(localTracks).forEach((tracks) => {
+      tracks.forEach((track) => publishLocalTrack(track))
+    })
   }
 
   room = con.initJitsiConference(roomName, options)
@@ -406,6 +437,11 @@ function roomInit() {
   room.on(JitsiMeetJS.events.conference.USER_ROLE_CHANGED, (userId, role) => {
     console.log(userId, ' Role Change: ', role)
     printParticipants()
+    if (userId === room.myUserId()) {
+      Object.values(localTracks).forEach((tracks) => {
+        tracks.forEach((track) => publishLocalTrack(track))
+      })
+    }
   })
 
   room.on(
@@ -448,9 +484,9 @@ function roomInit() {
       if (jingle_session.peerconnection.localTracks.size === 0) {
         // add local track to peerconnection as its not being added yet.
         console.log('Adding local tracks to peerconnection. #jvbFix')
-        for (let i = 0; i < localTracks.length; i++) {
-          room.addTrack(localTracks[i])
-        }
+        Object.values(localTracks).forEach((tracks) => {
+          tracks.forEach((track) => publishLocalTrack(track))
+        })
       }
     }
   )
