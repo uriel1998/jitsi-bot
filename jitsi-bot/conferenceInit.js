@@ -1,6 +1,26 @@
+let reconnectTimeoutId = undefined
+let pendingShardReconnect = false
+
+function scheduleReconnect(delayMs, reason = 'unspecified') {
+  if (reconnectTimeoutId) {
+    clearTimeout(reconnectTimeoutId)
+  }
+  log(`Reconnecting in ${Math.floor(delayMs / 1000)}s (${reason}).`)
+  reconnectTimeoutId = setTimeout(() => {
+    reconnectTimeoutId = undefined
+    tryReconnect()
+  }, delayMs)
+}
+
 function tryReconnect() {
-  room.leave()
-  con.disconnect()
+  pendingShardReconnect = false
+  connectionEstablished = false
+  if (reconnectTimeoutId) {
+    clearTimeout(reconnectTimeoutId)
+    reconnectTimeoutId = undefined
+  }
+  room?.leave()
+  con?.disconnect()
 
   conferenceInit()
   roomInit()
@@ -8,37 +28,57 @@ function tryReconnect() {
 
 function conferenceInit() {
   con = new JitsiMeetJS.JitsiConnection(null, null, options)
+  const formatEvent = (eventObj) => {
+    try {
+      return JSON.stringify(eventObj)
+    } catch (error) {
+      return String(eventObj)
+    }
+  }
 
   const onConnectionSuccess = (ev) => {
     console.log('Connection Success')
     connectionEstablished = true
   }
   const onConnectionFailed = (ev) => {
+    const failureDetails = String(ev || '')
     log('Connection Failed')
+    log('Connection Failure Details: ' + formatEvent(ev))
+    console.error('Connection failure event:', ev)
+    if (failureDetails.includes('shardChangedError')) {
+      pendingShardReconnect = true
+      log('Shard changed. Waiting for disconnect event before reconnect.')
+      return
+    }
     log(
       'Conference crashed, got system Terminated, or your internet is gone. \n Trying Reconnect in 5 minutes.'
     )
     connectionEstablished = false
 
-    setTimeout(tryReconnect, 300000)
+    scheduleReconnect(300000, 'connection failed')
   }
   /**
    * This function is called when we disconnect.
    */
   function disconnect() {
     log('Disconnected!')
-    connection.removeEventListener(
+    connectionEstablished = false
+    con.removeEventListener(
       JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
       onConnectionSuccess
     )
-    connection.removeEventListener(
+    con.removeEventListener(
       JitsiMeetJS.events.connection.CONNECTION_FAILED,
       onConnectionFailed
     )
-    connection.removeEventListener(
+    con.removeEventListener(
       JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
       disconnect
     )
+    if (pendingShardReconnect) {
+      pendingShardReconnect = false
+      scheduleReconnect(1500, 'shard changed')
+    }
   }
 
   con.addEventListener(
@@ -71,7 +111,7 @@ function roomInit() {
 
     postMessageToWorker(workerMessages.ADD_BOT, { roomName })
 
-    if ( !typeof ws == 'undefined' && ws.readyState === ws.OPEN) {
+    if (typeof ws !== 'undefined' && ws.readyState === ws.OPEN) {
       ws.send(
         JSON.stringify({
           type: wsMessages.ROOM_JOIN,
@@ -92,10 +132,36 @@ function roomInit() {
   )
 
   room.on(JitsiMeetJS.events.conference.CONFERENCE_LEFT, cleanupOnRoomLeft)
-  room.on(JitsiMeetJS.events.conference.CONFERENCE_FAILED, () => {
-    log(`Conference Terminated by a Moderator`)
+  room.on(JitsiMeetJS.events.conference.CONFERENCE_FAILED, (error) => {
+    const failureDetails = String(error || '')
+    const lowerDetails = failureDetails.toLowerCase()
+    log('Conference Failed: ' + failureDetails)
+    if (lowerDetails.includes('membersonly') || lowerDetails.includes('members-only')) {
+      log(
+        'Room is members-only/lobby protected. Waiting for a moderator to allow access, then retrying in 30 seconds.'
+      )
+      cleanupOnRoomLeft()
+      scheduleReconnect(30000, 'members-only')
+      return
+    }
+    if (lowerDetails.includes('shard') || lowerDetails.includes('moved')) {
+      log('Conference moved to another shard.')
+      pendingShardReconnect = true
+      cleanupOnRoomLeft()
+      return
+    }
+    if (
+      failureDetails ===
+      JitsiMeetJS.errors.conference.CONFERENCE_DESTROYED
+    ) {
+      log(`Conference Terminated by a Moderator`)
+      cleanupOnRoomLeft()
+      reloadBot('system')
+      return
+    }
+    log('Conference ended unexpectedly, reconnecting in 10 seconds.')
     cleanupOnRoomLeft()
-    reloadBot('system')
+    scheduleReconnect(10000, 'conference failure')
   })
   room.on(JitsiMeetJS.events.conference.KICKED, (kickedByUser, message) => {
     log(
@@ -288,10 +354,6 @@ function roomInit() {
     printParticipants()
     console.log(userId, ' Role Change: ', role)
     if (userId === room.myUserId() && role === 'moderator') {
-      if (room.getParticipants().length > 0) {
-        //if nobody in room, i'm the first one, so system is granting moderator.
-        room.sendMessage('Thank you for granting me Moderator')
-      }
       console.log('Setting Start muted Policy.')
       room.setStartMutedPolicy({ audio: true, video: true })
 
@@ -367,12 +429,7 @@ function roomInit() {
 
   room.join()
 
-  setTimeout(() => {
-    if (!room.isModerator()) {
-      log("currently disabled automatic Moderator request.")
-      //room.sendMessage('Please grant me Moderator to allow me to work.')
-    }
-  }, 2000)
+  // Bot does not request moderator permissions automatically.
 }
 
 function main() {
