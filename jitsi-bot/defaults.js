@@ -81,11 +81,9 @@ let options =
 
 let libJitsiMeetSrc = 'https://meet.jit.si/libs/lib-jitsi-meet.min.js'
 
-
 const breakoutBaseName = 'Breakout-Raum #'
 
-const customBreakouts = {
-}
+const customBreakouts = {}
 
 const breakoutInitCount = 0
 
@@ -147,16 +145,15 @@ document
 let d = new Date()
 log(d)
 
-
 // Open new Tab with selected Bot as Parameter
 
 function openBot() {
-    const targetJitsi = document.querySelector('#targetJitsi').value
+  const targetJitsi = document.querySelector('#targetJitsi').value
 
-    window.open(
-      `${window.location.pathname}?targetJitsi=${targetJitsi}`,
-      '_blank'
-    )
-  }
-  
+  window.open(
+    `../soundboard/soundboard.html?targetJitsi=${targetJitsi}`,
+    '_blank'
+  )
+}
+
 document.querySelector('#start_bot_button')?.addEventListener('click', openBot)
