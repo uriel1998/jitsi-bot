@@ -24,7 +24,12 @@ def run(server_class=HTTPServer, handler_class=MyHTTPRequestHandler):
         f"Launching HTTP Server for current directory at {server_address[0]}:{server_address[1]}"
     )
     httpd = server_class(server_address, handler_class)
-    httpd.serve_forever()
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nShutting down...")
+    finally:
+        httpd.server_close()
 
 
 if __name__ == "__main__":
