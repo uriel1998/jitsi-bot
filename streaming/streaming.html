@@ -11,11 +11,25 @@
   </head>
 
   <body>
-    <h1>Ponpoko</h1>
-    <label for="targetJitsi">Conference URL: </label>
-    <input style="width: 20vw" type="url" id="targetJitsi" />
-    <button id="start_bot_button">Toggle Bot</button>  <a href="streaming_loader.html"><button>Reset Bot</button></a>
-    <br />
+    <div class="wrapper">
+      <section id="logOuter">
+        <label for="targetJitsi">Conference URL: </label>
+        <input style="width: 35vw" type="url" id="targetJitsi" />
+        <br />
+        <br />
+        <button id="start_bot_button">Toggle Bot</button>
+        <br />
+        <br />
+        <a href="streaming_loader.html"><button>Reset Bot</button></a>
+        <br />
+      </section>
+      <aside id="participantsOuter">
+        <h1>Ponpoko</h1>
+        <div class="left-side">
+          <img width="100%" src="../images/streaming_icon.png" title="Streaming" />
+        </div>
+      </aside>
+    </div>
     <audio
       src="../audio/nggyu.mp3"
       controls

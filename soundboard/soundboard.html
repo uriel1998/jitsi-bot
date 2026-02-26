@@ -11,15 +11,26 @@
   </head>
 
   <body>
-    <h1>Mochi</h1>
-    <label for="targetJitsi">Conference URL: </label>
-    <input style="width: 20vw" type="url" id="targetJitsi" />
-    <br />
-    <button id="start_bot_button">Toggle Bot</button>  <a href="soundboard_loader.html"><button>Reset Bot</button></a>
-    <br />
-    <p class="mic-note">
-      This page will prompt for microphone access when you connect.
-    </p>
+    <div class="wrapper">
+      <section id="logOuter">
+        <label for="targetJitsi">Conference URL: </label>
+        <input style="width: 35vw" type="url" id="targetJitsi" />
+        <br />
+        <br />
+        <button id="start_bot_button">Toggle Bot</button>
+        <br />
+        <br />
+        <a href="soundboard_loader.html"><button>Reset Bot</button></a>
+        <br />
+      </section>
+      <aside id="participantsOuter">
+        <h1>Mochi</h1>
+        <div class="left-side">
+          <img width="100%" src="../images/soundboard_icon.png" title="Soundboard" />
+        </div>
+      </aside>
+    </div>
+    <p class="mic-note">This page will prompt for microphone access when you connect.</p>
 
     <div class="wrapper">
       <section id="logOuter">

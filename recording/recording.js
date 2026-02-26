@@ -57,8 +57,6 @@ let segmentStopTimerId = undefined
 let segmentRecordingActive = false
 let isStoppingSegmentRecorder = false
 let segmentSaveChain = Promise.resolve()
-let masterFileByteOffset = 0
-let announcedChunkDownloadFallback = false
 const remoteAudioNodes = new WeakMap()
 const pendingRemoteAudioTracks = new Set()
 let recordingLevelAnalyser = undefined
@@ -69,10 +67,34 @@ const recordingOnCueUrl = 'http://127.0.0.1:5500/audio/_on.webm'
 const recordingOffCueUrl = 'http://127.0.0.1:5500/audio/_off.webm'
 const recordingPingCueUrl = 'http://127.0.0.1:5500/audio/_ping.webm'
 const pingIntervalMs = 5 * 60 * 1000
-const segmentDurationMs = 30 * 1000
+const segmentDurationMs = 5 * 60 * 1000
 let pingIntervalId = undefined
 let audioPingEnabled = true
 let cuePlaybackQueue = Promise.resolve()
+const CONCAT_AUDIO_GUIDE_TEXT = `Concatenating recording chunks with ffmpeg
+
+Place all chunk files in one directory with names like:
+recording_YYYYMMDD_HHMMSS_part0001.webm
+recording_YYYYMMDD_HHMMSS_part0002.webm
+...
+
+1) Create a concat list file named chunk_list.txt
+Each line must reference one chunk file in order:
+file 'recording_YYYYMMDD_HHMMSS_part0001.webm'
+file 'recording_YYYYMMDD_HHMMSS_part0002.webm'
+
+2) Run ffmpeg
+
+Windows (PowerShell):
+ffmpeg -f concat -safe 0 -i .\chunk_list.txt -c copy .\recording_merged.webm
+
+Linux (bash):
+ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
+
+macOS (zsh/bash):
+ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
+
+If your files are out of order, sort them by part number before creating chunk_list.txt.`
 
 function getCueSourceCandidates(primaryCueUrl, cueFileName) {
   const sameOriginCue = new URL(`/audio/${cueFileName}`, window.location.origin).toString()
@@ -105,39 +127,32 @@ function getRecorderMimeType() {
 }
 
 async function promptForRecordingTarget() {
-  const suggestedName = getDefaultRecordingFilename()
-  if (window.showSaveFilePicker) {
-    try {
-      const fileHandle = await window.showSaveFilePicker({
-        suggestedName,
-        types: [
-          {
-            description: 'WebM audio',
-            accept: { 'audio/webm': ['.webm'] },
-          },
-        ],
-      })
-      recorderTargetName = fileHandle.name || suggestedName
-      return { mode: 'file-system', handle: fileHandle }
-    } catch (error) {
-      if (error?.name === 'AbortError') {
-        log('Recording file selection was cancelled.')
-        return undefined
-      }
-      throw error
-    }
-  }
-
-  const userName = window.prompt('Recording filename (.webm):', suggestedName)
-  if (userName === null) {
-    log('Recording file selection was cancelled.')
+  if (!window.showDirectoryPicker) {
+    log('Directory selection is not supported in this browser.')
     return undefined
   }
-  const safeName = userName.trim().endsWith('.webm')
-    ? userName.trim()
-    : `${userName.trim() || 'recording'}.webm`
-  recorderTargetName = safeName
-  return { mode: 'download', filename: safeName }
+
+  const suggestedPrefix = `recording_${makeTimestamp()}`
+  try {
+    const directoryHandle = await window.showDirectoryPicker()
+    const userPrefix = window.prompt(
+      'Recording prefix (used for chunk filenames):',
+      suggestedPrefix
+    )
+    if (userPrefix === null) {
+      log('Recording setup was cancelled.')
+      return undefined
+    }
+    const prefix = (userPrefix.trim() || suggestedPrefix).replace(/\.webm$/i, '')
+    recorderTargetName = `${prefix}.webm`
+    return { mode: 'directory', directoryHandle, prefix }
+  } catch (error) {
+    if (error?.name === 'AbortError') {
+      log('Recording directory selection was cancelled.')
+      return undefined
+    }
+    throw error
+  }
 }
 
 function waitForPlaybackEnd(audioElement) {
@@ -329,32 +344,23 @@ function startMediaRecorder() {
 async function saveRecordedChunks(target, chunks, segmentIndex) {
   const mimeType = getRecorderMimeType() || 'audio/webm'
   const blob = new Blob(chunks, { type: mimeType })
-  const rawName =
-    target.filename || target.handle?.name || recorderTargetName || getDefaultRecordingFilename()
-  const baseName = rawName.replace(/\.webm$/i, '')
-  const downloadName = `${baseName}_part${String(segmentIndex).padStart(4, '0')}.webm`
+  const fileName = `${target.prefix}_part${String(segmentIndex).padStart(4, '0')}.webm`
+  const fileHandle = await target.directoryHandle.getFileHandle(fileName, {
+    create: true,
+  })
+  const writable = await fileHandle.createWritable()
+  await writable.write(blob)
+  await writable.close()
+  return fileName
+}
 
-  if (target.mode === 'file-system') {
-    const writable = await target.handle.createWritable({ keepExistingData: true })
-    await writable.seek(masterFileByteOffset)
-    await writable.write(blob)
-    masterFileByteOffset += blob.size
-    await writable.close()
-    return target.handle.name || recorderTargetName || getDefaultRecordingFilename()
-  }
-
-  if (!announcedChunkDownloadFallback) {
-    announcedChunkDownloadFallback = true
-    log('File-system append is unavailable here; saving chunk files via downloads.')
-  }
-
-  const downloadUrl = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = downloadUrl
-  a.download = downloadName
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
-  return downloadName
+async function writeConcatGuideToDirectory(directoryHandle) {
+  const fileHandle = await directoryHandle.getFileHandle('concat_audio.txt', {
+    create: true,
+  })
+  const writable = await fileHandle.createWritable()
+  await writable.write(CONCAT_AUDIO_GUIDE_TEXT)
+  await writable.close()
 }
 
 let recordingTarget = undefined
@@ -366,11 +372,9 @@ async function startAutomatedRecordingFlow() {
   recordingSessionStarted = true
   audioPingEnabled = true
   recordingSegmentIndex = 0
-  masterFileByteOffset = 0
   segmentRecordingActive = true
   isStoppingSegmentRecorder = false
   segmentSaveChain = Promise.resolve()
-  announcedChunkDownloadFallback = false
 
   try {
     recordingTarget = await promptForRecordingTarget()
@@ -379,12 +383,8 @@ async function startAutomatedRecordingFlow() {
       segmentRecordingActive = false
       return false
     }
-    if (recordingTarget.mode === 'file-system') {
-      const writable = await recordingTarget.handle.createWritable()
-      await writable.truncate(0)
-      await writable.close()
-      masterFileByteOffset = 0
-    }
+    await writeConcatGuideToDirectory(recordingTarget.directoryHandle)
+    log('Wrote concat_audio.txt into the selected recording directory.')
 
     await playRecordingCue('on')
     const started = startMediaRecorder()
