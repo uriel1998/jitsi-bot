@@ -89,9 +89,22 @@ function initStreamingTrack() {
     return
   }
 
+  const streamingAudioConstraints = {
+    echoCancellation: false,
+    noiseSuppression: false,
+    autoGainControl: false,
+  }
   log('Initializing local audio Track(s).')
+  log(
+    `Streaming audio constraints: ${JSON.stringify(streamingAudioConstraints)}`
+  )
   // we also dont need local video stream, we just want the audio stream transmitted from the "audio streaming" html element
-  JitsiMeetJS.createLocalTracks({ devices: ['audio'] })
+  JitsiMeetJS.createLocalTracks({
+    devices: ['audio'],
+    constraints: {
+      audio: streamingAudioConstraints,
+    },
+  })
     .then((tracks) => {
       onLocalTracks({ type: 'audio', tracks })
     })
