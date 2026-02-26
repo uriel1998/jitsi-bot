@@ -5,6 +5,8 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR)
 // Recording bot should publish audio by default on join.
 options.startAudioMuted = 0
 options.startWithAudioMuted = false
+options.startVideoMuted = 1
+options.startWithVideoMuted = true
 
 JitsiMeetJS.init(options)
 const publishedLocalTracks = new WeakSet()
@@ -157,6 +159,50 @@ const quit = (userId) => {
   window.close()
 }
 
+const stopRecording = async (userId) => {
+  const sender = room.getParticipantById(userId)
+  if (!sender?.isModerator?.()) {
+    room.sendMessage(
+      'Only moderators can stop the recording with /stop.',
+      userId
+    )
+    return
+  }
+
+  try {
+    await window.stopAutomatedRecordingFlow?.()
+    room.sendMessage('Recording stopped.', userId)
+    disconnectBotFromConference()
+  } catch (error) {
+    room.sendMessage('Failed to stop recording.', userId)
+    console.error('Failed to stop automated recording flow:', error)
+  }
+}
+
+const disconnectBotFromConference = () => {
+  try {
+    room?.room?.doLeave()
+  } catch (error) {
+    console.error('Error while leaving conference room:', error)
+  }
+  try {
+    con?.disconnect()
+  } catch (error) {
+    console.error('Error while disconnecting conference connection:', error)
+  }
+}
+
+const stopRecordingFromUi = async () => {
+  try {
+    await window.stopAutomatedRecordingFlow?.()
+    room?.sendMessage('Recording stopped from bot UI.')
+    disconnectBotFromConference()
+  } catch (error) {
+    log(`Failed to stop recording from UI: ${error?.message || error}`)
+    console.error('Failed to stop automated recording flow from UI:', error)
+  }
+}
+
 const currentTrack = (userId) => {
   const track = recording.src
   room.sendMessage(`Currently loaded: ${track}`, userId)
@@ -243,6 +289,7 @@ const help = (userId) => {
     '/vol+',
     '/vol-',
     '/setVol x # x: vol between 0 .. 100',
+    '/stop # moderator only',
     '/quit',
     '/togglePlayOnJoin',
   ]
@@ -268,6 +315,7 @@ const commandHandler = {
   '/vol+': increaseVol,
   '/vol-': reduceVol,
   '/setVol': setVol,
+  '/stop': stopRecording,
   '/quit': quit,
 }
 
@@ -410,6 +458,12 @@ function roomInit() {
     roomJoined = true
 
     setTimeout(initRecordingTrack, 2000)
+    setTimeout(async () => {
+      const started = await window.startAutomatedRecordingFlow?.()
+      if (started) {
+        room.sendMessage('Recording started from bot UI.')
+      }
+    }, 500)
 
     Object.values(localTracks).forEach((tracks) => {
       tracks.forEach((track) => publishLocalTrack(track))
@@ -596,6 +650,9 @@ function main() {
 }
 
 document.querySelector('#start_bot_button')?.addEventListener('click', openBot)
+document
+  .querySelector('#stop_bot_button')
+  ?.addEventListener('click', stopRecordingFromUi)
 document
   .querySelector('#clearLog')
   ?.addEventListener(
