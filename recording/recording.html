@@ -26,6 +26,15 @@
       autocomplete="section-recording url" style="width: 30%" />
     <button type="submit" id="setRecordingSource">Set Source</button>
   </form>
+  <section id="recordingMeterOuter" aria-live="polite">
+    <div class="meter-header">
+      <strong>Recording Input Level</strong>
+      <span id="recordingLevelValue">0%</span>
+    </div>
+    <div id="recordingLevelTrack" role="meter" aria-label="Recording input level">
+      <div id="recordingLevelBar"></div>
+    </div>
+  </section>
   <br />
   <div class="wrapper">
     <section id="logOuter">

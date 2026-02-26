@@ -4,6 +4,8 @@
 
 const recording = document.querySelector('#recording')
 const videoboard = document.querySelector('#videoboard')
+const recordingLevelBar = document.querySelector('#recordingLevelBar')
+const recordingLevelValue = document.querySelector('#recordingLevelValue')
 
 recording.volume = 0.1
 videoboard.volume = 0.1
@@ -20,6 +22,11 @@ let recordingSessionStarted = false
 let recorderTargetName = undefined
 let mediaRecorder = undefined
 let recordedChunks = []
+const remoteAudioNodes = new WeakMap()
+const pendingRemoteAudioTracks = new Set()
+let recordingLevelAnalyser = undefined
+let recordingLevelData = undefined
+let recordingLevelRafId = undefined
 
 const recordingOnCueUrl = 'http://127.0.0.1:5500/audio/_on.webm'
 const recordingOffCueUrl = 'http://127.0.0.1:5500/audio/_off.webm'
@@ -236,6 +243,48 @@ function stopMediaRecorder() {
   })
 }
 
+function updateRecordingLevelMeter() {
+  if (!recordingLevelAnalyser || !recordingLevelData) {
+    return
+  }
+
+  recordingLevelAnalyser.getFloatTimeDomainData(recordingLevelData)
+  let sumSquares = 0
+  for (let i = 0; i < recordingLevelData.length; i++) {
+    const sample = recordingLevelData[i]
+    sumSquares += sample * sample
+  }
+  const rms = Math.sqrt(sumSquares / recordingLevelData.length)
+  const meterPercent = Math.min(100, Math.round(rms * 250))
+
+  if (recordingLevelBar) {
+    recordingLevelBar.style.width = `${meterPercent}%`
+  }
+  if (recordingLevelValue) {
+    recordingLevelValue.textContent = `${meterPercent}%`
+  }
+
+  recordingLevelRafId = window.requestAnimationFrame(updateRecordingLevelMeter)
+}
+
+function initRecordingLevelMeter(audioContext) {
+  if (!audioContext || !destStream?.stream || !recordingLevelBar) {
+    return
+  }
+
+  if (recordingLevelRafId) {
+    window.cancelAnimationFrame(recordingLevelRafId)
+    recordingLevelRafId = undefined
+  }
+
+  const meterSource = audioContext.createMediaStreamSource(destStream.stream)
+  recordingLevelAnalyser = audioContext.createAnalyser()
+  recordingLevelAnalyser.fftSize = 2048
+  recordingLevelData = new Float32Array(recordingLevelAnalyser.fftSize)
+  meterSource.connect(recordingLevelAnalyser)
+  updateRecordingLevelMeter()
+}
+
 async function stopAutomatedRecordingFlow() {
   const stopped = await stopMediaRecorder()
   if (stopped && recordingTarget) {
@@ -262,6 +311,7 @@ function initAudio() {
   const videoAudio = audioContext.createMediaElementSource(videoboard)
   const track = audioContext.createMediaElementSource(recording)
   destStream = audioContext.createMediaStreamDestination()
+  initRecordingLevelMeter(audioContext)
 
   videoAudio.connect(destStream)
   track.connect(destStream)
@@ -287,6 +337,7 @@ function initAudio() {
   }
 
   initDone = true
+  flushPendingRemoteAudioTracks()
 }
 
 document
@@ -336,3 +387,80 @@ function printParticipants() {
 
 window.startAutomatedRecordingFlow = startAutomatedRecordingFlow
 window.stopAutomatedRecordingFlow = stopAutomatedRecordingFlow
+
+function connectRemoteAudioTrack(track) {
+  if (!recordingContext || !destStream?.stream || !track) {
+    return false
+  }
+  if (track.getType?.() !== 'audio') {
+    return false
+  }
+
+  if (remoteAudioNodes.has(track)) {
+    return true
+  }
+
+  const originalStream = track.getOriginalStream?.()
+  if (!originalStream || originalStream.getAudioTracks().length === 0) {
+    log('Remote audio track has no original audio stream.')
+    return false
+  }
+
+  try {
+    const sourceNode = recordingContext.createMediaStreamSource(originalStream)
+    const gainNode = recordingContext.createGain()
+    gainNode.gain.value = 1
+    sourceNode.connect(gainNode)
+    gainNode.connect(destStream)
+    remoteAudioNodes.set(track, { sourceNode, gainNode })
+    return true
+  } catch (error) {
+    log(`Failed to connect remote audio track: ${error?.message || error}`)
+    return false
+  }
+}
+
+function flushPendingRemoteAudioTracks() {
+  if (!recordingContext || !destStream?.stream || pendingRemoteAudioTracks.size === 0) {
+    return
+  }
+
+  for (const track of [...pendingRemoteAudioTracks]) {
+    if (connectRemoteAudioTrack(track)) {
+      pendingRemoteAudioTracks.delete(track)
+    }
+  }
+}
+
+window.registerRemoteAudioTrackForRecording = (track) => {
+  if (!track || track.getType?.() !== 'audio') {
+    return
+  }
+  if (!initDone || !recordingContext || !destStream?.stream) {
+    pendingRemoteAudioTracks.add(track)
+    return
+  }
+  connectRemoteAudioTrack(track)
+}
+
+window.unregisterRemoteAudioTrackForRecording = (track) => {
+  if (!track || track.getType?.() !== 'audio') {
+    return
+  }
+  pendingRemoteAudioTracks.delete(track)
+  const nodes = remoteAudioNodes.get(track)
+  if (!nodes) {
+    return
+  }
+  try {
+    nodes.sourceNode.disconnect()
+  } catch (error) {
+    console.log('Failed to disconnect remote source node', error)
+  }
+  try {
+    nodes.gainNode.disconnect()
+  } catch (error) {
+    console.log('Failed to disconnect remote gain node', error)
+  }
+  remoteAudioNodes.delete(track)
+}

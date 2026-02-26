@@ -5,6 +5,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR)
 // Recording bot should publish audio by default on join.
 options.startAudioMuted = 0
 options.startWithAudioMuted = false
+options.startSilent = false
 options.startVideoMuted = 1
 options.startWithVideoMuted = true
 
@@ -82,7 +83,20 @@ function onLocalTracks({ type, tracks }) {
  * @param track JitsiTrack object
  */
 function onRemoteTrack(track) {
-  return // we dont need remote audio and video tracks, so just do nothing here.
+  if (!track || track.isLocal?.()) {
+    return
+  }
+
+  const participantId = track.getParticipantId?.()
+  if (!remoteTracks[participantId]) {
+    remoteTracks[participantId] = []
+  }
+  remoteTracks[participantId].push(track)
+
+  if (track.getType() === 'audio') {
+    window.registerRemoteAudioTrackForRecording?.(track)
+    log(`Remote audio track added from ${participantId || 'unknown participant'}.`)
+  }
 }
 
 function initRecordingTrack() {
@@ -552,18 +566,36 @@ function roomInit() {
   room.on(JitsiMeetJS.events.conference.USER_LEFT, (userId, userObj) => {
     log('USER LEFT EVENT ' + userId + ': ' + userObj._displayName)
     printParticipants()
-    if (!remoteTracks[userId]) {
+    const tracks = remoteTracks[userId]
+    if (!tracks?.length) {
       return
     }
-    const tracks = remoteTracks[id]
 
     for (let i = 0; i < tracks.length; i++) {
-      tracks[i].detach($(`#${id}${tracks[i].getType()}`))
+      if (tracks[i].getType?.() === 'audio') {
+        window.unregisterRemoteAudioTrackForRecording?.(tracks[i])
+      }
     }
+    delete remoteTracks[userId]
   })
 
   room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack)
   room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, (track) => {
+    if (!track || track.isLocal?.()) {
+      return
+    }
+    if (track.getType?.() === 'audio') {
+      window.unregisterRemoteAudioTrackForRecording?.(track)
+    }
+    const participantId = track.getParticipantId?.()
+    if (remoteTracks[participantId]) {
+      remoteTracks[participantId] = remoteTracks[participantId].filter(
+        (remoteTrack) => remoteTrack !== track
+      )
+      if (remoteTracks[participantId].length === 0) {
+        delete remoteTracks[participantId]
+      }
+    }
     console.log(`track removed!!!${track}`)
   })
 
