@@ -149,11 +149,10 @@ log(d)
 
 function openBot() {
   const targetJitsi = document.querySelector('#targetJitsi').value
-
-  window.open(
-    `../soundboard/soundboard.html?targetJitsi=${targetJitsi}`,
-    '_blank'
-  )
+  const url = new URL(window.location.href)
+  url.search = ''
+  url.searchParams.set('targetJitsi', targetJitsi)
+  window.location.href = url.toString()
 }
 
 document.querySelector('#start_bot_button')?.addEventListener('click', openBot)

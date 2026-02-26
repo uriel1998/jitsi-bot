@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="favicon.ico" rel="SHORTCUT ICON">
+    <META HTTP-EQUIV="refresh" CONTENT="3600">
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    background-image: url("background_tile.jpg");
+    background: url("background_tile.jpg");
+  }
+    .header {
+        width: 95%;
+        display:block;
+        
+    }
+  /* Your existing header icon row stays */
+  .container4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding-bottom: 20px;
+  }
+
+  /* OUTER GRID: 2 panels per row */
+  .container2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* two panels across */
+    gap: 12px;
+    padding: 5px;
+    width: 95%;
+  }
+
+  /* INNER PANEL: icon (25%) + iframe (75%) */
+  .panel {
+    display: grid;
+    grid-template-columns: 25% 75%;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .panel .icon img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .panel iframe {
+    width: 100%;
+    min-height: 420px; /* tweak as desired */
+    border: 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    /* stack panels one per row on mobile */
+    .container2 {
+      grid-template-columns: 1fr;
+      width: 95% !important;
+    }
+
+    /* keep icon+iframe side-by-side or stack them; choose one */
+    .panel {
+      grid-template-columns: 25% 75%;
+    }
+
+    /* If you prefer stacking icon over iframe on mobile, use this instead:
+    .panel { grid-template-columns: 1fr; }
+    */
+  }
+</style>
+
+
+    <title>wombat central</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="header"><H1>hello there my pretties</H1>
+</div>
+<div class="container2">
+
+  <!-- Row 1, left: streaming -->
+  <div class="panel">
+    <div class="icon">
+      <img src="images/streaming_icon.png" title="Streaming">
+    </div>
+    <iframe src="soundboard/soundboard.html"></iframe>
+  </div>
+
+  <!-- Row 1, right: chatbot -->
+  <div class="panel">
+    <div class="icon">
+      <img src="images/chatbot_icon.png" title="Chatbot">
+    </div>
+    <iframe src="soufndboard/soundboard.html"></iframe>
+  </div>
+
+  <!-- Row 2, left: soundboard -->
+  <div class="panel">
+    <div class="icon">
+      <img src="images/soundboard_icon.png" title="Soundboard">
+    </div>
+    <iframe src="soundfboard/soundboard.html"></iframe>
+  </div>
+
+  <!-- Row 2, right: switchboard -->
+  <div class="panel">
+    <div class="icon">
+      <img src="images/switchboard_icon.png" title="Switchboard">
+    </div>
+    <iframe src="soundbofard/soundboard.html"></iframe>
+  </div>
+
+</div>
+ 
+</body>
+</html>
