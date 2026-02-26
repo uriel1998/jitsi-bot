@@ -54,11 +54,11 @@ input[type='text']:focus {
   border-color: var(--purple);
 }
 
-input#soundboardSourceInput:valid + #setSoundboardSource {
+input#streamingSourceInput:valid + #setStreamingSource {
   border-color: var(--green);
 }
 
-input#soundboardSourceInput:invalid + #setSoundboardSource {
+input#streamingSourceInput:invalid + #setStreamingSource {
   border-color: var(--red);
 }
 
@@ -103,7 +103,7 @@ video {
 }
 
 /* Soundboard source form */
-#soundboardInputForm {
+#streamingInputForm {
   display: flex;
   align-items: center;
   gap: 0.5rem;

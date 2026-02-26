@@ -250,7 +250,12 @@ const sendMessage = (userId, argument) => {
 
 const joinSoundBot = (userId) => {
   const url = new URL(window.location.href)
-  window.open('../soundboard/soundboard.html'+url.search, '_blank')
+  window.open('../soundboard/soundboard.html' + url.search, '_blank')
+}
+
+const joinStreamingBot = (userId) => {
+  const url = new URL(window.location.href)
+  window.open('../streaming/streaming_effect.html' + url.search, '_blank')
 }
 
 const setAdminPass = (userId, argument) => {
@@ -357,7 +362,7 @@ const help = (userId, argument) => {
       argument = `/${argument}` // prepend slash to be commandHandler list conform
     }
 
-    if (!argument in commandHandler) {
+    if ((!argument) in commandHandler) {
       room.sendMessage(
         'Command does not exist, no help available. Try /help',
         userId
@@ -486,6 +491,13 @@ const commandHandler = {
     syntax: '/joinSoundBot',
     requirements: 'None',
     example: '/joinSoundBot',
+  },
+  '/joinStreamingBot': {
+    handler: joinStreamingBot,
+    helptext: 'Attempts to spawn a Streaming Bot in the current room.',
+    syntax: '/joinStreamingBot',
+    requirements: 'None',
+    example: '/joinStreamingBot',
   },
   '/sendMessage': {
     handler: sendMessage,

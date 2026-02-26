@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="jquery.min.js"></script>
+    <title>Chatbot</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="worker-src 'self';" />
+    <link rel="stylesheet" href="jitsi.css" />
+  </head>
+
+  <body>
+    <h1>Kobuko</h1>
+    <p>The Chatbot</p>
+    <label for="targetJitsi">Conference URL: </label>
+    <input style="width: 20vw" type="url" id="targetJitsi" />
+    <br />
+    <button id="start_bot_button">Start Bot.</button>
+    <br />
+    <div class="wrapper">
+      <section id="logOuter">
+        <h3>Jitsi Bot Log</h3>
+        <button id="clearLog">Clear Log</button>
+        <p></p>
+        <div id="log" style="white-space: pre-wrap"></div>
+      </section>
+      <aside id="participantsOuter">
+        <h3>Participants</h3>
+        <div id="participantsInner"></div>
+      </aside>
+    </div>
+  </body>
+  <script id="libJitsiMeet"></script>
+  <script id="jitsiConfig"></script>
+  <script src="defaults.js"></script>
+  <script src="sharedWorker.js"></script>
+  <script src="botFunctions.js"></script>
+  <script src="botCommands.js"></script>
+  <script src="pageParams.js"></script>
+  <script id="confInit"></script>
+</html>
