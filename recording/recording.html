@@ -9,14 +9,26 @@
 </head>
 
 <body>
-  <h1>Ritson</h1>
-  <label for="targetJitsi">Conference URL: </label>
-  <input style="width: 20vw;" type="url" id="targetJitsi" />
-  <br />
-  <button id="start_bot_button">Start Bot.</button>
-  <button id="stop_bot_button">Stop Bot</button>
-  <a href="recording_loader.html"><button>Reset Bot</button></a>
-  <br />
+  <div class="wrapper">
+    <section id="logOuter">
+      <label for="targetJitsi">Conference URL: </label>
+      <input style="width: 35vw;" type="url" id="targetJitsi" />
+      <br />
+      <br />
+      <button id="start_bot_button">Start Bot.</button>
+      <button id="stop_bot_button">Stop Bot</button>
+      <br />
+      <br />
+      <a href="recording_loader.html"><button>Reset Bot</button></a>
+      <br />
+    </section>
+    <aside id="participantsOuter">
+      <h1>Ritson</h1>
+      <div class="left-side">
+        <img width="100%" src="../images/switchboard_icon.png" title="Recording" />
+      </div>
+    </aside>
+  </div>
   <section id="recordingMeterOuter" aria-live="polite">
     <div class="meter-header">
       <strong>Recording Input Level</strong>
