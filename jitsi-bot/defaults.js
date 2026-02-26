@@ -68,8 +68,9 @@ let options =
   //will be merged with config object from the target Jitsi server
   {
     displayName: '🦧 Kobuko ',
-    soundboardDisplayName: '🐐🤖',
+    soundboardDisplayName: '🐐 Mochitail',
     streamingDisplayName: '🦝 Ponpoko',
+    chatbotDisplayName: '🦇 Kitsupon',
     startAudioMuted: 1,
     startWithAudioMuted: true,
     startVideoMuted: 1,
