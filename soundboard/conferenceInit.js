@@ -90,7 +90,19 @@ function initSoundboardTrack() {
   }
 
   log('Initializing microphone audio track for bot.')
-  JitsiMeetJS.createLocalTracks({ devices: ['audio'] })
+  log(
+    'Mic constraints applied: echoCancellation=false, noiseSuppression=false, autoGainControl=false'
+  )
+  JitsiMeetJS.createLocalTracks({
+    devices: ['audio'],
+    constraints: {
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+      },
+    },
+  })
     .then((tracks) => {
       onLocalTracks({ type: 'audio', tracks })
     })
