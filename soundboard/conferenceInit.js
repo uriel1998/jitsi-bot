@@ -9,6 +9,16 @@ options.startWithAudioMuted = false
 JitsiMeetJS.init(options)
 const publishedLocalTracks = new WeakSet()
 
+const connectionRetryConfig = {
+  intervalMs: 10000,
+  maxAttempts: 6,
+}
+const boshFallbackAttempt = 3
+let connectionAttemptCount = 0
+let retryTimeoutId = undefined
+let waitingForConnectionLogged = false
+let usingBoshFallback = false
+
 const publishLocalTrack = async (track) => {
   if (!room || !roomJoined || !track || publishedLocalTracks.has(track)) {
     return
@@ -262,49 +272,116 @@ const commandHandler = {
 }
 
 function conferenceInit() {
-  con = new JitsiMeetJS.JitsiConnection(null, null, options)
+  function scheduleReconnect(reason) {
+    if (connectionAttemptCount >= connectionRetryConfig.maxAttempts) {
+      log(
+        `Connection retry limit reached (${connectionRetryConfig.maxAttempts}). Giving up.`
+      )
+      return
+    }
 
-  const onConnectionSuccess = (ev) => {
-    console.log('Connection Success')
-    connectionEstablished = true
-  }
-  const onConnectionFailed = (ev) => {
-    console.log('Connection Failed')
+    connectionAttemptCount += 1
+    const attemptLabel = `${connectionAttemptCount}/${connectionRetryConfig.maxAttempts}`
+    log(
+      `Connection failed (${reason}). Retrying in ${
+        connectionRetryConfig.intervalMs / 1000
+      }s (${attemptLabel})...`
+    )
+
+    if (retryTimeoutId) {
+      clearTimeout(retryTimeoutId)
+    }
+    retryTimeoutId = setTimeout(() => {
+      startConnection(`retry ${attemptLabel}`)
+    }, connectionRetryConfig.intervalMs)
   }
 
-  /**
-   * This function is called when we disconnect.
-   */
-  function disconnect() {
-    console.log('disconnect!')
-    con.removeEventListener(
+  function startConnection(reason) {
+    if (con) {
+      try {
+        con.disconnect()
+      } catch (error) {
+        console.log('Error while disconnecting previous connection', error)
+      }
+    }
+
+    if (!usingBoshFallback && connectionAttemptCount >= boshFallbackAttempt) {
+      const fallbackBosh =
+        options.bosh ||
+        (options.targetJitsi?.origin
+          ? `${options.targetJitsi.origin}/http-bind`
+          : undefined)
+      if (fallbackBosh) {
+        options.serviceUrl = fallbackBosh
+        usingBoshFallback = true
+        log(`Switching to BOSH: ${fallbackBosh}`)
+      } else {
+        log('BOSH fallback requested but no endpoint is available.')
+      }
+    }
+
+    connectionEstablished = false
+    log(
+      reason ? `Connecting to Jitsi (${reason})...` : 'Connecting to Jitsi...'
+    )
+
+    con = new JitsiMeetJS.JitsiConnection(null, null, options)
+
+    const onConnectionSuccess = (ev) => {
+      console.log('Connection Success')
+      log('Connection established.')
+      connectionEstablished = true
+      waitingForConnectionLogged = false
+      connectionAttemptCount = 0
+      if (retryTimeoutId) {
+        clearTimeout(retryTimeoutId)
+        retryTimeoutId = undefined
+      }
+    }
+    const onConnectionFailed = (ev) => {
+      console.log('Connection Failed')
+      log('Connection failed.')
+      scheduleReconnect('failed')
+    }
+
+    /**
+     * This function is called when we disconnect.
+     */
+    function disconnect() {
+      console.log('disconnect!')
+      log('Connection disconnected.')
+      con.removeEventListener(
+        JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
+        onConnectionSuccess
+      )
+      con.removeEventListener(
+        JitsiMeetJS.events.connection.CONNECTION_FAILED,
+        onConnectionFailed
+      )
+      con.removeEventListener(
+        JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
+        disconnect
+      )
+      scheduleReconnect('disconnected')
+    }
+
+    con.addEventListener(
       JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
       onConnectionSuccess
     )
-    con.removeEventListener(
+    con.addEventListener(
       JitsiMeetJS.events.connection.CONNECTION_FAILED,
       onConnectionFailed
     )
-    con.removeEventListener(
+    con.addEventListener(
       JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
       disconnect
     )
+
+    con.connect()
   }
 
-  con.addEventListener(
-    JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
-    onConnectionSuccess
-  )
-  con.addEventListener(
-    JitsiMeetJS.events.connection.CONNECTION_FAILED,
-    onConnectionFailed
-  )
-  con.addEventListener(
-    JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
-    disconnect
-  )
-
-  con.connect()
+  startConnection()
 }
 
 const getNameById = (userId) => {
@@ -317,12 +394,17 @@ const getStatsIDById = (userId) => {
 
 function roomInit() {
   if (!connectionEstablished) {
+    if (!waitingForConnectionLogged) {
+      log('Waiting for connection to establish...')
+      waitingForConnectionLogged = true
+    }
     setTimeout(roomInit, 1000)
     return
   }
 
   const onConferenceJoined = (ev) => {
     console.log('Conference Joined')
+    log('Conference joined.')
 
     bot_started = true
     roomJoined = true
@@ -405,10 +487,7 @@ function roomInit() {
   // onJoin
   room.on(JitsiMeetJS.events.conference.USER_JOINED, (userId, userObj) => {
     if (playJoinSound) {
-      if (
-        soundboard.src ==
-        `${window.location.host}/audio/-Tea.mp3`
-      ) {
+      if (soundboard.src == `${window.location.host}/audio/-Tea.mp3`) {
         play()
       }
     }
