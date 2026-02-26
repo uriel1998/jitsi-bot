@@ -1,4 +1,4 @@
-// soundboard should already be defined
+// streaming should already be defined
 
 JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR)
 
@@ -83,14 +83,14 @@ function onRemoteTrack(track) {
   return // we dont need remote audio and video tracks, so just do nothing here.
 }
 
-function initSoundboardTrack() {
+function initStreamingTrack() {
   if (!initDone) {
-    setTimeout(initSoundboardTrack, 2000)
+    setTimeout(initStreamingTrack, 2000)
     return
   }
 
   log('Initializing local audio Track(s).')
-  // we also dont need local video stream, we just want the audio stream transmitted from the "audio soundboard" html element
+  // we also dont need local video stream, we just want the audio stream transmitted from the "audio streaming" html element
   JitsiMeetJS.createLocalTracks({ devices: ['audio'] })
     .then((tracks) => {
       onLocalTracks({ type: 'audio', tracks })
@@ -111,21 +111,21 @@ function initVideoboardTrack() {
     })
 }
 
-soundboard.addEventListener('play', () => {
+streaming.addEventListener('play', () => {
   room.setDisplayName(
-    `▶ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
+    `▶ ${getStreamingCurrentTrackName()} - ${options.streamingDisplayName}`
   )
 })
 
-soundboard.addEventListener('ended', () => {
+streaming.addEventListener('ended', () => {
   room.setDisplayName(
-    `⏹ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
+    `⏹ ${getStreamingCurrentTrackName()} - ${options.streamingDisplayName}`
   )
 })
 
-soundboard.addEventListener('pause', () => {
+streaming.addEventListener('pause', () => {
   room.setDisplayName(
-    `⏸ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
+    `⏸ ${getStreamingCurrentTrackName()} - ${options.streamingDisplayName}`
   )
 })
 
@@ -152,13 +152,13 @@ const unknownCommand = (userId) => {
 }
 
 const quit = (userId) => {
-  room.sendMessage(`Soundbot leaving.`)
+  room.sendMessage(`Streaming bot leaving.`)
   room.room.doLeave()
   window.close()
 }
 
 const currentTrack = (userId) => {
-  const track = soundboard.src
+  const track = streaming.src
   room.sendMessage(`Currently loaded: ${track}`, userId)
 }
 
@@ -171,7 +171,7 @@ const loadTrack = (userId, url) => {
   }
 
   try {
-    soundboard.src = url
+    streaming.src = url
     room.sendMessage(`Source set.`, userId)
   } catch (error) {
     log(`Error on loading new source "${url}", check url.`)
@@ -179,26 +179,26 @@ const loadTrack = (userId, url) => {
 }
 
 const play = () => {
-  soundboard.play()
+  streaming.play()
 }
 
 const pause = () => {
-  soundboard.pause()
+  streaming.pause()
 }
 
 const toggleLoop = (userId) => {
-  room.sendMessage(`Track Repeating set to ${!soundboard.loop}`, userId)
-  soundboard.loop = !soundboard.loop
+  room.sendMessage(`Track Repeating set to ${!streaming.loop}`, userId)
+  streaming.loop = !streaming.loop
 }
 
 const increaseVol = (userId) => {
-  soundboard.volume += 0.1
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
+  streaming.volume += 0.1
+  room.sendMessage(`Volume set to ${streaming.volume * 100}%`, userId)
 }
 
 const reduceVol = (userId) => {
-  soundboard.volume -= 0.1
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
+  streaming.volume -= 0.1
+  room.sendMessage(`Volume set to ${streaming.volume * 100}%`, userId)
 }
 
 const setVol = (userId, argument) => {
@@ -213,8 +213,8 @@ const setVol = (userId, argument) => {
     )
   }
 
-  soundboard.volume = vol / 100
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
+  streaming.volume = vol / 100
+  room.sendMessage(`Volume set to ${streaming.volume * 100}%`, userId)
 }
 
 const togglePlayOnJoin = (userId) => {
@@ -409,7 +409,13 @@ function roomInit() {
     bot_started = true
     roomJoined = true
 
-    setTimeout(initSoundboardTrack, 2000)
+    const avatarUrl = new URL(
+      '/images/streaming_icon.png',
+      window.location.href
+    ).toString()
+    room.setLocalParticipantProperty('avatarUrl', avatarUrl)
+
+    setTimeout(initStreamingTrack, 2000)
 
     Object.values(localTracks).forEach((tracks) => {
       tracks.forEach((track) => publishLocalTrack(track))
@@ -487,7 +493,7 @@ function roomInit() {
   // onJoin
   room.on(JitsiMeetJS.events.conference.USER_JOINED, (userId, userObj) => {
     if (playJoinSound) {
-      if (soundboard.src == `${window.location.host}/audio/-Tea.mp3`) {
+      if (streaming.src == `${window.location.host}/audio/-Tea.mp3`) {
         play()
       }
     }
@@ -577,7 +583,7 @@ function roomInit() {
     )
   })
 
-  room.setDisplayName(options.soundboardDisplayName)
+  room.setDisplayName(options.streamingDisplayName)
 
   room.join()
 }
@@ -587,7 +593,7 @@ function main() {
     return
   }
 
-  document.title = 'Soundboard - ' + roomName
+  document.title = 'Streaming - ' + roomName
 
   conferenceInit()
 

@@ -67,8 +67,9 @@ let workerHeartbeatIntervalId = undefined
 let options =
   //will be merged with config object from the target Jitsi server
   {
-    displayName: '🤖',
-    soundboardDisplayName: '🎧🤖♫🎶',
+    displayName: '🦧 Kobuko ',
+    soundboardDisplayName: '🐐🤖',
+    streamingDisplayName: '🦝 Ponpoko',
     startAudioMuted: 1,
     startWithAudioMuted: true,
     startVideoMuted: 1,

@@ -2,25 +2,26 @@
  * Credit: Jimmi Music Bot for Jitsi https://github.com/Music-Bot-for-Jitsi/Jimmi
  */
 
-const soundboard = document.querySelector('#soundboard')
+const streaming = document.querySelector('#streaming')
 const videoboard = document.querySelector('#videoboard')
 
-soundboard.volume = 0.4
+streaming.volume = 0.4
 videoboard.volume = 0.4
 
 let gainNode = undefined
-let soundboardContext = undefined
+let streamingContext = undefined
 
 let destStream = undefined
 
 let initDone = false
 
 async function initAudio() {
-
-  let microphoneStream = await navigator.mediaDevices.getUserMedia({audio:true});
+  let microphoneStream = await navigator.mediaDevices.getUserMedia({
+    audio: true,
+  })
 
   let audioContext = new AudioContext()
-  soundboardContext = audioContext
+  streamingContext = audioContext
 
   let inputNode = audioContext.createMediaStreamSource(microphoneStream)
 
@@ -33,16 +34,15 @@ async function initAudio() {
 
   let delayNode = audioContext.createDelay()
 
-  delayNode.delayTime.value = 0.05 // 1000 ms 
-  inputNode.connect(delayNode);
-  delayNode.connect(destStream);
+  delayNode.delayTime.value = 0.05 // 1000 ms
+  inputNode.connect(delayNode)
+  delayNode.connect(destStream)
 
   let delayNode2 = audioContext.createDelay()
-  delayNode2.delayTime.value = 0.05 // 1000 ms 
-  delayNode.connect(delayNode2);
-  delayNode2.connect(destStream);
-  
-  
+  delayNode2.delayTime.value = 0.05 // 1000 ms
+  delayNode.connect(delayNode2)
+  delayNode2.connect(destStream)
+
   navigator.mediaDevices.getUserMedia = async function ({ audio, video }) {
     console.log({ audio, video })
     log(
@@ -61,26 +61,26 @@ async function initAudio() {
     return destStream.stream
   }
 
-  initDone = true;
+  initDone = true
 }
 
-document
-  .querySelector('#setSoundboardSource')
-  ?.addEventListener('click', () => {
-    const soundboardSourceInput = document.querySelector(
-      '#soundboardSourceInput'
-    )
-    if (!soundboardSourceInput.validity.valid) {
-      return
-    }
-    soundboard.src = soundboardSourceInput.value
-    soundboardSourceInput.value = ''
-  })
+document.querySelector('#setStreamingSource')?.addEventListener('click', () => {
+  const streamingSourceInput = document.querySelector('#streamingSourceInput')
+  if (!streamingSourceInput.validity.valid) {
+    return
+  }
+  streaming.src = streamingSourceInput.value
+  streamingSourceInput.value = ''
+})
 
 initAudio()
 
-function getSoundboardCurrentTrackName() {
-  let splittedPath = new URL(soundboard.src).pathname.split('/')
+options.displayName = 'Ponpoko'
+options.streamingDisplayName = 'Ponpoko'
+options.avatarUrl = window.location.origin + '/images/streaming_icon.png'
+
+function getStreamingCurrentTrackName() {
+  let splittedPath = new URL(streaming.src).pathname.split('/')
 
   return splittedPath[splittedPath.length - 1].split('.')[0]
 }

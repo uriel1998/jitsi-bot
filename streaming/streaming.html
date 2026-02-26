@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="streaming.css" />
+    <title>Streaming</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="worker-src 'self'; media-src *"
+    />
+    <meta charset="UTF-8" />
+  </head>
+
+  <body>
+    <div><h1>Ponpoko</h1><p>Streaming Audio</p></div>
+    <label for="targetJitsi">Conference URL: </label>
+    <input style="width: 20vw" type="url" id="targetJitsi" />
+    <br />
+    <button id="start_bot_button">Start Bot.</button>
+    <br />
+    <h3>Streaming Control</h3>
+    <audio
+      src="../audio/nggyu.mp3"
+      controls
+      id="streaming"
+      crossorigin="anonymous"
+    ></audio>
+    <video
+      id="videoboard"
+      crossorigin="anonymous"
+      controls
+      src="../video/big-buck-bunny-sample.mp4"
+    ></video>
+    <br />
+    <form id="streamingInputForm">
+      <label for="streamingSourceInput">Audio Source Input</label>
+      <input
+        type="url"
+        name="streamingSourceInput"
+        id="streamingSourceInput"
+        pattern=".*\/\/.*\.(mp3|m4a)"
+        autocomplete="section-streaming url"
+        style="width: 30%"
+      />
+      <button type="submit" id="setStreamingSource">Set Source</button>
+    </form>
+    <br />
+    <div class="wrapper">
+      <section id="logOuter">
+        <h3>Jitsi Bot Log</h3>
+        <button id="clearLog">Clear Log</button>
+        <p></p>
+        <div id="log" style="white-space: pre-wrap"></div>
+      </section>
+      <aside id="participantsOuter">
+        <h3>Participants</h3>
+        <div id="participantsInner"></div>
+      </aside>
+    </div>
+  </body>
+  <script id="libJitsiMeet"></script>
+  <script id="jitsiConfig"></script>
+  <script src="../jitsi-bot/defaults.js"></script>
+  <script src="streaming.js"></script>
+  <script src="../jitsi-bot/pageParams.js"></script>
+  <script id="confInit"></script>
+</html>
