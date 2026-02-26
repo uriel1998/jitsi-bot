@@ -1,8 +1,8 @@
-// soundboard should already be defined
+// recording audio element should already be defined
 
 JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR)
 
-// Soundboard should publish audio by default on join.
+// Recording bot should publish audio by default on join.
 options.startAudioMuted = 0
 options.startWithAudioMuted = false
 
@@ -83,14 +83,14 @@ function onRemoteTrack(track) {
   return // we dont need remote audio and video tracks, so just do nothing here.
 }
 
-function initSoundboardTrack() {
+function initRecordingTrack() {
   if (!initDone) {
-    setTimeout(initSoundboardTrack, 2000)
+    setTimeout(initRecordingTrack, 2000)
     return
   }
 
   log('Initializing local audio Track(s).')
-  // we also dont need local video stream, we just want the audio stream transmitted from the "audio soundboard" html element
+  // we also dont need local video stream, we just want the audio stream transmitted from the "audio recording" html element
   JitsiMeetJS.createLocalTracks({ devices: ['audio'] })
     .then((tracks) => {
       onLocalTracks({ type: 'audio', tracks })
@@ -111,21 +111,21 @@ function initVideoboardTrack() {
     })
 }
 
-soundboard.addEventListener('play', () => {
+recording.addEventListener('play', () => {
   room.setDisplayName(
-    `▶ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
+    `▶ ${getRecordingCurrentTrackName()} - ${options.recordingbotDisplayName}`
   )
 })
 
-soundboard.addEventListener('ended', () => {
+recording.addEventListener('ended', () => {
   room.setDisplayName(
-    `⏹ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
+    `⏹ ${getRecordingCurrentTrackName()} - ${options.recordingbotDisplayName}`
   )
 })
 
-soundboard.addEventListener('pause', () => {
+recording.addEventListener('pause', () => {
   room.setDisplayName(
-    `⏸ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
+    `⏸ ${getRecordingCurrentTrackName()} - ${options.recordingbotDisplayName}`
   )
 })
 
@@ -152,13 +152,13 @@ const unknownCommand = (userId) => {
 }
 
 const quit = (userId) => {
-  room.sendMessage(`Soundbot leaving.`)
+  room.sendMessage(`Recording bot leaving.`)
   room.room.doLeave()
   window.close()
 }
 
 const currentTrack = (userId) => {
-  const track = soundboard.src
+  const track = recording.src
   room.sendMessage(`Currently loaded: ${track}`, userId)
 }
 
@@ -171,7 +171,7 @@ const loadTrack = (userId, url) => {
   }
 
   try {
-    soundboard.src = url
+    recording.src = url
     room.sendMessage(`Source set.`, userId)
   } catch (error) {
     log(`Error on loading new source "${url}", check url.`)
@@ -179,26 +179,26 @@ const loadTrack = (userId, url) => {
 }
 
 const play = () => {
-  soundboard.play()
+  recording.play()
 }
 
 const pause = () => {
-  soundboard.pause()
+  recording.pause()
 }
 
 const toggleLoop = (userId) => {
-  room.sendMessage(`Track Repeating set to ${!soundboard.loop}`, userId)
-  soundboard.loop = !soundboard.loop
+  room.sendMessage(`Track Repeating set to ${!recording.loop}`, userId)
+  recording.loop = !recording.loop
 }
 
 const increaseVol = (userId) => {
-  soundboard.volume += 0.1
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
+  recording.volume += 0.1
+  room.sendMessage(`Volume set to ${recording.volume * 100}%`, userId)
 }
 
 const reduceVol = (userId) => {
-  soundboard.volume -= 0.1
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
+  recording.volume -= 0.1
+  room.sendMessage(`Volume set to ${recording.volume * 100}%`, userId)
 }
 
 const setVol = (userId, argument) => {
@@ -213,8 +213,8 @@ const setVol = (userId, argument) => {
     )
   }
 
-  soundboard.volume = vol / 100
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
+  recording.volume = vol / 100
+  room.sendMessage(`Volume set to ${recording.volume * 100}%`, userId)
 }
 
 const togglePlayOnJoin = (userId) => {
@@ -409,7 +409,7 @@ function roomInit() {
     bot_started = true
     roomJoined = true
 
-    setTimeout(initSoundboardTrack, 2000)
+    setTimeout(initRecordingTrack, 2000)
 
     Object.values(localTracks).forEach((tracks) => {
       tracks.forEach((track) => publishLocalTrack(track))
@@ -487,7 +487,7 @@ function roomInit() {
   // onJoin
   room.on(JitsiMeetJS.events.conference.USER_JOINED, (userId, userObj) => {
     if (playJoinSound) {
-      if (soundboard.src == `${window.location.host}/audio/-Tea.mp3`) {
+      if (recording.src == `${window.location.host}/audio/-Tea.mp3`) {
         play()
       }
     }
@@ -577,7 +577,7 @@ function roomInit() {
     )
   })
 
-  room.setDisplayName(options.soundboardDisplayName)
+  room.setDisplayName(options.recordingbotDisplayName)
 
   room.join()
 }
@@ -587,7 +587,7 @@ function main() {
     return
   }
 
-  document.title = 'Soundboard - ' + roomName
+  document.title = 'Recording - ' + roomName
 
   conferenceInit()
 

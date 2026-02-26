@@ -2,8 +2,8 @@
 <html>
 
 <head>
-  <link rel="stylesheet" href="soundboard.css" />
-  <title>Soundboard</title>
+  <link rel="stylesheet" href="recording.css" />
+  <title>Recording</title>
   <meta http-equiv="Content-Security-Policy" content="worker-src 'self'; media-src *">
   <meta charset="UTF-8" />
 </head>
@@ -15,15 +15,15 @@
   <br />
   <button id="start_bot_button">Start Bot.</button>
   <br />
-  <h3>Soundboard Control</h3>
-  <audio src="../audio/nggyu.mp3" controls id="soundboard" crossorigin="anonymous"></audio>
+  <h3>Recording Control</h3>
+  <audio src="../audio/nggyu.mp3" controls id="recording" crossorigin="anonymous"></audio>
   <video id="videoboard" crossorigin="anonymous" controls src="../video/big-buck-bunny-sample.mp4"></video>
   <br />
-  <form id="soundboardInputForm">
-    <label for="soundboardSourceInput">Audio Source Input</label>
-    <input type="url" name="soundboardSourceInput" id="soundboardSourceInput" pattern=".*\/\/.*\.(mp3|m4a)"
-      autocomplete="section-soundboard url" style="width: 30%" />
-    <button type="submit" id="setSoundboardSource">Set Source</button>
+  <form id="recordingInputForm">
+    <label for="recordingSourceInput">Audio Source Input</label>
+    <input type="url" name="recordingSourceInput" id="recordingSourceInput" pattern=".*\/\/.*\.(mp3|m4a)"
+      autocomplete="section-recording url" style="width: 30%" />
+    <button type="submit" id="setRecordingSource">Set Source</button>
   </form>
   <br />
   <div class="wrapper">
@@ -42,7 +42,7 @@
 <script id="libJitsiMeet"></script>
 <script id="jitsiConfig"></script>
 <script src="../jitsi-bot/defaults.js"></script>
-<script src="soundboard.js"></script>
+<script src="recording.js"></script>
 <script src="../jitsi-bot/pageParams.js"></script>
 <script id="confInit"></script>
 

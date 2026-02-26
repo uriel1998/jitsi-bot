@@ -67,10 +67,11 @@ let workerHeartbeatIntervalId = undefined
 let options =
   //will be merged with config object from the target Jitsi server
   {
-    displayName: '🦧 Kobuko ',
-    soundboardDisplayName: '🐐 Mochitail',
+    displayName: '🦉 Alissan',
+    soundboardDisplayName: '🐐 Mochi',
     streamingDisplayName: '🦝 Ponpoko',
-    chatbotDisplayName: '🦇 Kitsupon',
+    chatbotDisplayName: '🦧 Kobuko',
+    recordingbotDisplayName: '🦊 Ritson',
     startAudioMuted: 1,
     startWithAudioMuted: true,
     startVideoMuted: 1,
