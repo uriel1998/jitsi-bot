@@ -89,8 +89,7 @@ function initSoundboardTrack() {
     return
   }
 
-  log('Initializing local audio Track(s).')
-  // we also dont need local video stream, we just want the audio stream transmitted from the "audio soundboard" html element
+  log('Initializing microphone audio track for bot.')
   JitsiMeetJS.createLocalTracks({ devices: ['audio'] })
     .then((tracks) => {
       onLocalTracks({ type: 'audio', tracks })
@@ -98,42 +97,6 @@ function initSoundboardTrack() {
     .catch((error) => {
       throw error
     })
-}
-
-function initVideoboardTrack() {
-  console.log('Initializing local video Track(s).')
-  JitsiMeetJS.createLocalTracks({ devices: ['video'] })
-    .then((tracks) => {
-      onLocalTracks({ type: 'video', tracks })
-    })
-    .catch((error) => {
-      throw error
-    })
-}
-
-soundboard.addEventListener('play', () => {
-  room.setDisplayName(
-    `▶ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
-  )
-})
-
-soundboard.addEventListener('ended', () => {
-  room.setDisplayName(
-    `⏹ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
-  )
-})
-
-soundboard.addEventListener('pause', () => {
-  room.setDisplayName(
-    `⏸ ${getSoundboardCurrentTrackName()} - ${options.soundboardDisplayName}`
-  )
-})
-
-// Video Related setup Stuff
-
-function playVideo() {
-  initVideoboardTrack()
-  videoboard.play()
 }
 
 /* -------------------------
@@ -157,95 +120,8 @@ const quit = (userId) => {
   window.close()
 }
 
-const currentTrack = (userId) => {
-  const track = soundboard.src
-  room.sendMessage(`Currently loaded: ${track}`, userId)
-}
-
-const loadTrack = (userId, url) => {
-  const mp3Reg = new RegExp('.*//.*.mp3')
-
-  if (!mp3Reg.test(url)) {
-    room.sendMessage('Invalid URL.', userId)
-    return
-  }
-
-  try {
-    soundboard.src = url
-    room.sendMessage(`Source set.`, userId)
-  } catch (error) {
-    log(`Error on loading new source "${url}", check url.`)
-  }
-}
-
-const play = () => {
-  soundboard.play()
-}
-
-const pause = () => {
-  soundboard.pause()
-}
-
-const toggleLoop = (userId) => {
-  room.sendMessage(`Track Repeating set to ${!soundboard.loop}`, userId)
-  soundboard.loop = !soundboard.loop
-}
-
-const increaseVol = (userId) => {
-  soundboard.volume += 0.1
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
-}
-
-const reduceVol = (userId) => {
-  soundboard.volume -= 0.1
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
-}
-
-const setVol = (userId, argument) => {
-  const vol = parseFloat(argument)
-  if (isNaN(vol)) {
-    room.sendMessage(`Argument is NaN`, userId)
-  }
-  if (vol < 0 || vol > 100) {
-    room.sendMessage(
-      `Argument invalid. Please write Number between 0 and 100.`,
-      userId
-    )
-  }
-
-  soundboard.volume = vol / 100
-  room.sendMessage(`Volume set to ${soundboard.volume * 100}%`, userId)
-}
-
-const togglePlayOnJoin = (userId) => {
-  playJoinSound = !playJoinSound
-  if (playJoinSound) {
-    room.sendMessage(
-      `OnJoinSound enabled (-Tea.mp3 needs to be set from host.)`,
-      userId
-    )
-  } else {
-    room.sendMessage(`OnJoinSound disabled.`, userId)
-  }
-}
-
 const help = (userId) => {
-  const commands = [
-    'Available Commands:',
-    '/currentTrack',
-    '/help',
-    '/loadTrack URL',
-    '/pause',
-    '/play',
-    '/playVideo',
-    '/reload',
-    '/toggleLoop',
-    '/vol+',
-    '/vol-',
-    '/setVol x # x: vol between 0 .. 100',
-    '/quit',
-    '/togglePlayOnJoin',
-  ]
+  const commands = ['Available Commands:', '/help', '/reload', '/quit']
 
   room.sendMessage(commands.join('\n'), userId)
 }
@@ -256,18 +132,8 @@ const help = (userId) => {
  */
 
 const commandHandler = {
-  '/currentTrack': currentTrack,
   '/help': help,
-  '/loadTrack': loadTrack,
-  '/pause': pause,
-  '/play': play,
-  '/playVideo': playVideo,
   '/reload': reloadBot,
-  '/toggleLoop': toggleLoop,
-  '/togglePlayOnJoin': togglePlayOnJoin,
-  '/vol+': increaseVol,
-  '/vol-': reduceVol,
-  '/setVol': setVol,
   '/quit': quit,
 }
 
@@ -486,11 +352,6 @@ function roomInit() {
   )
   // onJoin
   room.on(JitsiMeetJS.events.conference.USER_JOINED, (userId, userObj) => {
-    if (playJoinSound) {
-      if (soundboard.src == `${window.location.host}/audio/-Tea.mp3`) {
-        play()
-      }
-    }
     printParticipants()
     log('USER JOINED EVENT ' + userId + ': ' + userObj._displayName)
   })
