@@ -217,6 +217,34 @@ const stopRecordingFromUi = async () => {
   }
 }
 
+const setAudioPingQuiet = (userId) => {
+  const sender = room.getParticipantById(userId)
+  if (!sender?.isModerator?.()) {
+    room.sendMessage(
+      'Only moderators can change recording ping audio with /quiet or /loud.',
+      userId
+    )
+    return
+  }
+
+  window.setAudioPingEnabled?.(false)
+  room.sendMessage('Audio pings silenced.', userId)
+}
+
+const setAudioPingLoud = (userId) => {
+  const sender = room.getParticipantById(userId)
+  if (!sender?.isModerator?.()) {
+    room.sendMessage(
+      'Only moderators can change recording ping audio with /quiet or /loud.',
+      userId
+    )
+    return
+  }
+
+  window.setAudioPingEnabled?.(true)
+  room.sendMessage('Audio pings resumed.', userId)
+}
+
 const currentTrack = (userId) => {
   const track = recording.src
   room.sendMessage(`Currently loaded: ${track}`, userId)
@@ -304,6 +332,8 @@ const help = (userId) => {
     '/vol-',
     '/setVol x # x: vol between 0 .. 100',
     '/stop # moderator only',
+    '/quiet # moderator only (silence audio pings)',
+    '/loud # moderator only (resume audio pings)',
     '/quit',
     '/togglePlayOnJoin',
   ]
@@ -330,6 +360,8 @@ const commandHandler = {
   '/vol-': reduceVol,
   '/setVol': setVol,
   '/stop': stopRecording,
+  '/quiet': setAudioPingQuiet,
+  '/loud': setAudioPingLoud,
   '/quit': quit,
 }
 

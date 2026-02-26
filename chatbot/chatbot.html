@@ -9,12 +9,24 @@
   </head>
 
   <body>
-    <h1>Kobuko</h1>
+	<div class="wrapper">
+		<section id="logOuter">
+  
     <label for="targetJitsi">Conference URL: </label>
-    <input style="width: 20vw" type="url" id="targetJitsi" />
+    <input style="width: 35vw" type="url" id="targetJitsi" />
     <br />
-    <button id="start_bot_button">Toggle Bot</button>
     <br />
+    <button id="start_bot_button">Toggle Bot</button>  <br /><br />
+    <a href="chatbot_loader.html"><button>Reset Bot</button></a>
+    <br />
+    </section>
+    <aside id="participantsOuter">
+		  <h1>Kobuko</h1>
+		    <div class="left-side">
+      <img width=100% src="../images/chatbot_icon.png" title="Chatbot" />
+    </div>
+		</aside>
+    </div>
     <div class="wrapper">
       <section id="logOuter">
         <h3>Jitsi Bot Log</h3>

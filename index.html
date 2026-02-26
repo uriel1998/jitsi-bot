@@ -27,51 +27,61 @@
       html {
         height: 100%;
         margin: 0;
-        background-image: url('background_tile.jpg');
-        background: url('background_tile.jpg');
         background-color: var(--bg);
         color: var(--fg);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
       .header {
-        width: 95%;
-        display: block;
+        width: 90%;
+        color: var(--fg);
+        background-color: var(--bg-alt);        
+        border-bottom: 1px solid var(--surface);
+        padding: 0.5rem;
+        margin: 1rem;        
       }
-      /* Your existing header icon row stays */
+      H1 {
+        color: var(--purple);
+        margin: 0.5rem 0 1rem;
+      }      
+      
+       .panel .icon img {
+        border-radius: 4px;
+        border: 1px solid var(--surface);
+      }
+      
       .container4 {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr;
         padding-bottom: 20px;
       }
 
-      /* OUTER GRID: 2 panels per row */
       .container2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* two panels across */
-        gap: 12px;
         padding: 5px;
         width: 95%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;    
+        background-color: var(--bg);    
       }
 
       /* INNER PANEL: icon (25%) + iframe (75%) */
       .panel {
         display: grid;
-        grid-template-columns: 25% 75%;
         gap: 10px;
         align-items: center;
+        background-color: var(--bg-alt);
+        border: 1px solid var(--surface);
+        border-radius: 6px;
+        padding: 10px;        
       }
 
-      .panel .icon img {
-        width: 100%;
-        height: auto;
-        object-fit: contain;
-        display: block;
-      }
+ 
 
       .panel iframe {
         width: 100%;
         min-height: 420px; /* tweak as desired */
         border: 0;
+        border: 1px solid var(--surface);
+        border-radius: 4px;
       }
 
       @media screen and (max-width: 768px) {
@@ -81,88 +91,41 @@
           width: 95% !important;
         }
 
-        /* keep icon+iframe side-by-side or stack them; choose one */
-        .panel {
-          grid-template-columns: 25% 75%;
-        }
-
-        /* If you prefer stacking icon over iframe on mobile, use this instead:
-    .panel { grid-template-columns: 1fr; }
-    */
+    
       }
     </style>
+ 
 
-    <style>
-      /* Dracula theme additions */
-      H1 {
-        color: var(--purple);
-        margin: 0.5rem 0 1rem;
-      }
 
-      .panel {
-        background-color: var(--bg-alt);
-        border: 1px solid var(--surface);
-        border-radius: 6px;
-        padding: 10px;
-      }
-
-      .panel iframe {
-        border: 1px solid var(--surface);
-        border-radius: 4px;
-      }
-
-      .panel .icon img {
-        border-radius: 4px;
-        border: 1px solid var(--surface);
-      }
-
-      .container2 {
-        background-color: var(--bg);
-      }
-
-      .header {
-        color: var(--fg);
-        border-bottom: 1px solid var(--surface);
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-    </style>
+ 
 
     <title>Jitsi Bots</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
-  <body>
-    <div class="header"><h1>hello there my pretties</h1></div>
-    <div class="container2">
+  <body>     
+    <div class="header"><h1>hello there my pretties</h1></div></div>
+ 
       <!-- Row 1, left: streaming -->
       <div class="panel">
-        <div class="icon">
-          <img src="images/streaming_icon.png" title="Streaming" />
-        </div>
+
         <iframe src="streaming/streaming_loader.html"></iframe>
       </div>
 
       <!-- Row 1, right: chatbot -->
       <div class="panel">
-        <div class="icon">
-          <img src="images/chatbot_icon.png" title="Chatbot" />
-        </div>
+
         <iframe src="chatbot/chatbot_loader.html"></iframe>
       </div>
 
       <!-- Row 2, left: soundboard -->
       <div class="panel">
-        <div class="icon">
-          <img src="images/soundboard_icon.png" title="Soundboard" />
-        </div>
+
         <iframe src="soundboard/soundboard_loader.html"></iframe>
       </div>
 
       <!-- Row 2, right: switchboard -->
       <div class="panel">
-        <div class="icon">
-          <img src="images/switchboard_icon.png" title="Switchboard" />
-        </div>
+
         <iframe src="recording/recording_loader.html"></iframe>
       </div>
     </div>
