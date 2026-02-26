@@ -97,7 +97,7 @@ button#clearLog:hover {
 }
 
 #logOuter {
-  width: 60%;
+  width: 50%;
   background-color: var(--bg-alt);
   border: 1px solid var(--surface);
   border-radius: 6px;
@@ -105,7 +105,7 @@ button#clearLog:hover {
 }
 
 #participantsOuter {
-  width: 30%;
+  width: 40%;
   background-color: var(--bg-alt);
   border: 1px solid var(--surface);
   border-radius: 6px;

@@ -15,17 +15,8 @@
   <br />
   <button id="start_bot_button">Start Bot.</button>
   <button id="stop_bot_button">Stop Bot</button>
+  <a href="recording_loader.html"><button>Reset Bot</button></a>
   <br />
-  <h3>Recording Control</h3>
-  <audio src="../audio/nggyu.mp3" controls id="recording" crossorigin="anonymous"></audio>
-  <video id="videoboard" crossorigin="anonymous" controls src="../video/big-buck-bunny-sample.mp4"></video>
-  <br />
-  <form id="recordingInputForm">
-    <label for="recordingSourceInput">Audio Source Input</label>
-    <input type="url" name="recordingSourceInput" id="recordingSourceInput" pattern=".*\/\/.*\.(mp3|m4a)"
-      autocomplete="section-recording url" style="width: 30%" />
-    <button type="submit" id="setRecordingSource">Set Source</button>
-  </form>
   <section id="recordingMeterOuter" aria-live="polite">
     <div class="meter-header">
       <strong>Recording Input Level</strong>
