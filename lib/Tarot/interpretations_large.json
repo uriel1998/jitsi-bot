@@ -1,0 +1,1019 @@
+{
+    "description": "Tarot card interpretations, from Mark McElroy's _A Guide to Tarot Meanings_ (http://www.madebymark.com/a-guide-to-tarot-card-meanings/)",
+    "tarot_interpretations": [
+        {
+            "meanings": {
+                "light": [
+                    "The first card of the Major Arcana, The Fool is generally a positive card indicating new beginnings. If it appears in your readings it could mean that you are on the verge of an exciting, unexpected new adventure. Your new adventure will bring you along a path which may require you to make a leap of faith but you will grow as a result of this new experience. This new adventure could be a literal new adventure, like travelling to a place you've never been before. The change this card can bring will usually be a welcome one. While the Fool is generally a positive card, its appearance in a reading can also indicate that you need to take the time to look before you leap. -"
+                ],
+                "shadow": [
+                    "As with the upright meaning, The Fool reversed signifies a new beginning. However, when reversed this Major Arcana trump card indicates that the beginning is something you may be reluctant to jump into. This new beginning is still coming either way! The Fool tarot card reversed can be an indication of living in the moment but also can be a sign that in your excitement you are behaving somewhat recklessly towards others. It can signify being irrational, lack of fun and lack of faith or hope."
+                ]
+            },
+            "name": "The Fool",
+            "rank": 0,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "When The Magician appears in a Tarot card reading it is a sign that you have all the skills and abilities you need to be successful. The universe is aligning to bring positive changes your way. This Major Arcana trump card shows you that you must use your intellect, concentration and willpower to make things happen. The Magician usually signifies a time in your life when you have the power to manifest the outcome you want. If it is referring to other people in your life it usually refers to someone you can learn from whose ability and wisdom will impress you."
+                ],
+                "shadow": [
+                    "When The Magician reversed Tarot card appears in a Tarot reading it is a sign that you will need to be careful not to miss the opportunities coming your way. Don't allow self-doubt to stop you from seizing the moment. If it refers to a person, The Magician reversed can mean that a person in your life who presents themselves as knowledgeable and trustworthy may actually be trying to use you or manipulate you. Watch out for deceitful and greedy people and be careful who you trust with this Major Arcana card in reverse!"
+                ]
+            },
+            "name": "The Magician",
+            "rank": 1,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The High Priestess possesses intuition, mystery and sensuality combined with common sense. When the High Priestess appears in a tarot reading she indicates that now is the time to trust your instincts and go with your gut feeling. Pay attention to your dreams and the signs and symbols the universe is sending you when this Major Arcana trump card appears in your tarot reading."
+                ],
+                "shadow": [
+                    "As with the upright meaning, The High Priestess reversed in a tarot reading indicates your intuition is trying to guide you and your instincts are correct. However, in the reversed position this Major Arcana card shows that you are not hearing it. You may be more focused on the opinions of others or winning other people's approval than your own inner wisdom. It can also indicate that you are neglecting your own needs to take care of others. You need to take the time to connect with yourself and listen to your inner voice. Trust yourself. You have all the wisdom and knowledge you need. -"
+                ]
+            },
+            "name": "The High Priestess",
+            "rank": 2,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Empress Tarot is the Major Arcana card of femininity and motherhood. It is also one of the strongest pregnancy cards in the Tarot deck. If you are a mother, you will really come into your own and find fulfilment. If you are a father, The Empress encourages you to build on your communication with your children and show them your nurturing side. Even if you are not a parent, when The Empress appears the message is the same, you should embrace your softer side, allow yourself to explore the emotions you are feeling and listen to your intuition. People will be drawn to you, especially those in need of the empathy, compassion and nurturing you are able to provide."
+                ],
+                "shadow": [
+                    "When The Empress reversed appears in a Tarot reading, it again tells you to embrace your feminine qualities. This applies to men too. We are all a mixture of masculine and feminine qualities. The Empress reversed indicates that you have been suppressing or neglecting your feminine side and need to embrace it in order to bring your masculine and feminine energies into balance. You may be focusing too much on the material and mental aspects of life, rather than the emotional and spiritual when this Major Arcana card appears. The disharmony indicated by The Empress reversed can take many forms. You may be putting others needs before your own to your detriment. Or you may feel so emotionally overwhelmed that you are neglecting those that are important to you. You may also feel unattractive and undesirable and your confidence has taken a knock. You will need to shift the focus and ground yourself to correct this imbalance. It can be a signifier of empty-nest syndrome for the parents of grown up children. It can also be an indicator of mother issues affecting you depending on its placement in a Tarot spread."
+                ]
+            },
+            "name": "The Empress",
+            "rank": 3,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "As a person, The Emperor represents an older man who is good in business and usually wealthy. The Emperor is a solid, stable man. He is a powerful, grounded protector but he also can be rigid and stubborn. This can be a father or father-figure type or an older man you are romantically involved with. The Emperor is a hard task master and has little time for fun and frivolity. Children of The Emperor can struggle with father issues as falling short of his high expectations can affect their self-esteem. If The Emperor Tarot card appears in a past position, this Major Arcana card can indicate that the father figure in your life was authoritarian and that, while he had your best interests at heart, he may have struggled to show affection. If it appears in the present or future it's a much better omen as it indicates a wise older man who will give you solid advice which, if you follow it, will lead you in the right direction. Generally, if not representing a person in your life, The Emperor signifies the dominance of logic over emotion and of the mind over the heart. It signifies that concentration, structure, stability and focus is required if you want to make your ideas and dreams a reality. The Emperor upright can represent fatherhood."
+                ],
+                "shadow": [
+                    "The Emperor in reverse as a person signifies an older man or person in authority in your life who may be abusing his power or being too authoritarian leaving you feeling powerless or rebellious. This person may actually be trying to give you solid guidance but the message is lost due to their domineering behaviour. The best way to handle this person is to remain calm and logical. Take the advice that works for you and throw the rest away. Don't be afraid to stand up to authority but do so in a practical and logical manner which will get you the results you want. The Emperor reversed can also indicate a father figure who let you down or abandoned you. If not representing a person in your life, The Emperor Tarot reversed can indicate that you are letting your heart overrule your head too much and need to balance your mind with your emotions. This Major Arcana card shows that you may be lacking self-control and need to get more structure in your life. The Emperor reversed can represent paternity issues or questions over paternity."
+                ]
+            },
+            "name": "The Emperor",
+            "rank": 4,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Hierophant is the card of traditional values and institutions. The Hierophant can represent a counsellor or mentor who will provide you with wisdom and guidance or a spiritual or religious advisor such as a priest, vicar, preacher, imam, rabbi or a monk. Alternatively, you may be dealing with someone who is very set in their ways. The institutions The Hierophant Tarot card can represent include economic, religious, political, social, family, educational, social welfare and medical. Its appearance can signify that now is a time to conform to convention or tradition. It's not a time to rock the boat. It can also be an indicator that you will take part in some sort of traditional ceremony or that you may start creating some new traditions or rituals of your own."
+                ],
+                "shadow": [
+                    "When The Hierophant Tarot appears reversed it is time to break with convention. You will want to change traditional structure, social norms and rigid rules. Those close to you may not understand this need to challenge the established way of doing things and may be completely against it but with this Major Arcana card appearing in your Tarot reading you will feel compelled to think for yourself and throw away the rule book. The Hierophant reversed can signify an unconventional way of living or an alternative lifestyle. Alternatively, it may indicate that you are clinging desperately to old ways to your detriment or it may indicate that you have feelings of guilt and shame associated with behaving in a way that goes against the values you were raised with. Learning to live by your own rules, while still listening to your own conscience, will bring you freedom from oppression. It will open your mind and expand your horizons in a positive way. The Hierophant reversed can also be an indicator of conflict with a person in a position of authority."
+                ]
+            },
+            "name": "The Hierophant",
+            "rank": 5,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Lovers signifies perfect union, harmony, love and attraction. The Lovers can represent finding the balance within oneself. You are learning to understand yourself, your own personal moral code and what you value in life. This will bring harmony and balance to your life. In general when The Lovers Tarot card appears it is an indication that you have major choices to make or are faced with a dilemma. You may be feeling uncertain about situations, people in your life or what direction you should take. These are important decisions you are faced with. Don't automatically go for the easy road, make sure you have all the information and make the right decision. Even if it seems like a difficult path, it will lead you on to greater things."
+                ],
+                "shadow": [
+                    "The Lovers Tarot reversed indicates that you may be struggling to take ownership of the decisions you've made. This is causing conflict within you. You may be feeling uncertain of the direction your life is going in. You need to remember that you are the master of your own destiny. Don't try to blame the universe if your situation is a result of choices that you've made. Instead be accountable, learn from past mistakes and let them go. If you do that you will be able to move forward in a position direction. You will develop a deeper understanding of your true self, your values and your beliefs and avoid repeating the same mistakes in the future."
+                ]
+            },
+            "name": "The Lovers",
+            "rank": 6,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Chariot Tarot represents overcoming obstacles through determination, focus and willpower. With this Major Arcana trump card in your tarot spread you will be feeling motivated, ambitious and in control. Now is a time to go for what you really want. The Chariot is not without its challenges, there may be many obstacles in your path but if you stay focused, keep your composure and are confident in your abilities, you will be successful! It can also represent travel (usually involving driving) as The Chariot is after all a mode of transport. The Chariot can also indicate that you may be acting defensively or aggressively to hide that you are feeling emotionally vulnerable. You may feel like you are in a battle at the moment. Don't worry, if you maintain your focus, you will be successful! The Chariot is also an indicator of success in sports or competitions. The Chariot represents finding the balance between the heart and mind. Put any worries aside and maintain your focus."
+                ],
+                "shadow": [
+                    "The Chariot Tarot card reversed can indicate that you feel powerless and are lacking direction. You need to take control of your own destiny and not let outside forces determine your path. When The Chariot reversed you are still moving but you have let go of the reins. You need to regain your drive and determination. Don't be a passenger in your own life, focus and take your control back! Consider what aspects of your current situation are within your control and take proactive steps to change your fate. You may be powerless, lacking in confidence and put upon by others or by the circumstances of your life. This may be leading to anger, frustration and uncontrolled aggression. If the people in your life are being too needy and demanding you need to take back you power in a productive way. Be clear about what time or resources you are prepared to dedicate to others. Set your boundaries and stick to them."
+                ]
+            },
+            "name": "The Chariot",
+            "rank": 7,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Strength Tarot card is the Major Arcana card of inner strength. It represents mastering raw emotions in order to bring calm to yourself or a situation. It is similar to the Chariot in that it represents overcoming challenges. However, the Strength card usually refers to inner challenges. Overcoming the obstacles we face in relation to our own doubts, fears and anxieties. In a general context this card indicates that you are learning to master your fears and anxieties, to be courageous and daring. You have all the skills you need to be successful, the focus now is to conquer your inner worries and believe in yourself. Take the time you need to master your emotions, be patient and compassionate with yourself and you will find a new confidence in yourself and your abilities. Strength, as well as being representative of taming your emotions, can also represent taming someone else's wild ways. This is not done by trying to dominate the other person but by gentle coaxing, positive reinforcement, encouragement and compassion."
+                ],
+                "shadow": [
+                    "When the Strength Tarot card appears reversed in your Tarot reading, it indicates that you are not tapping into the inner strength you have. It is does not indicate a lack of strength so much as it indicates that you are letting fear, anxiety or low self-esteem paralyse you. Now more than ever you need to summon your inner resolve and self-belief to pull you out of your current situation. You have the strength you need to get over your obstacles. You have simply lost touch with it and that disconnection is leaving you feeling weak, vulnerable and lacking confidence. Focus on the positive, stay away from people who make you feel inadequate and spend time with people who build you up."
+                ]
+            },
+            "name": "Strength",
+            "rank": 8,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Hermit Tarot card in an upright position generally indicates that you are entering a period of soul searching, self-reflection and spiritual enlightenment. You may find that you need time alone to gain a deeper understanding of yourself, to remove yourself from the daily grind in order to discover your true spiritual self, contemplate your existence, your direction in life or your values. The Hermit can also indicate isolating yourself or withdrawing into oneself in order to recover from a difficult situation. This Major Arcana trump card can suggest that you may be going through an anti-social phase where you just don't want to interact with people as much as you normally would. The Hermit is wise, mature and knowledgeable and may be an indication of someone seeking the services of a counsellor or psychiatrist. This is a time to focus on yourself and meeting your own needs."
+                ],
+                "shadow": [
+                    "The Hermit Tarot card reversed suggests that you have withdrawn too much from the world or are becoming too reclusive. Solitude might have been necessary or good for you at one point but The Hermit reversed is telling you that it is time to come back to the world and the people around you. Taking time for soul-searching and self-reflection can be a great thing in moderation but too much can be damaging. At some point, you do need to draw a line under things and move forward, this Major Arcana card in reversed position indicates that now is that time. It can also indicate that you may be feeling shy or apprehensive about being in social situations. Don't be afraid to get back out there. Alternatively, The Hermit in reversed can indicate that you are avoiding self-reflection completely as you are afraid of what you'll discover if you look inside yourself. It can be an indicator of becoming too fixated with someone or something or too rigid and restricted in your views."
+                ]
+            },
+            "name": "The Hermit",
+            "rank": 9,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Wheel of Fortune is generally an indicator of luck or destiny and it is a Major Arcana signifier of change. When the Wheel of Fortune appears upright in your Tarot reading big changes are coming. These changes should be for your greater good, but remember not all change is easy even if it's leading you to your destiny! The upright Wheel of Fortune signals that the universe is working in your favour to help you reach your goals. Make sure you make the most of this time by focusing your intention on what you truly want! Know that the universe has a plan for you even if that plan is not clear to you at this point. The Wheel of Fortune also represents the ever-changing cycles we go through in life. We must learn to accept this process as part of living, even if it's uncomfortable at times. This trump card is also a karma card so remember to be nice to people on your way up, you may be meeting them again on your way back down!"
+                ],
+                "shadow": [
+                    "In a general context, the Wheel of Fortune reversed Tarot card still indicates change but this change is likely to be negative and unwelcome. The reversed Wheel of Fortune is a strong indicator that there is a challenging time ahead and that the change coming may be difficult to adjust to. It can represent that things had been going well and have suddenly and quite unexpectedly fallen apart. This sudden deterioration can leave you feeling powerless, out of control and as if external forces are working against you. However, that is not the case. While there may be some outside factors, the current situation is most likely a result of decisions you made. You will need to take control of your situation and ownership of your choices in order to learn from this situation. Although things may be tough with the Wheel of Fortune in reverse, there is a big opportunity for you to learn karmic lessons here that will help you move on to a brighter and better future, seize the opportunity and don't resist change. These ups and downs are part of life and often we learn more from hardship than we do from good fortune."
+                ]
+            },
+            "name": "Wheel of Fortune",
+            "rank": 10,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Justice Tarot card relates to karmic justice, legal matters and cause and effect. In a general context Justice is showing you that all actions have consequences. So look at your present circumstances in that context, how have your own actions contributed to where you find yourself today? Are there any karmic lessons that you should be learning from your current situation? This Major Arcana card is also a signifier of legal matters being resolved in a fair and balanced matter. This is usually a favourable omen if you are involved in a legal dispute. Justice is concerned with truth and integrity, so you may find yourself compelled to speak the truth and that you more than ever value honesty and integrity in others. Justice also relates to balance. It may signify that circumstances may arise that could throw you off balance. These circumstances may or may not be beyond your control or of your own making. Either way, you must try to keep yourself on an even-keel as events unfold. The Justice card can also indicate that you have a choice to make when it appears in your Tarot readings as you will be weighing up all your options and balancing the scales."
+                ],
+                "shadow": [
+                    "In a general context, Justice reversed can indicate injustice or avoidance of karmic justice. This may take the form of being treated unjustly in your life or situation where you are being unfairly affected by the choices or actions of others. You may feel you are being victimised or blamed for something that is not your fault. Whatever the situation, you must try to maintain your balance. Even if you didn't create the situation, you can choose how you react to it and that can be a lesson in itself. Justice in a reversed position can also be an indicator of someone trying to avoid their karma. If you have played a part in creating your current situation by bad choices or actions, you must be accountable. Don't try to blame others or avoid the consequences, just learn from it and move forward a little wiser and more self-aware. The Justice Tarot card reversed can also indicate dishonesty. If you have been caught out in a lie, don't try to justify it or lie your way out of it. Just confess, accept the consequences and try to draw a line under it. Justice reversed can indicate someone with very hard-line or uncompromising views. Examine if you or those around you may have become prejudiced. Examine this and determine is this how you want to be or what you want in your life? If you are involved in a legal dispute, it is not a favourable card to get and indicates that there will be some form of injustice in the outcome or the outcome will not be what you had hoped for."
+                ]
+            },
+            "name": "Justice",
+            "rank": 11,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, The Hanged Man Tarot card indicates that you are in a situation that you are not happy with. You may be feeling like you are stuck in a rut or trapped in a situation or frame of mind that is not making you happy but you have the power to release yourself. This may involve walking away from the situation or simply changing your perspective on it. The Hanged Man may also signify that you may be facing a dilemma and are unsure of what path to take. You may feel that things are not turning out the way you planned with this Major Arcana card appearing in your Tarot spread. You need to step outside yourself and look at your situation from a different angle. Give yourself time to just relax, stop trying to control things and just let them be, the correct course of action will become clear to you in time."
+                ],
+                "shadow": [
+                    "The Hanged Man reversed can indicate that you are being impulsive and making rash decisions as a way to distract yourself from some sort of inner discontentment. This Major Arcana trump card generally shows that you may be jumping from one bad situation to the next without considering where this behaviour is taking you. Ask yourself if there are feelings you trying to avoid confronting or changes that you know need to be made but are reluctant to tackle. If there are, consider what you fear will happen if you do? If you genuinely don't know what to do in terms of your direction in life, just stop, breathe and wait for things to become clearer. However, if you know your behaviour patterns are not working for you, change them. Your attitude towards your life will determine life's attitude towards you!"
+                ]
+            },
+            "name": "The Hanged Man",
+            "rank": 12,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "Although it is the Tarot card that many people fear, Death generally does not mean physical death. As a rule you should never predict deaths (or the outcomes of illnesses or pregnancies for that matter) as a Tarot reader. It is unethical and irresponsible. Aside from the ethics, The Death Tarot Card usually signifies spiritual transformation and a time of change and new beginnings, not actual death! The transformation or change that Death can bring can be difficult, unexpected, sudden or even traumatic but it will bring with it a new lease of life. Its best to try not to resist the change the Death Tarot card brings as resisting it will only make the transition difficult and painful. Instead try to embrace the change as a fresh start. This Major Arcana card can also signify the need to let go of old issues or beliefs when it appears in a Tarot spread. It may be telling you that you need to draw a line under the past in order to move forward in a positive direction. A Death card transformation can be a bit of a shock to the system but ultimately it's a positive one."
+                ],
+                "shadow": [
+                    "In a general context, Death reversed indicates that you are resisting a change that is necessary for you to move forward. Nothing new can begin while you are holding on to this old negative energy. Death indicates that while you are finding it difficult to let go, once you do, new energy will come into your life to give you a new brighter beginning. The change the Death Tarot card reversed brings is not something you can resist forever, if you keep holding onto the things you should be letting go of, the universe will find a way to push you on to your life path in its own way. The universe's way of getting you to where you're supposed to be, if you resist it, can be shocking and distressing. It's much better to make you way to your correct path rather than getting a jolt that forces you onto it. At least if you make a decision to let go of old situations, old issues or relationships you will feel empowered that you made a decision to end what wasn't working for you. When you think of the change you are resisting, ask yourself realistically is it going to make you feel worse than staying in your current situation indefinitely or could it possibly lead you to something amazing?"
+                ]
+            },
+            "name": "Death",
+            "rank": 13,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Temperance Tarot card signifies balance, peace, patience and moderation. This Major Arcana card indicates that you have found your inner calm and have a good perspective on things. It is a sign that the relationships in your life are harmonious. You have learned not to allow yourself to be dragged into other people's conflict or to let minor issues knock you off balance. Instead you adapt to the situations with a clear mind and calm heart and keep your balance. Temperance can also signify that you have found peace and tranquillity and you are feeling content. Temperance indicates that you are truly in touch with who you are inside, what you value and your own moral compass and you are finding it easier to figure out your aspirations and set yourself goals."
+                ],
+                "shadow": [
+                    "In a general context, Temperance reversed indicates imbalance or overindulgence. This Major Arcana card can be an indicator that you are behaving in a hasty or reckless fashion. It can be a signifier of many issues with excessive or harmful indulgences such as drinking, drug use, gambling, overeating, shopping and the list goes on. The Temperance Tarot card in a reversed position may be telling you that you have lost touch with your own inner calm and tranquillity which can lead you to seek gratification in risky, harmful ways. Temperance reversed can also indicate a lack of harmony with the people in your life so you may find yourself clashing with those closest to you or allowing yourself to be dragged into other people's drama. You may be lacking perspective and not looking at the bigger picture. You would do well to take a step back and take a look at how you are behaving, examine the root causes and work on resolving them."
+                ]
+            },
+            "name": "Temperance",
+            "rank": 14,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, The Devil Tarot card can signify depression or addiction. It can also be a sign of feeling trapped or restricted. With this Major Arcana card in your Tarot spread you may feel as though outside influences or forces beyond your control are restricting you, leaving you feeling powerless and victimised. However, this is the illusion The Devil creates. You are in control of your own destiny and are not bound by anything other than your own attitudes and behaviour. Don't give up and don't give away your power. You don't have to tolerate negativity, criticism, manipulation or abuse from anyone. There are always options and there is always something positive you can do to improve your situation no matter how hopeless things may seem on the surface. Likewise be mindful of how you are treating others and make sure you are not trying to manipulate or control people in your life either. The Devil upright in your Tarot reading can also indicate obsessive, secretive or impulsive behaviour. It can be a sign that you are out of control. The Devil Tarot card is also a signifier of materialism and may show that you have become overly concerned with material things, status or power. These are not things that will make you truly fulfilled as a person so put your energy into the things that will."
+                ],
+                "shadow": [
+                    "In a general context, The Devil reversed can signify that you are becoming aware of the things that have been trapping you and the role you play in allowing them to. It is a great card for anyone battling an addiction or mental illness or engaging in harmful behaviour as it indicates that you are starting to see the light and take back control of yourself and your life. You want to be free from these problems and you are starting to get the motivation to change your circumstances. It can also indicate that you are getting a new perspective on issues that you felt powerless to change previously. The changes you want to make may not be easy but they are necessary for you if you want to have a happy life in the future and you are beginning to realise what you have to do. The Devil Tarot card reversed can also indicate a near miss with a negative, harmful or dangerous situation or person. The important message this Major Arcana card brings is to be grateful that you avoided it, learn from it and move forward. Do not fall back into the old bad or risky behaviours that led you so close to danger. Don't get cocky and think you are invincible if you managed to dodge the bullet. Appreciate your good fortune, but don't push it!"
+                ]
+            },
+            "name": "The Devil",
+            "rank": 15,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "Whereas the Death card is usually the card people are terrified of, out of all of the cards in the deck, The Tower is the one you really need to brace yourself for. The Tower Tarot card represents chaos and destruction. It is the Major Arcana card of sudden upheaval and unexpected change. This change usually is scary, life changing and often unavoidable. A negative Tower event can be akin to a bomb going off in your life. You don't know how you will survive but somehow you will and later you will realise that while it was a tremendously difficult thing to go through and you wouldn't wish it on your worst enemy, it has made you into the person you are. One positive aspect of The Tower is that the destruction it brings is usually directed at something that was built on a false beliefs and foundations or unrealistic goals and dreams. Also on the bright side, the destruction The Tower brings is always followed by renewal and creation. However, The Tower with a negative aspect can represent a whole host of tragic, traumatic or life-altering events like the death of a loved one, divorce, a bad breakup, assault, rape, violent abuse, stillbirth or miscarriage, child abuse, bankruptcy, a drug overdose, a car crash or job loss to name but a few. It's usually the kind of thing you hope will never happen to you. That said, not every Tower event denotes tragedy. If the surrounding cards are positive, The Tower can simply represent a big change, like going to live in another country. This will be a massive upheaval. It will be a scary adjustment and will change your life as you know it but ultimately the change will be a good one. Placement of The Tower is important too, in a past position in a Tarot spread it is telling you what you've been through. While there are some life-events that we cannot avoid, sometimes The Tower will appear in a future if you are on a path that is leading to danger to warn you to avoid it. For instance, if you tend to put yourself in dangerous situations without thinking of the consequences, The Tower may be a warning to be mindful of your safety. Or if you take big gambles with money, The Tower may be warning you that it's time to start acting more responsibly to avert disaster. It can also warn of natural disasters such as earthquakes, tsunamis, hurricanes, tornadoes etc."
+                ],
+                "shadow": [
+                    "The Tower Tarot card reversed can be a sign that you have narrowly avoided a disaster. You will need to learn from the experience in order to prevent the lesson from coming back around again. It can also signify delaying the inevitable. While we would all like to go through life without experiencing hardships, they are a necessary part of life. Without darkness how would we ever learn to appreciate the light? If you have been running from a big change because you fear the pain or heartache it will bring, this Major Arcana card in reversed position may be telling you it's time to turn and face it. Avoiding it may seem like the easier option but if you do you'll be running for the rest of your life. Confronting it won't be easy but it will eventually lead you to a new beginning. If you have already experienced your Tower event, The Tower reversed warns you not to try and rebuild what you had but to seek something new and better to build in place of what was destroyed as it was destroyed for a reason. You need to let it go and focus on creating something new. It can also be a sign that you are trying to hold onto people that are no longer supporting you in the way they once did. You need to let go of them and let them go their own way, so new people can come into your life."
+                ]
+            },
+            "name": "The Tower",
+            "rank": 16,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, The Star indicates hope for the future, inspiration and contentment. With this Major Arcana card in your Tarot spread you will find yourself feeling very positive, motivated and free. You will be feeling very serene and in tune with the universe as The Star is a card of spiritual connection. The Star is a very positive omen. It is the period of calm and stability that follows the storm that was The Tower. The Star indicates that you have come through your tough times with a renewed sense of yourself and the world around you, you are full of calm, well-balanced energy and you are open to healing the wounds of the past. Whatever mental, emotional, physical or spiritual issues you were experiencing are now behind you and you are ready to embrace what your future holds. Trust that the universe has a plan for you and trust the feeling you have that everything is going to be OK. You will be feeling confident in yourself and people will like you for who you are with this card in your Tarot reading. The Star can also indicate creativity and artistic flair, so now would be a great time to take up an artistic hobby."
+                ],
+                "shadow": [
+                    "The Star in a reversed position can indicate that you are feeling hopeless. Perhaps the difficult situations you have been through in the past have drained you of your lust for life and your faith in the universe's plan for you. The Star reversed does not indicate that things are hopeless, only that you feel they are. You need to take responsibility for yourself and your attitude to life. You may want to consider seeking some professional counselling to help you heal the wounds of the past and leave them where they belong. The Star can signify that you have lost your confidence, your belief in yourself and your trust in your own abilities. This Major Arcana card can also be an indication of feeling anxious and overwhelmed. A change of attitude is needed to resolve this not necessarily a change of circumstances. Don't allow yourself to continue to play the victim if you have long since left the situation in which you were victimised. The Star is telling you that it's time to heal the past, draw a line under it and move forward. Seek support to do this if you need to. You can do anything you set your mind to, you just have to believe in yourself and focus on the positive. Start small and try to find one or two things to be grateful for in each day. A creative outlet might also be helpful to you if you are artistically inclined. Rediscover your creative side, it will help you heal."
+                ]
+            },
+            "name": "The Star",
+            "rank": 17,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The general meaning of The Moon Tarot card in an upright position is that everything is not as it seems. It is also the Major Arcana Tarot card of intuition. The Moons tells you that something about a situation or person in your life is not what it appears to be and you need to trust what your instincts are telling you in order to see past this illusion. The Moon also indicates that you should pay attention to your dreams as your subconscious may be bringing your attention to some information you've missed. The Moon can also signify that you are letting your anxiety or fear overwhelm you which may be having a negative effect on your outlook and causing you to suffer from mood swings, instability or insecurity. It can also represent a woman's menstrual cycle. The Moon can also signify dormant insecurities or repressed issues resurfacing. The Moon Tarot card can represent underhanded or dodgy deals or illegal behaviour. If it appears in this context it is a warning to clean your act up before your behaviour is exposed. If you are awaiting a decision on something, The Moon indicates that the answer will either be delayed or be so vague it will add to your confusion rather than clarify matters"
+                ],
+                "shadow": [
+                    "In a general context The Moon Tarot card reversed can signify releasing fears or negative energy clearing. It can also indicate secrets or lies being exposed. If you have been experiencing fear or anxiety it should begin to subside. If you have lost something, The Moon reversed is a sign you will find it. This Major Arcana card may also be an indication of self-deception or delusions. You may be kidding yourself about your role in creating your current circumstances or you may be struggling to separate your own deception or fantasies from reality. The Moon reversed can also indicate that any depression or mental health issues you have been having will begin to lift and you will begin to see the light again. You will work through any repressed issues or insecurities to find new confidence and clarity. If you have been awaiting a decision on something, The Moon reversed indicates that you will get an answer or clarity on the matter."
+                ]
+            },
+            "name": "The Moon",
+            "rank": 18,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "The Sun Tarot card is the Major Arcana card of positivity, optimism, freedom and fun. When The Sun appears in an upright position, things should be going well for you as this card also represents success and enthusiasm. You will find that people are drawn to the happy vibes and positive energy you are giving out and you will bring light and joy to everyone and everything you come into contact with. You will be feeling carefree, liberated and self-assured. It is also the card of truth so if you have been the victim of lies or deception, The Sun is coming to shine its light on the deceit to reveal the truth and the perpetrators of the lies. The Sun Tarot card in an upright position also signifies good luck. Any problems you have been experiencing will melt away with the warmth this card brings. It can also indicate travel to a country with a warm climate."
+                ],
+                "shadow": [
+                    "In a general context, The Sun Tarot card reversed can indicate sadness, depression and pessimism. You may be finding it difficult to focus on the positive with this card in your Tarot reading. The Sun reversed does not usually mean that your situation or circumstances are all that bad but that you are feeling pessimistic and focusing on the negative which is affecting your outlook on life. It can signify a lack of enthusiasm for life, being unclear on the right path to take or being unable to see the way forward. This Major Arcana card may show that you are letting negative energy/thoughts close you off to the happiness and joy that is all around you. You have the power to change this by simply allowing yourself to be open to the positive things that are coming your way and by finding gratitude for the good things in your life. The Sun reversed can also be an indicator of being overly enthusiastic or confident to the point that it becomes a negative trait. For example, you may be being so overly confident that you are actually becoming egotistical or arrogant. Or you may be so enthusiastic about achieving your goals that you haven't stopped to check if they are actually realistic."
+                ]
+            },
+            "name": "The Sun",
+            "rank": 19,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Judgement Tarot card can indicate that you and/or someone you care about are being judged too harshly by others. It can also indicate that you are judging people harshly or making snap judgements yourself. Alternatively, Judgement can also be an indication that you have achieved a level of clarity and composure that allows you to calmly evaluate yourself and your choices in order to make positive decisions. You have come through your past karmic lessons with increased self-awareness and you are allowing healing to take place so you can move forward in a positive direction. If you have a big decision to make when this Major Arcana card appears, use the karmic lessons you have learnt from the past to help you make the right choice. Judgement upright can represent a legal matter or court case being resolved. If you have acted honourably and told the truth, this matter should be resolved in your favour. If you have been dishonest, don't expect things to go your way. You need to clear your conscience and try to make amends for your misdeeds. This Major Arcana card can also signify being separated from someone you love by an ocean or sea. You can expect to be reunited with them soon when it appears. It can also indicate homesickness."
+                ],
+                "shadow": [
+                    "In a general context, the Judgement Tarot card reversed can signify that you are allowing fear and self-doubt to hold you back from making the decisions necessary to move forward in a positive direction. Now is the time to take action. If you delay you may lose the opportunities available to you. Alternately, this Major Arcana card in a reversed position can be a sign that you may be refusing to learn the karmic lessons of the past. Or you may be reproaching yourself for past mistakes so much that you are unable to see the lessons to be learned from those mistakes. Judgement reversed can also be a sign that you are taking your focus off your own shortcomings by being overly critical of others or engaging in malicious gossip. This will only lead you to trouble, try to put the focus back on fixing the issues in your own life rather than judging other people for their mistakes. It can also indicate that others are being overly judgemental or critical of you or blaming you for something that wasn't your fault. Don't let those people influence your decisions, rise above the drama and focus on doing what you want to do. Judgement reversed can also indicate that a legal matter or court case will be resolved but in an unjust or unfair manner."
+                ]
+            },
+            "name": "Judgement",
+            "rank": 20,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, The World Tarot card signifies having the world at your feet! This can be in a literal sense as The World is one of the Travel cards of the Major Arcana. It can represent new worlds opening up for you so you can expect to be welcomed by the people in the countries you travel to. The World can also mean you will have the world at your feet in another sense, i.e. that you will be successful and the opportunities available to you at the moment are endless. You have gone through the trials and tribulations of the rest of the Major Arcana, you have endured the hardships and learned your lessons and now you will reap the rewards. You should be proud of what you have achieved, it has not been easy to get here but you've done it. The universe is smiling upon you and luck is on your side when this Major Arcana card appears in your reading so grab the opportunities available to you. The World can represent the completion of a challenge such as a university course or a project or can represent finally achieving a dream or aspiration such as starting your own business, getting married or having children. You have reached the point where you can be happy with what you have accomplished. Success can bring a whole new set of challenges or worries so make sure you're not carrying the weight of the world on your shoulders. You've worked hard to get to this point so stop and savour the moment! Celebrate your accomplishments."
+                ],
+                "shadow": [
+                    "In a general context, The World Tarot card reversed can indicate that you have not accomplished what you set out to do and things have become stagnant. You may have tried to take shortcuts instead of putting in the hard work necessary to achieve your dreams. You may be throwing all your energy into trying to make something work that is not working for you. The World reversed can signify feeling stuck in a situation. This will be one particular part of your life that is taking up your energy rather than problems in all areas. You may be aware of what is it already as it will be a focus for you and you may feel burdened by it. Remember that there is no point in flogging a dead horse. So if you've thrown everything you've got a something and it's still not working for you, The World reversed may be telling you that it's time to accept the disappointment and cut your losses."
+                ]
+            },
+            "name": "The World",
+            "rank": 21,
+            "suit": "major"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Ace of Wands represents good news and new beginnings. It signifies taking action, physically starting something, new initiative and finding new passion, enthusiasm or spark. It is a Minor Arcana card of accepting a challenge, getting fired up and getting in the game. It can also represent discovering your potential or talent and brings a sense of urgency and a new lease of life when it appears in your Tarot spread. This is a card indicates that you have creative spark and are feeling bold and daring. It also signifies spontaneity and excitement so expect fun times when it appears in your Tarot reading. This card can also represent fertility, conception and birth"
+                ],
+                "shadow": [
+                    "In a general context, the Ace of Wands reversed represents delays, setbacks and disappointing news. This Minor Arcana card when reversed indicates that you do not have any \"get up and go\" in you at the moment as it represents lack of initiative, passion, assertiveness, energy, enthusiasm, motivation, & growth. You may be stopping yourself from progressing or be slow and hesitant about starting or trying anything new. Life may not be fun when the Ace of Wands appears reversed in your Tarot reading as this card signifies having no spark and things being boring and predictable. It can also represent creative blocks, wasted talent or potential and missed opportunities. You need to start taking the bull by the horns, what exactly are you waiting for? Alternatively, this card can indicate that you are so passionate, enthusiastic and motivated that you are a little too intense for some people to handle. Don't lose your passion, but maybe dial it down a tiny bit! The Ace of Wands reversed can also represent infertility, miscarriages, abortions, stillbirths and difficult pregnancies."
+                ]
+            },
+            "name": "Ace of Wands",
+            "rank": 1,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Two of Wands signifies having two paths. When this Minor Arcana card appears in your Tarot reading you have decisions to make or a choice between two options but remember the grass isn't always greener on the other side! This card can signify overseas travel, sudden departures, emigration and deciding if you will stay or go. It can also indicate a lack of contentment with your life, restlessness, withdrawal and detachment. It can represent waiting, anticipation and wanderlust. It is also a card of cooperation, business partnerships or overseas expansion."
+                ],
+                "shadow": [
+                    "In a general context, the Two of Wands reversed represents indecisiveness, fear of change and fear of the unknown. When reversed, it is a Minor Arcana card of lack of planning, restricted options, being held back and disappointment. It can represent staying put, deciding not to go, cancelled or delayed travel or cancelled emigration. The Two of Wands reversed can also signify choosing the safest bet, choosing a mundane life, anti-climax and self-doubt. It can also signify the sudden arrival or return of a person into your life."
+                ]
+            },
+            "name": "Two of Wands",
+            "rank": 2,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Three of Wands represents freedom, adventure, travel, moving abroad and foreign lands. It can indicate hard work paying off, success and being happy with your choices or the outcome of your situation. This card also signifies foresight, forward planning, moving forward, growth and expansion. It is a Minor Arcana card of self-confidence, self-belief, spreading your wings and experiencing life. It tells you that fortune favours the brave. It can also represent holiday romances and long distance relationships."
+                ],
+                "shadow": [
+                    "In a general context, the Three of Wands represents moving back home, returning from travels and homeland. It can indicate restriction, lack of progress, adventure or growth, failure and being unhappy with your choices or disappointed with the outcome of your situation. This card also signifies lack of foresight or forward planning or holding on the past and being haunted by it. It is a Minor Arcana card of lack of confidence, self-doubt, frustration, clipped wings and shying away from life. It can also represent failed holiday romances or failed long distance relationships."
+                ]
+            },
+            "name": "Three of Wands",
+            "rank": 3,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Four of Wands represents happy families, celebrations, surprises, parties, weddings and events. It signifies coming home and reunions, feeling like you fit in and being made to feel welcome and supported. This Minor Arcana card indicates success, prosperity, stability, security and laying down roots. It tells you that you will be proud of your achievements and that your self-esteem will be high when it appears. It also represents team work, community spirit and communities or families coming together."
+                ],
+                "shadow": [
+                    "In a general context, the Four of Wands reversed represents unhappy families, being jilted or cancelled celebrations, surprises, parties, or events. It can signify leaving home, postponed or cancelled reunions, feeling like you don't fit in, not being made to feel welcome and lack of support. This Minor Arcana card when reversed can indicate failure, lack of achievement, neglect, instability, insecurity and being transient or uprooted. It tells you that you may experience self-doubt and that your self-esteem may be low when it appears. It also represents lack of team work or community spirit and communities or families divided."
+                ]
+            },
+            "name": "Four of Wands",
+            "rank": 4,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Five of Wands represents rows, arguments, conflict, fighting and disagreements. It signifies struggle, opposition, battles, aggression and temper. This Minor Arcana card represents clashing personalities or egos, pent up energy and aggression, irritation and frustration. You can expect a lack of cooperation, lack of control, pettiness, strikes, chaos or unruliness when it appears in your Tarot reading. It can also represent being rough, defensive or territorial and can signify competition and sports."
+                ],
+                "shadow": [
+                    "In a general context, the Five of Wands reversed represents the end of rows, arguments, conflict, fighting and disagreements. It signifies ending struggles, finding common ground or solutions, reaching agreements, compromise, cooperation, peace and harmony. This Minor Arcana card reversed can also represent battle fatigue, fear of confrontation, shyness, suppressing your temper and feeling intimidated. Cooperation, control, focus and order may be possible when it appears in your Tarot reading. Alternatively, it can represent all-out war, looking for an argument, extreme aggression and having a short fuse. It can also signify sports events being cancelled."
+                ]
+            },
+            "name": "Five of Wands",
+            "rank": 5,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Six of Wands represents success, victory, winning, triumph, achievement and having the advantage. It also signifies praise, acclaim, awards, recognition, applause and goodwill. It is a Minor Arcana card of fame, celebrity, fans, well-wishers, supporters, crowds and being in the spotlight. It indicates that someone is being a leader, riding high, confident and proud with high self-esteem. It is a card of strength and stability and can also represent successful campaigns and winning battles."
+                ],
+                "shadow": [
+                    "In a general context, the Six of Wands reversed represents losing, failure, lack of achievement, recognition, endurance, confidence or support. When reversed, it is a Minor Arcana card of mob or pack mentality, being a follower or being hunted. It indicates that someone is being arrogant, egotistical, fame hungry or a diva and that pride comes before a fall. The Six of Wands reversed signifies disadvantage, disgrace, disloyalty, treachery and broken promises. It can also represent ill-will, disappointment, instability, weakness and unsuccessful campaigns and losing battles."
+                ]
+            },
+            "name": "Six of Wands",
+            "rank": 6,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Seven of Wands represents opposing, standing up for what you believe in, fighting your corner and holding your own. It signifies taking the high road, maintaining control and being strong willed. This Minor Arcana card also indicates someone who is protective, defensive, assertive, forceful, relentless, determined and territorial. It can suggest that you are under attack, being harassed, blamed or scapegoated but you are resisting. Life may be challenging, busy and hectic with this card in your Tarot spread so you will need stamina to endure."
+                ],
+                "shadow": [
+                    "In a general context, the Seven of Wands reversed represents folding on your beliefs, yielding, quitting, giving up and giving in. It signifies admitting defeat, surrendering and lack of courage or stamina. This Minor Arcana card can represent weakness, failing to protect or defend someone or something you care about and being exhausted, burnt-out or worn down. It can indicate a compromise, resolution or sharing territory. It can also suggest that you have lost control, power, respect or moral authority and have been involved in a scandal of some sort. The Seven of Wands reversed can also represent being overbearing and unpopular."
+                ]
+            },
+            "name": "Seven of Wands",
+            "rank": 7,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Eight of Wands represents hastiness, speed, rushing, progress, movement and action. It is a Minor Arcana card of sudden action, excitement, exciting times, travel, freedom, holidays and holiday romances. Whatever you turn your hand to at the moment will take off at great speed and gain momentum. You will be feeling positive and energetic. You will be thinking on your feet, seeing results and finding solutions. Your hard work will be paying off and you will be ahead of the game. The Eight of Wands also represents infatuation, obsession and getting carried away or being swept off your feet."
+                ],
+                "shadow": [
+                    "In a general context, the Eight of Wands reversed represents slowness, slow progress and lack of speed, movement or action. When reversed, it is a Minor Arcana card of restriction, returning from travels or delayed or cancelled travel or holidays. It can signify late starts, bad timing, losing momentum, missed opportunities and unfinished business. Whatever you turn your hand to at the moment probably won't work out the way you want it to. You may be feeling negativity or a lack of energy when it appears in your Tarot spread. The Eight of Wands reversed also represents being hysterical, impatient, impulsive and panicked or out of control. It can represent dislike or a lack of passion, excitement or romance. It can also signify being grounded."
+                ]
+            },
+            "name": "Eight of Wands",
+            "rank": 8,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Nine of Wands tells you that you are half way through a battle. Recent events have left you drained of all energy and feeling like you can't go on, but you are so close to getting what you want! You just need to gather the last of your strength and push forward and you will be successful. It represents ongoing battles, being battle weary, drained of energy and fatigued. It also signifies courage, persistence, strength of will, having a backbone, holding out and perseverance. It is a Minor Arcana card of gathering your strength, learning from past failures, fighting your corner and making your last stand. You may be wounded, guarded or expecting trouble when it appears in your Tarot reading. It can suggest that things have not worked out the way you planned and there have been challenges and setbacks along the way. The Nine of Wands also tells you that you are close to success or nearly there."
+                ],
+                "shadow": [
+                    "In a general context, the Nine of Wands reversed represents refusing to compromise or give in, being stubborn, rigid or obstinate. It can signify being the last one standing or having a chip on your shoulder. Alternatively, this Minor Arcana card reversed can signify a stalemate, withdrawal, retreat, giving up, having no fight left or no backbone. The Nine of Wands reversed can also indicate weakness of will, chronic fatigue and lack of courage, persistence or perseverance. It can represent not learning from past mistakes or falling at the final hurdle. This card can signify dropping your guard or encountering unexpected trouble."
+                ]
+            },
+            "name": "Nine of Wands",
+            "rank": 9,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Ten of Wands represents a situation that started off as a good idea but has now become a burden. It signifies problems, responsibilities, being overburdened, overloaded and stressed. It indicates that you have a huge weight on your shoulders and you feeling obligated, saddled and restricted. This Minor Arcana card can signify being taken for granted, struggle, major challenges, drudgery and duty. It suggests that you have taken on too much and may be heading for burn out. This card does however also indicate that the end is insight and if you keep going you will be successful. It can also signify delays, losing your way, losing your focus and having an uphill struggle. It can indicate that the fun or spontaneity has gone out of your life."
+                ],
+                "shadow": [
+                    "In a general context, the Ten of Wands reversed represents having too much responsibility and stress or a cross that's too heavy to bear. When reversed, this Minor Arcana card can signify insurmountable problems, flogging a dead horse and working hard but getting nowhere. It suggests that you are pushing yourself so far that you are on the brink of a collapse or a breakdown. It can also indicate being duty bound and resigned to your fate or having no stamina and not being up to the challenges you are facing. Alternatively, it can represent letting go, learning to say no, off-loading, dumping and shirking duties or responsibilities."
+                ]
+            },
+            "name": "Ten of Wands",
+            "rank": 10,
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Page of Wands represents good news that should be coming to you swiftly or shortly. This may take the form of letters, phone calls or word of mouth. This Minor Arcana card also signifies having bright ideas about what you can do, being inspired or creative, making new exciting plans, thinking big and finding something you are passionate about. It can also indicate that you may have a tendency to rush into new things without thinking them through fully when it appears in your Tarot spread. You may be releasing your inner child and find yourself feeling very playful and having fun when it appears. As a person, the Page of Wands represents a young person, child or person who is young at heart, who is fresh, cheerful, playful, active, optimistic and full of energy. This person will have lots of bright ideas and new exciting plans. They may be a fire sign such as Aries, Leo or Sagittarius. They may be a bit of a cheeky charmer or lovable rogue. They are charismatic, free-thinking, confident, intelligent, extroverted and fearless but may have a tendency to rush to action without considering the consequences."
+                ],
+                "shadow": [
+                    "In a general context, the Page of Wands reversed represents bad or delayed news and set-backs. This may take the form of letters, phone calls or word of mouth. This Minor Arcana card reversed can indicate that you may be lacking ideas or creativity or feeling uninspired or demotivated. However, it also suggests that you may be procrastinating and putting things off rather than taking action to make things happen. It can indicate a failure to launch a project, restricted thinking or not being able to find something you are passionate about when it appears in your Tarot spread. It can also represent deep inner child issues coming to the surface. As a person, the Page of Wands reversed represents a young person, child or person who is young at heart, who may be hasty, gullible or impatient or alternatively, may lack energy, be lazy, lethargic pessimistic or spoiled. This person may lack ideas, ambition, goals or plans. They may be a fire sign such as Aries, Leo or Sagittarius. They may be a prone to being a loud mouth or throwing tantrums if they don't get their way and could be a bit of a problem child or a delinquent. They may lack confidence or be self-conscious, close-minded, predictable, fearful or boring."
+                ]
+            },
+            "name": "Page of Wands",
+            "rank": "Page",
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Knight of Wands indicates that things are going better than you expected and any ventures you have taken on are likely to be more successful than you hoped. You should be full of energy, enthusiasm and confidence and should be feeling fearless and brave when it appears in your Tarot reading. It tells you to take action and put your ideas and plans into motion. This Minor Arcana card signifies getting things done and finishing what you start. However, this card tells you not to be hasty, don't rush in without thinking and just expect things to work out. It is also a card of free-spirited adventure, travel and moving country. As a person, the Knight of Wands is an adult (20-35 years of age and usually male) who is charming, adventurous, energetic, warm and exciting. He may be a fire sign such as Aries, Leo or Sagittarius. He will be fearless, confident and self assured. He believes he knows best and is a man of action. He is heroic, rebellious, brave and a revolutionary with an open mind and a free spirit. He is sexy, warm and charming but can be quite cold and uncaring to anyone who tries to tame him or restrict his freedom in any way and he is a shameless flirt. He can also be hasty and at times can rush into action without thinking things through and has a hot temper."
+                ],
+                "shadow": [
+                    "In a general context, the Knight of Wands reversed indicates that things are not going as well as you expected and any ventures you have taken on are likely to experience delays or setback. You may be lacking ambition, enthusiasm or self-discipline to make your ventures a success and could be feeling fearful and passive when it appears in your Tarot reading. Alternatively, it can indicate that you are being overly confident or competitive, arrogant or cocky. It tells you not to be reckless or overly hasty as it may not be the right time to put your plans into action. It can also indicate that you may be heading for a fall so slow down and put the brakes on before it's too late. This Minor Arcana card signifies not finishing what you started. It is also a card of cancelled or delayed travel or sudden unexpected departures. As a person, the Knight of Wands reversed is an adult (20-35 years of age and usually male) who may be extremely hasty, arrogant, egotistical, reckless, hyperactive and a daredevil. He may be overly confident, loud, over the top and a show off and could lack self-discipline and self-control. He may be a fire sign such as Aries, Leo or Sagittarius. On the flip side he may be passive, fearful and may lack enthusiasm, ambition, imagination and purpose and have a chip on his shoulder. In the extreme negative he can be violent, abusive, jealous, volatile, extremely aggressive, overly competitive and domineering."
+                ]
+            },
+            "name": "Knight of Wands",
+            "rank": "Knight",
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Queen of Wands indicates that you will be optimistic, outgoing and full of energy. You will be accomplishing many tasks and keeping a lot of balls in the air when she appears in your Tarot spread. People will be tired just looking at you because you are always on the go! This card represents taking charge of things and organising your life. It a Minor Arcana card of being efficient and helping others. It can also represent being chaotic and forgetful as the amount of things you have taken on might take their toll after a while. As a person, the Queen of Wands a represents mature female or feminine person who is energetic, vivacious, strong, courageous and passionate. She may be a fire sign such as Aries, Leo or Sagittarius. She is independent, confident, optimistic, outgoing and assertive and she has an abundance of sex appeal and a great sense of humour. She has an abundance of energy and is a brilliant multi-tasker. In the negative, she can be chaotic, hot tempered and forgetful as she has so many balls in the air at once."
+                ],
+                "shadow": [
+                    "In a general context, the Queen of Wands reversed can indicate that you may be feeling pessimistic, temperamental or overwhelmed. You may have taken on far too many tasks and are trying to keep too many balls in the air when she appears in your Tarot spread. You may be exhausted and heading for burn out when she appears! On the flip side, it can indicate that you are being overbearing or sticking your nose where it doesn't belong when it appears. If you can offer support to people in need, then do. However, remember, if you interfere in someone else's business they may not thank you! This card can also represent not taking charge of things and being disorganised or extremely chaotic. When reversed, it is a Minor Arcana card of being inefficient or hindering others. As a person, the Queen of Wands reversed a represents mature female or feminine person who may be demanding, overbearing, pushy and self-righteous or a busybody or bully. She may be a fire sign such as Aries, Leo or Sagittarius. She may be unfriendly, jealous, catty, manipulative, spiteful or vengeful. She may be a malicious liar who is deceitful or unfaithful and a trouble-maker. On the flip side, she may simply be someone with low confidence, low self-esteem or who lacks self-belief and is overwhelmed, exhausted or completely burnt out."
+                ]
+            },
+            "name": "Queen of Wands",
+            "rank": "Queen",
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the King of Wands indicates that you will have the energy, experience and enthusiasm to accomplish what you set out to achieve at this time. You are taking control of your life. You will motivate those around you, lead the way forward and set a good example for those who look up to you. You do not worry about other people's opinion of you and you dare to be different when this Minor Arcana card appears in your Tarot reading. As a person, the King of Wands is a mature male who is confident, strong, energetic and optimistic and a natural born leader. He may be a fire sign such as Aries, Leo or Sagittarius He is friendly by nature, funny, charming and good with words. He is also fearless, freethinking, motivated and action-orientated. He has an independent streak and as such, he needs his freedom and will not tolerate neediness. The King of Wands does not like to let emotions stand in the way of his enjoyment of life. He is usually supportive of those around him and has learned to be lenient. However, the King of Wands can be self-centred, hot-tempered and controlling. However, at his best, when he is allowed his freedom, he is proud, passionate, honest, loyal, dependable and protective"
+                ],
+                "shadow": [
+                    "In a general context, the King of Wands reversed can indicate that you lack the energy, experience or enthusiasm to accomplish what you set out to achieve at this time. You are taking a back seat and are not being proactive in your life. You may feel that you are not up to the task or are giving away your power and setting a bad example for those who look up to you. You may be worrying about other people's opinion of you and you may be afraid to be different or step outside of your comfort zone when this Minor Arcana card appears reversed in your Tarot reading. On the flipside, you may be trying to control everyone and everything around you with bullying tactics, aggression or brute force. As a person, the King of Wands reversed, is a mature male who is rude, boorish, forceful and controlling and is a bully, dictator or tyrant. He may be impulsive, abusive and extremely aggressive and excessively proud, stubborn or egotistical. He may be nasty, vicious and bitter and a may lose his temper at the drop of a hat. He may be a fire sign such as Aries, Leo or Sagittarius. On the flip side, the King of Wands reversed may be weak, unreliable, undependable, ineffective and powerless and may break the promises he makes."
+                ]
+            },
+            "name": "King of Wands",
+            "rank": "King",
+            "suit": "Wands"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Ace of Cups Tarot card in an upright position signifies new beginnings, usually in terms of love, empathy, compassion and/or happiness. When this Minor Arcana card appears it indicates that you will be feeling happy, positive and good about yourself. Now is a great time to begin new friendships and get out there and socialise. People will be very receptive, kind and friendly to you with this card appearing in your Tarot reading. It can also be an indication of good news or celebrations coming your way."
+                ],
+                "shadow": [
+                    "In a reversed position, The Ace of Cups Tarot card generally can indicate sadness, pain or blocked/repressed emotions. It can also signify that you may receive some bad or upsetting news. This Minor Arcana card reversed can indicate that you may find that you are not in the mood for socialising or meeting new people. It can also signify cancelled social events or cancelled celebrations like a broken engagement or cancelled wedding. It can also be a sign that people around you may be reacting to you in a negative way or may have ill will towards you."
+                ]
+            },
+            "name": "Ace of Cups",
+            "rank": 1,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, when the Two of Cups Tarot card appears things should be going well for you and life should be very harmonious. The Two of Cups is a very positive card. While it normally relates to unity and love in romantic relationships it can signify harmony and mutual respect and appreciation in friendships and partnerships. This Minor Arcana card can also signify equality and balance when it appears in your tarot spread. As this is an attraction card, you may find you are popular or sought after in many areas on your life!"
+                ],
+                "shadow": [
+                    "In a general context, the Two of Cups Tarot card reversed can indicate a lack of harmony or balance in your life. It can signify that you may fall victim to some form of inequality, abuse or bullying. Again, while this Minor Arcana card in a reversed position usually relates to a romantic relationship, it can also signify falling out with a friend or being in a friendship that is imbalanced or one-sided in some way. It can indicate a partnership breaking down or a lack of equality or mutual respect in a partnership. It can also be a sign of arguments with friends, family, partners, business partners or colleagues."
+                ]
+            },
+            "name": "Two of Cups",
+            "rank": 2,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Three of Cups Tarot card is the Minor Arcana card of reunion or celebration. It can signify someone from your past coming back in to your life. It can also signify parties, festivals, weddings, engagement parties, baby showers and other similar celebrations. With this card appears in your Tarot reading you can look forward to a happy event in your life. It signifies group of people coming together with open hearts and minds to celebrate important events. It is a very positive card that indicates happy times, uplifting and positive energy and good feelings."
+                ],
+                "shadow": [
+                    "In a general context, the Three of Cups Tarot card reversed can indicate celebrations being cancelled. This may take the form of a cancelled party, a cancelled wedding or an engagement being broken off to name but a few. The Three of Cups reversed can signify that your social life may be non-existent at the moment or that you've grown apart from your friends. While the upright Three of Cups is all about people who are open and loving coming together in celebration, the reversed card can indicate backstabbing or bitchiness from those around you. It can indicate that the people who should be happy for you, or alternatively should be empathising with you if an important event has fallen through, are being nasty or gossiping about you behind your back. People you thought were your friends may try to start rumours or sabotage you with gossip when this card appears. Be careful who you trust. The Three of Cups in a reversed position can also indicate a celebration being tainted in some way, you could find that a rowdy intoxicated guest ruins your party or someone gate-crashes or causes a scene. It can also simply be a sign of family and friends going their separate ways after a coming together for a celebration. Look to the supporting cards for more information."
+                ]
+            },
+            "name": "Three of Cups",
+            "rank": 3,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Four of Cups Tarot Card can represent missed opportunities, remorse or regret. It can also signify becoming self-absorbed due to depression, negativity or apathy. The Four of Cups can indicate that you are feeling bored or disillusioned with your life, you may be focusing on the negative or feeling like the grass is greener on the other side. You may feel like you have lost your passion and motivation for life. When this Minor Arcana card appears in your Tarot spread it comes with a warning to be mindful of the opportunities or offers available to you. You may be inclined to dismiss them as insignificant now but you could realise later that they would have led on to amazing things. The Four of Cups can also represent feeling nostalgic, daydreaming or fantasising. -"
+                ],
+                "shadow": [
+                    "In a general context, the Four of Cups Tarot card reversed indicates that you are pulling yourself out of the rut you have been in. While your life may have previously felt stagnant, that is now coming to an end. The Four of Cups reversed represent leaving regrets, remorse and wishful thinking in the past and focusing on the present and moving forward in a positive direction. You will be seizing opportunities with enthusiasm and focus. It signifies that you have realised that you have been detached from the world and caught up in self-absorption and that has now been replaced with self-awareness and a zest for life. You are done with fantasising about what your life could be or wallowing in grief or self-pity and are ready to re-join the world and take a proactive approach to making things happen. You may be letting go of patterns or people in your life that are no longer good for you when this Minor Arcana card appears. The Four of Cups reversed can also represent acting spoilt as a result of pandered to too much by others. If you are engaging in this sort of behaviour you need to take responsibility for yourself and stop expecting others to do everything for you. If you don't, it will be to your own detriment."
+                ]
+            },
+            "name": "Four of Cups",
+            "rank": 4,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "How many negative emotions can one card represent? Quite a few in the case of the Five of Cups! In a general context, the Five of Cups Tarot card can represent sadness, loss, loneliness and despair. When this card appears it indicates that you are focusing on the negative. This may be the result of some sort of trauma or unwelcome change you have suffered. As such, this card can signify heartbreak, divorce or separation. The Five of Cups also tends to appear if you have suffered a recent bereavement as it represents mourning and grief. It is a card of emotional baggage and instability and can signify that you feel deep remorse, regret, anger, sorrow or disappointment. It is also the Minor Arcana card of abandonment and can either represent you being abandoned by someone significant to you or you abandoning plans or people in your life. It can also indicate loneliness or isolation. However, for all the negative connotations this card can bring there is a positive message underneath it all. The figure depicted in the card is crying over the spilt cups and seems to be oblivious to the fact that two cups are still upright. This is reminding you that no matter how bad things may seem there is always a silver lining, you just have to choose to see it."
+                ],
+                "shadow": [
+                    "In a general context, the Five of Cups Tarot card reversed represents acceptance, forgiveness and healing. You have come to terms with your grief and sorrow. You have realised that living the rest of your life in regret, mourning or sadness will not change the past and have accepted that you have to move on with your life. You are beginning to open up your awareness to the opportunities that have been all around you all along. Alternately, the card can also indicate the negative feelings of the upright card being prolonged or dragged out. However, the Five of Cups reversed usually signifies that you are ready to begin re-joining the world. You are letting of the past, releasing your negative emotions and emotional baggage. You may also be willing now to accept help from those around with this Minor Arcana card in your Tarot reading. This is a positive step forward as previously you were so caught up in despair that you could not accept the help that was offered to you, which left you feeling lonely and isolated. If you have been bereaved, the Five of Cups reversed can signify coming through a period of intense mourning."
+                ]
+            },
+            "name": "Five of Cups",
+            "rank": 5,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In general context, the Six of Cups Tarot card can represent nostalgia, childhood memories and focusing on the past. When this card appears in a Tarot spread you may be being influenced by past events, reminiscing about the past or thinking about someone from your past. The Six of Cups is also the Minor Arcana card of children, young people and youthfulness and can represent having children or taking care of or working with them. It can signify simplicity, playfulness, innocence, goodwill and sharing. It can also represent protection and family. If you have been going through a tough time, the Six of Cups may be telling to take the support available to you from family and close friends. When the Six of Cups appears in a Tarot spread it can also indicate that you are being childish or immature. If combined with certain supporting cards it can, in some cases, indicate childhood abuse. It can also signify homesickness for those that live abroad. -"
+                ],
+                "shadow": [
+                    "In a general context, the Six of Cups reversed can signify letting go of the past and being ready to move on to the future. It can be an indicator of growing up, becoming more mature or leaving home. It can also indicate letting go of childhood issues or childishness. The Six of Cups reversed can indicate childhood abuse or stolen innocence. This Minor Arcana card reversed in a Tarot reading can also indicate overcoming such abuse so look to the supporting cards for clarification. If you have been going through counselling or therapy, the Six of Cups reversed can be a good omen, signalling that you have worked through the issues of the past and are ready for a fresh start. Alternately, the Six of Cups reversed can indicate that you are stuck in the past or looking at past events through rose tinted glasses, if that's the case you need to bring your focus back to the present moment and appreciate what you have today."
+                ]
+            },
+            "name": "Six of Cups",
+            "rank": 6,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Seven of Cups Tarot card represents having lots of options to choose from or multiple possibilities open to you. It can be an indication that you have so many choices or so many things going on at once that you may be overwhelmed or unable to focus properly. You need to limit the amount of things you are taking on to a manageable amount. There is no point in agreeing to do things if you can't give them the time and attention they deserve. Try to be realistic about what you can commit to. The Seven of Cups can also signify that you may be indulging in wishful thinking, fantasies or living in a dream world. When this Minor Arcana card appears in a Tarot reading, it indicates that you need to make a decision in your life and realistically look at where you are. Take proactive steps to make your situation better rather than fantasising about how you want it to be. Your imagination is a great tool to help you envision your future but it will never happen unless you take action to make it happen."
+                ],
+                "shadow": [
+                    "In a general context, the Seven of Cups Tarot card reversed can indicate that you are finding clarity and getting back to reality after a period of indulging in fantasies or living in a dream world. You may be finally starting to act decisively and to see the correct path for you clearly, having previously felt indecisive or lost. It represents getting a reality check. Alternately, when this Minor Arcana appears reversed in your Tarot spread it can indicate that you may have a lack of options, choices or opportunities or you may be feeling restricted or trapped in some way."
+                ]
+            },
+            "name": "Seven of Cups",
+            "rank": 7,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Eight of Cups represents abandonment. It can signify walking away from people or situations in your life or abandoning your plans. It can indicate disappointment, escapism and turning your back on or leaving bad situation. The Eight of Cups can also represent the exhaustion or weariness that can prompt such a decision. Strength and courage are necessary to walk away from what you know into an unknown future and these qualities are also represented in the Eight of Cups. It is a Minor Arcana card representing travel so you could find yourself embarking on an adventure when this card appears in your Tarot reading. The Eight of Cups can signify loneliness, introspection, self-analysis and looking for the truth."
+                ],
+                "shadow": [
+                    "In a general context, the Eight of Cups reversed can indicate stagnation. When it appears you may be accepting your lot in life or staying in bad situation that makes you terribly unhappy because you are afraid of moving on or worried about what the future might hold if you leave. You may appear happy to those around you but underneath it all you know you need to get let go of certain people or situations in your life in order to move forward. You are resisting this change because you are paralysed by fear. It can also be a sign of running away from situations, not because they are bad but because you are afraid to take a chance and be vulnerable. This Minor Arcana card in a reversed position can show a lack of emotional maturity and can also be an indicator of low self-esteem or low self-worth. It can also represent returning home after a long period of travelling or living abroad."
+                ]
+            },
+            "name": "Eight of Cups",
+            "rank": 8,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Nine of Cups Tarot card is a positive card which indicates your wishes will be coming true or your dreams will become a reality. If you have experienced hardship, sorrow or pain recently, this card tells you that the bad times are behind you now and a time of happiness, joyfulness and fulfilment is coming. With this Minor Arcana card appearing in your Tarot spread you will be able to accomplish anything you put your mind to as it represents triumph, success and achievement. Your efforts will not go unnoticed either as it also signifies recognition, acclaim and even fame. The Nine of Cups also represents having high self-esteem and self-confidence. It is a card of celebrations and parties."
+                ],
+                "shadow": [
+                    "In a general context, the Nine of Cups reversed is not a great omen as it can represent shattered dreams or wishes turning into nightmares. You may have gotten what you wanted but now find that it's not how you hoped it would be. Alternately, you may have gotten what you wanted and subsequently lost it and are now feeling the devastation that can bring. The Nine of Cups reversed can represent unhappiness, misery and lack of fulfilment. It can also indicate negativity or pessimism. You may feel let down or disappointed when this Minor Arcana card appears reversed in your Tarot spread. You may also be struggling to achieve your goals, lacking in accomplishments or feel that you are not gaining the rewards or recognition you want. The Nine of Cups reversed can also be an indicator that you are lacking self-confidence or have low self-esteem. This card in a reversed position can also indicate problems such as eating disorders or addictions being caused as a result of low self-esteem and unhappiness. On the other hand, it can signify arrogance or conceitedness and a lack of emotional maturity. -"
+                ]
+            },
+            "name": "Nine of Cups",
+            "rank": 9,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Ten of Cups Tarot card is a great card to have in your Tarot reading as it represents true happiness and emotional and spiritual fulfilment. It tells you that you will be living your happy ever after and can look forward to domestic bliss. This Minor Arcana card represents happy families, children, caring and fun. You should be feeling very happy and secure when it appears in your Tarot reading. Life should be full of true contentment. This applies to you and your circle of family and friends. Everything you need you should have in abundance and you will be feeling truly blessed. Now is a time to reap the rewards of your previous hard work. The Ten of Cups Tarot card also represents playfulness and creativity so you may find the fun factor in your life goes up a notch when this card makes an appearance. The Ten of Cups can also signify reunions, home comings or family gatherings so if you have been away from your family, friends or partner or they have gone abroad, you can expect to be reunited with them. -"
+                ],
+                "shadow": [
+                    "In a general Tarot reading, the Ten of Cups Tarot card reversed is not a great omen. The love, harmony and contentment have disappeared and are replaced with discontent, arguments and conflict. The Ten of Cups reversed can generally refer to an unhappy home life, broken home or dysfunctional family situation. It can indicate family breakdowns, problems within a family, neglect or abuse. The Ten of Cups reversed can be an indicator of family relationships not being as stable as they may appear outwardly. There may be secrets, problems and/or disharmony and someone may be trying to keep up appearances when this Minor Arcana appears. It can also represent infertility or miscarriage. On the lighter side, it can simply represent a non-traditional family situation or a foster family. It can also signify homesickness or feeling isolated."
+                ]
+            },
+            "name": "Ten of Cups",
+            "rank": 10,
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Page of Cups is a bringer of messages. This can be in the form of happy news, important information, invitations to social events, gossip or the potential for romantic proposals. It can also represent your inner child so don't take things too seriously when this card appears. It may be a sign that you need to connect to your inner child by embracing the fun and frivolous side of life. It can also represent beauty, fashion, glamour or style so you may be trying out a new personal style or having fun with fashion when this Minor Arcana card appears in your Tarot spread. The Page of Cups can also signify that you are beginning to gain a level of emotional maturity that allows you to be kind, compassionate, helpful, affectionate and loyal. If representing a person, the Page of Cups signifies a young person, child or person who is young at heart, who is a bit of a daydreamer, intuitive, naïve, sensitive and idealistic. They may be a water sign such as Cancer, Scorpio or Pisces"
+                ],
+                "shadow": [
+                    "In a general context, the Page of Cups reversed is not a great omen as it can bring bad news. For instance, you could find you fall in love with someone who does not return your feelings or you may find that a social event you have been looking forward to is cancelled. Whatever form this news takes it could possibly cause sadness, disappointment, heartbreak or sorrow. The reversed Page of Cups Tarot card can indicate descent into emotional instability taking the form of obsession, envy or vindictiveness. The Page of Cups reversed can also represent shattered innocence, emotional wounds and broken dreams. It can represent emotional vulnerability, promiscuity or seduction and it can also be an indicator of sexual abuse. Alternatively, it may simply indicate that you have lost touch with your inner child or that some unresolved childhood issues are resurfacing. If representing a person, The Page of Cups reversed can indicate a young person, child or person who is young at heart, who is overly obsessed with superficial body image while ignoring their inner emotions or someone who engages in attention seeking behaviour or is a bit of a drama queen. They may be a water sign such as Cancer, Scorpio or Pisces"
+                ]
+            },
+            "name": "Page of Cups",
+            "rank": "Page",
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Knight of Cups Tarot card can represent proposals, offers, good news and invitations. The news or offers he brings usually carry with them a lot of excitement. They are the kinds of offers or news we hope to receive. Knights as action takers and as such, this Minor Arcana card can be an indication that now is the time to take action and follow your heart or that you are about to get swept off your feet. The Knight of cups can also signify gentleness, affection and warmth. It can also represent grace under pressure or diplomacy so you may find yourself acting as a mediator in resolving any disputes or conflict. If representing a person the Knight of Cups is a charming adult (usually 20-35 year of age and usually male) who is emotional, romantic, caring, gentle and idealistic. He is chivalrous, warm, tactful and a peace lover or good negotiator. He may be a water sign such as Cancer, Scorpio or Pisces."
+                ],
+                "shadow": [
+                    "In a general context, the Knight of Cups reversed Tarot card can represent revoked offers or proposals, bad news and withdrawn invitations. The news this Minor Arcana brings usually brings with it heartbreak, sorrow or disappointment. The Knight of Cups reversed Tarot card can be telling you not to jump to conclusions or to check your facts before taking action. The reversed Knight of Cups can also signify moodiness, tantrums and emotional turmoil so expect stressful situations when he appears. The Knight of Cups reversed can also indicate that you may be procrastinating or avoiding taking action rather than confronting a situation head on. If representing a person, the Knight of Cups reversed can indicate that an adult (usually 20-35 year of age and usually male) who at first appears to be charming and trustworthy may turn out to be any of the following: disloyal, passive aggressive, commitment-phobic, a drifter, a manipulator, a cheater or a heartbreaker. He may be a water sign such as Cancer, Scorpio or Pisces."
+                ]
+            },
+            "name": "Knight of Cups",
+            "rank": "Knight",
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Queen of Cups Tarot card can generally signify a woman or women in your life who will be supportive and caring towards you. This Minor Arcana card is also a sign that you should be mindful of how you treat yourself and others or to treat people with compassion and sympathy. She can also indicate that you may be more sensitive than you let on to the outside world and that harsh actions or hurtful comments affect you more than you show to the outside world. This card can also indicate a tendency to daydream and a big imagination. As a person, the Queen of Cups represents a mature female or feminine person who is kind, caring and supportive. The Queen of Cups is a sentimental, sensitive soul and a good listener. She is empathetic to the feelings of others. As a mother, partner or friend, the Queen of Cups is affectionate, loving and warm. However, she can also be shy and have a tendency to daydream. She is creative, artistic and intuitive and she appreciates beauty. She may be a water sign such as Cancer, Scorpio or Pisces"
+                ],
+                "shadow": [
+                    "In a general context, the Queen of Cups reversed Tarot card generally indicates emotional immaturity. She can also indicate that you may be feeling overly sensitive, insecure, depressed or sulky. This Minor Arcana card reversed warns you to avoid becoming bitter or vengeful if things do not go your way. You should always seek to rise above your challenges and not give way to spitefulness or jealousy. As a person, the Queen of Cups reversed can represent a female or feminine person who is weak, directionless or shallow. The Queen of Cups reversed represents a mature female or feminine person who can be overly sensitive, needy or clingy. She may lack empathy for others as she becomes caught up in being self-centred. As a mother, the Queen of Cups reversed can be disorganised, manipulative or smothering. As a friend or partner she can be disloyal, shallow and unfaithful. She may be a water sign such as Cancer, Scorpio or Pisces."
+                ]
+            },
+            "name": "Queen of Cups",
+            "rank": "Queen",
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the King of Cups Tarot card represents kindness, compassion and wisdom. This Minor Arcana card can indicate that you will be finding the balance between your mind and your heart. You will learn to control your emotions and find the wisdom to accept that which you cannot change. You should be gaining a deeper level of emotional maturity when this card appears. You will become calmer, more sympathetic to others and tolerant. Like all the cups court cards, the King of Cups signifies emotion, creativity, artistic ability and intuition but in a more balanced form. As a person, the King of Cups is caring, affectionate and empathetic. He is a good listener, diplomatic and easy going. He is the type of older male who will give you sound advice and act as a calming influence in your life. He usually has light hair and has few if any enemies as he is well liked and gets along with the majority of people. He may lack the drive to pursue material wealth as he is more focused on the emotional side of life. He is very family orientated. He may be a water sign such as Cancer, Scorpio or Pisces."
+                ],
+                "shadow": [
+                    "In a general context, the King of Cups reversed can represent being overly emotional or too sensitive. It can signify a lack of emotional maturity. It can be a sign that you are lacking back bone or are allowing yourself to be too gullible or putting yourself in a position where others can take advantage of you. You have to be accountable for your own behaviour. It tells you that you need to take responsibility for your emotions and well-being. This Minor Arcana card can indicate that a lack of emotional balance may be causing you to become overwhelmed, anxious or depressed. This can also present itself as bitterness or unkind, uncaring or manipulative behaviour. As a person, the King of Cups reversed is manipulative, controlling and, in the extreme negative, abusive. He is someone who uses his ability to sense the emotional weaknesses of others as a weapon against them and will seek to take advantage of vulnerability in others to get his own way or simply for his own amusement. He can be vindictive and spiteful and is not be trusted. Alternatively, the King of Cups reversed can represent an older male who is so overly emotional and sensitive that he has lost the ability to function properly in the world. He may be moody, sulky, unbalanced and at risk of becoming dependent on the people around him. He may be a water sign such as Cancer, Scorpio or Pisces."
+                ]
+            },
+            "name": "King of Cups",
+            "rank": "King",
+            "suit": "Cups"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Ace of Swords represents new ideas, new beginnings, new projects, new plans and breakthroughs. It also indicates intellectual ability, mental clarity, clear thinking and the ability to concentrate. This Minor Arcana signifies communication, vision, force, focus and intensity. It represents making correct decisions, being assertive and justice and authority. The Ace of Swords can indicate good news in relation to legal matters or legal contracts or letters that may be to your benefit. -"
+                ],
+                "shadow": [
+                    "In a general context, the Ace of Swords reversed can represent a lack of ideas, misinformation, confusion and failure. It can also indicate intellectual inability, lack of mental clarity, memory loss and an inability to concentrate. This Minor Arcana card reversed can signify a lack of communication, creative blocks, lack of vision and frustration. It represents making wrong decisions, injustice and a lack of assertiveness. It can also indicate bad news in relation to legal matters or legal contracts or legal letters that may not be favourable to you."
+                ]
+            },
+            "name": "Ace of Swords",
+            "rank": 1,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Two of Swords represents a stalemate, truce or being at a crossroads. It indicates that you are sitting on the fence or struggling to make/ avoiding a difficult, stressful or painful decision. It is the Minor Arcana of coming face to face with your fears. It can also signify being torn between two loyalties, relationships, situations, offers or people. It represents being caught in the middle of an argument or conflict and trying to mediate between opposing parties. The Two of Swords also represents blocking emotions, being in denial, blindness and an inability or unwillingness to see the truth."
+                ],
+                "shadow": [
+                    "In a general context, the Two of Swords reversed represents indecision, delays or postponement. It indicates that fear, worry, anxiety or stress is overwhelming you and you may be experiencing emotional or mental turmoil as a result leading to an inability to make a decision. It can also represent holding onto resentment or anxiety and being overloaded with more information that you can handle. This Minor Arcana card reversed can signify someone who is overly cautious, emotionally detached, cold or guarded. Alternatively, the Two of Swords can signify being able to see the truth of a matter after a period of mental fogginess and finally being able to make a decision as a result. It can also represent lies being exposed."
+                ]
+            },
+            "name": "Two of Swords",
+            "rank": 2,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Three of Swords represents unhappiness, heartache, sorrow and sadness. It is a Minor Arcana card of grief, loss, depression and tears and when it appears in your Tarot reading it generally indicates a period of difficulty or hardship, usually on an emotional level. Distraction, conflict, disillusion and serious misunderstanding are all represented by this card so whatever situation it signifies will bring with it confusion, upset and upheaval. The Three of Swords also indicates depression, trauma, disorders, loneliness, absence and betrayal. You have suffered or will suffer a loss or betrayal of some kind when this card appears and not one that can easily be brushed over. You will be feeling this loss on a deep emotional level and you must give yourself time to process what has happened. Though it does represent hardship, this card is not all bad. The most difficult situations in our lives often teach us more about who we are and what we are capable of than the good times. Give yourself space and time to heal and learn all you can from the experience. If you need support, don't be afraid to reach out to the people that love you."
+                ],
+                "shadow": [
+                    "In a general context, the Three of Swords reversed represents overcoming unhappiness, heartache, sorrow and sadness. When reversed, it is a Minor Arcana card of optimism, overcoming grief or depression and releasing pain. When it appears in your Tarot reading it generally indicates that you are recovering from your heartbreak and getting over the worst part of a bad situation or event. You may be reaching out to friends and sharing your problems or reconciling with someone whom you were hurt by in the past. You may have reached a compromise or be at a point where you are able to forgive and let go of past trauma. Alternatively, the Three of Swords reversed has a flip side. It can be an indication that you are repressing your grief, sorrow or traumatic memories. That you are refusing to let go of negative emotions and are holding onto your pain. Look to support cards to confirm this."
+                ]
+            },
+            "name": "Three of Swords",
+            "rank": 3,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Four of Swords represents fear, anxiety and stress. You will be feeling overwhelmed and mentally overloaded when it appears. This Minor Arcana tells you that the issues you are facing are actually not as bad as you believe them to be and there are solutions available. However, it suggest that you are allowing negativity to set in and becoming so overwhelmed that you cannot see the woods for the trees. This card is more to do with your mental state than any problems you are facing. Relax, regroup and contemplate your situation in a calm rational way. If you leave aside your fears and logically plan for the future, you will find a way forward. The Four of Swords Tarot card also indicates that you are in need of peace and quiet, introspection, rest, relaxation and sanctuary. It is a card of recuperation and hospitalisation. And it signifies having faith or receiving spiritual counselling or support. -"
+                ],
+                "shadow": [
+                    "In a general context, the Four of Swords reversed represents awakening and finding mental strength. You will be coming out of isolation after a period of solitude or mental overload and re-joining the world. This Minor Arcana tells you that you are slowly recovering and that healing is possible. Alternatively, the Four of Swords Tarot card reversed can indicate that your stress or anxiety levels have reached such a point that burn-out or mental breakdown or collapse is imminently possible if you don't start taking care of yourself. You will be experiencing extreme levels of anxiety and a sense of restlessness when it appears."
+                ]
+            },
+            "name": "Four of Swords",
+            "rank": 4,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Five of Swords is not always a good omen as it can represent defeat, change surrender and walking away. It is a Minor Arcana card of self-sabotaging or underhanded behaviour and deception and lack of communication. It can also represent serious conflict, stress and lack of communication. The Five of Swords Tarot card comes with a warning as it can signify hostility, aggression, intimidation and violence and as such it can represent situations we would hope to never encounter in our lives such as crime, theft, bullying, abuse, assault, rape, murder. On the other hand, it may simply represent the action one must take to overcome being challenged by others such as standing up for oneself and fighting back. As such it can be an indication of victory. If so, the victory it represents will be hard won as you will have quite a battle on your hands."
+                ],
+                "shadow": [
+                    "In a general context, the Five of Swords reversed can be a good omen as it can signify the peaceful resolution of a situation, ending conflict and moving on. It is a Minor Arcana card of communication, compromise, overcoming challenges and releasing stress. However, the Five of Swords Tarot card reversed can signify an escalation in serious violence and revenge. It can also signify risking everything, being relentless, not heeding warning signs and surrendering to challenges. It can also represent someone being held accountable for their actions, crimes being uncovered, arrests, regret, remorse, shame and public humiliation."
+                ]
+            },
+            "name": "Five of Swords",
+            "rank": 5,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Six of Swords represents progress, moving into calmer waters, moving on or moving forward. It is a Minor Arcana card of overcoming hardship, healing, relief and stability so you can expect problems in your life to settle down and things to be much easier to deal with. The Six of Swords can also represent escaping, running away, journeys, travel, travelling overseas and going on holiday. It can signify feeling lethargic and deflated after coming through a tough time or the calm after the storm. It is also a Tarot card of intuition, inner guidance and spirit guides. -"
+                ],
+                "shadow": [
+                    "In a general context, the Six of Swords reversed represents moving into troubled waters, lack of progress and jumping out of the frying pan and into the fire. In a reversed position, it is a Minor Arcana card of feeling stuck, trapped overwhelmed, restricted and having nowhere to run or choosing to stand your ground. This card signifies instability, rocking the boat, causing trouble and stormy relationships so you can expect life to be a little turbulent when it appears in your Tarot spread. This card also signifies slow healing. The Six of Swords reversed can also represent returning from travel or holidays or disrupted or cancelled travel, changing or abandoning plans and eloping to get married. It can signify floods or accidents in the water. -"
+                ]
+            },
+            "name": "Six of Swords",
+            "rank": 6,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Seven of Swords represents deception, lies, trickery, cheating and lack of conscience. This card also signifies mental manipulation, tactics, scheming, cunning, enemies who masquerade as friends and spies in your camp. It is a Minor Arcana card of dangerous or risky behaviour, daring, courage and staying ahead of the game. The Seven of Swords can also represent flexibility, adaptability, sharp wit, resourcefulness, being strategic or being overly rational. This Tarot card can also signify underhanded behaviour, theft, burglary, fraud, dodgy deals and a general lack of conscience. It represents escaping detection and getting away with something."
+                ],
+                "shadow": [
+                    "In a general context, the Seven of Swords reversed signifies coming clean and one's conscience kicking in so if you have done something you are not proud of you may find yourself confessing and turning over a new leaf. It can represent careers in the military or security. Alternatively, this Minor Arcana card reversed represents pathological liars, serial cheaters, people who are malicious or so two faced they are toxic or dangerous to be around. It also represents slander, blackmail and con artists. The Seven of Swords reversed can also signify ignoring warning signs, being outsmarted or finding that your strategies or plans are unworkable. This Tarot card can also be an indicator that you are lacking a backbone, behaving in cowardly manner, stealing credit for other people's achievements or running away from consequences. It may also represent ignoring warning signs or getting caught."
+                ]
+            },
+            "name": "Seven of Swords",
+            "rank": 7,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Eight of Swords can represent feeling trapped, confined, restricted or backed into a corner or having your hands tied. It signifies fear, terror, anxiety and psychological issues. It is a Minor Arcana card of hopelessness, helplessness, powerlessness, slavery, persecution and being silenced or censored. You will be feeling the pressure when this appears and may be in crisis or going through a dilemma or drama. However, the overall theme of this card is that you are the one keeping yourself in this situation through negative thinking and allowing yourself to be paralysed by fear. The swords depicted in the card are surrounding you but you can take the blindfold off and walk away at any time! This card also represents consequences and judgement which may take the form of trial by jury, imprisonment and punishment."
+                ],
+                "shadow": [
+                    "In a general context, the Eight of Swords reversed can represent release, freedom, escape and finding solutions and options. It signifies relieving pressure, releasing anxiety and facing fears and truths. When reversed, it is a Minor Arcana card of self-belief, ignoring criticism, standing up to abuse and taking back control. You may be feeling clear minded, empowered, mentally strong and hopeful when this card appears in your Tarot spread. This card indicates that you may find you are ready for healing, to ask for help and to overcome obstacles. It can also represent release from prison and the end of a punishment. However, on the flip side the Eight of Swords reversed card can be an indication of extreme oppression, surrendering to pressure or being completely paralysed by fear and severe depression. -"
+                ]
+            },
+            "name": "Eight of Swords",
+            "rank": 8,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Nine of Swords is another of the fear and anxiety cards in the Suit of Swords. Similar to the other fear cards, this card is not an indication of negative events actually happening, just that your fear and anxiety levels are so high they are making you feel that things are worse than they are. In short, you may be making mountains out of molehills. It represents stress, burdens, negative thinking and deep unhappiness. You will be feeling overwhelmed and unable to cope with or face situations, problems or just life in general and may have reached your breaking point. It is a Minor Arcana card of mental anguish, remorse, guilt, regret, joylessness and despair and you may wish you could go back in time and re-write the past when it appears. It can also signify feeling isolated and being the subject of gossip and it can represent nightmares and insomnia."
+                ],
+                "shadow": [
+                    "In a general context, the Nine of Swords reversed represents seeing the light at the end of the tunnel after dark times. When reversed, it is a Minor Arcana card of recovering from depression or mental illness or issues improving, letting go of negativity, releasing stress and learning to cope. It signifies opening up, accepting help and facing life. Alternatively, this card can signify a worsening of the issues, depression, problems or fears associated with the upright card. As such, it can represent extreme guilt, remorse, shame, regret, burdens, negative thinking, self-pity, self-loathing or giving up, nervous breakdowns or total collapse. It can be an indication that there is malicious gossip or scandal around you. It can also represent night terrors, hallucinations and psychosis."
+                ]
+            },
+            "name": "Nine of Swords",
+            "rank": 9,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Ten of Swords is not a good omen as it can represent backstabbing betrayal, badmouthing, bitching behind your back, bitterness and enemies. It is a Minor Arcana card of failure, ruin, collapse, severing ties, goodbyes and the final nail in the coffin of a relationship or situation. It can signify nervous breakdowns, chronic fatigue, exhaustion and being unable to cope. It can also represent hitting rock bottom, hitting a wall or being in a dead end situation. The Ten of Swords can also indicate someone playing the victim or martyr, being overly dramatic, attention seeking or exaggerating. It can also signify violence, attacks and curses."
+                ],
+                "shadow": [
+                    "In a general context, the Ten of Swords reversed can represent things getting better, getting over the worst, surviving/ being saved from disaster and escaping ruin. It is a Minor Arcana reversed card of pulling yourself together and learning from past hardships. It can signify something coming back from the brink of death or failure, Near Death Experiences and Out of Body Experiences. Alternatively, it can signify fears coming true, the worst being yet to come and being beyond help. It can also represent total ruin, despair, relapse and problems coming back."
+                ]
+            },
+            "name": "Ten of Swords",
+            "rank": 10,
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Page of Swords represents delayed news, ideas, planning and inspiration. It can also signify being protective, guarded and vigilant. This Minor Arcana card may be telling you to be patient, to think before you speak and not to get drawn in unnecessary arguments or conflicts. It can also represent fairness, speaking out and fighting injustice. The Page of Swords can indicate mental agility, learning or getting an education, being quick-witted, curious and inquisitive and using your head. This card can signify being chatty, communicative, truthful and direct. However, it can also signify being blunt or abrasive or engaging in petty gossip. As a person, the Page of Swords represents a young person, child or person who is young at heart, who is chatty, lively, quick thinking, analytical, logical and cool and possesses a sharp mind. This person abhors injustice and is a deep thinker but at the same time can come across as blunt, insensitive or a bit of a loner sometimes. In the negative, they can also be a bit of a gossip or deceitful but they do not intentionally cause harm. They like to stick to the rules and may be an air sign such as Aquarius, Gemini or Libra."
+                ],
+                "shadow": [
+                    "In a general context, the Page of Swords reversed can represent bad or disappointing news and lack of ideas, planning or inspiration. It can also signify being defensive, cold, vindictive, cynical or sarcastic. This Minor Arcana card reversed may be telling you to get your head out of the clouds and can represent acting in a scatter-brained or dim-witted manner. It can also represent a lack of fairness, not speaking out against injustice, breaking the law or being a delinquent. The Page of Swords reversed can suggest that you may have nothing to say or may be lacking in communication skills. It can be a warning to you about the way you communicate with people in your life. You may think you are being truthful and direct but you could be coming across as blunt and abrasive. It can also indicate a lack of education, lack of mental agility or learning difficulties. The Page of Swords reversed can also signify being a game player, playing mind games, malicious gossip and paranoia. As a person, the Page of Swords reversed represents a young person who is keeping information to themselves. They are still analytical and logical with a sharp mind. However, they may use their wit for malicious or vindictive purposes. They can be manipulative, cynical and sarcastic and may consider themselves superior to others and that the rules don't apply to them. They may spread malicious rumours or gossip to intentionally cause trouble."
+                ]
+            },
+            "name": "Page of Swords",
+            "rank": "Page",
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Knight of Swords is a change card, it tells you that a big change is coming, one you have been awaiting for quite some time and you better be ready to roll with it when it does. It's time to jump in and seize the moment! This is a Minor Arcana card of being assertive, direct, honest, quick witted and intellectual. It signifies being dashing, daring, brave, courageous or rebellious. It also represents being talkative, ambitious, forward thinking, focused and single-minded when it appears in your Tarot spread. When this card appears in your Tarot reading, it can indicate that you go against the flow and have great leadership qualities and that you are a perfectionist and a risk taker. If representing a person, the Knight of Swords is an adult (20-35 years of age and usually male) who has a strong personality, is quick-witted, a fast talker, intelligent, daring and rebellious. He may be an air sign such as Aquarius, Gemini or Libra. The knight is assertive and rational but can be impatient and impulsive. He has a very direct manner and this can sometimes make him seems a little insensitive. However, he is also exciting and adventurous which draws people to him. Champions, heroes and warriors charging into battle are signified by this card and as such, it can represent a soldier or someone in the military."
+                ],
+                "shadow": [
+                    "In a general context, the Knight of Swords reversed can indicate that a big change or opportunity that you have been awaiting for quite some has come your way but you are failing recognise or seize it. It may be that you are not ready to jump on or that you are out of your depth. Whatever the case, this card tells you that if you miss this opportunity you will get left behind. This Minor Arcana card can also represent being out of control, leading others to trouble or danger and heading for a fall. It can signify being insincere, self-obsessed, rude, tactless, hurtful, sarcastic or cynical so remember to be mindful of the words you use and their effects on others when this card appears in your Tarot reading. It can also signify going with the flow and being a sheep or a follower, mindlessly following the crowd. The Knight of Swords reversed may also suggest that you or someone around you is acting superior, being a know it all or has inferiority complex when it appears. As a person, the Knight of Swords reversed is an adult (20-35 years of age and usually male) who may be overly cocky and impulsive to the point of putting others in jeopardy. He may be an air sign such as Aquarius, Gemini or Libra. This card can indicate a person who is not the most intelligent or communicative. However it can also indicate someone who is a quick thinker and fast talker but uses those strengths in the wrong way. He might talk you into trouble. He rushes into things head first without thinking and can put himself and others in danger as a result. In the extreme negative, he can be arrogant, aggressive, illogical and intimidating. The Knight of Swords reversed can also signify a bully, a criminal or someone who is vicious or dangerous. -"
+                ]
+            },
+            "name": "Knight of Swords",
+            "rank": "Knight",
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Queen of Swords can represent an older woman in your life who will step in when you are vulnerable and protect you or help you to overcome a problem. It represents being intelligent, sharp witted, witty, honest, truthful and candid. This Minor Arcana card signifies being realistic, discerning or sceptical and it can signify that you will receive constructive criticism from someone and you would do well to listen to it. It can also represent open-mindedness and self-reliance. However, this card can also indicate that you may be suppressing some pain or sadness from past events. As a person, the Queen of Swords represents a mature female or feminine person who is chatty, quirky, forthright and supportive. She may be an air sign such as Aquarius, Gemini or Libra. She is a woman who may have known loss or suffering herself and has gained much inner strength and wisdom from her experiences. She is someone who will always defend those who cannot defend themselves. She has strong empathy and is a great person to have in your corner if you are vulnerable as she will defend you. However, she will not suffer fools gladly and if you are in the wrong, you can expect her to call you out on it without mincing her words! She can have quite a sharp tongue on her at times. She is strong, quick-witted, principled, fair, funny, sophisticated, independent and capable and will not be clingy or needy."
+                ],
+                "shadow": [
+                    "In a general context, the Queen of Swords reversed can represent not learning from the past or not forgiving the past and using it as a stick to beat others around you with. This card can signify that an older or mature female in your life may try to drag you down by spreading malicious gossip about you or being overly critical of you. It can also be an indication that you are feeling dependent on others or not getting the freedom and independence you crave. This card also represents being dysfunctional or infertile or having a cold or absent mother or an evil step-mother. As a person, the Queen of Swords reversed represents a mature female or feminine person who generally is not a nice character as she can be bitter, cruel, cold, unforgiving and pessimistic. She may be an air sign such as Aquarius, Gemini or Libra. She is a woman who may have known loss or trauma herself which she uses as justification to drag others down. She can be spiteful, nasty, vindictive and vengeful. She may lack empathy for others and can be obsessive and controlling. She is someone who may be overly critical or harsh to the people around her and can come across as rude and very negative in reverse. The Queen of Swords reversed may also be a liar, a cheater, disloyal or just generally deceitful."
+                ]
+            },
+            "name": "Queen of Swords",
+            "rank": "Queen",
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the King of Swords represents structure, routine, self-discipline, power authority. It is a Minor Arcana card of being methodical, using your head, mind over matter and the head over the heart. This card signifies logic and reason, integrity, ethics and morals. The King of Swords can represent legal matters, law enforcement, military, police and judges. As a person, the King of Swords is a mature male who is cool, self-disciplined, intelligent, honest and strong. He is rational, logical and a deep thinker. He may be an air sign such as Aquarius, Gemini or Libra. He does not like to publicly display his emotions and prefers to use his intellect over his emotions to deal with situations. He is a great conversationalist and fiercely loyal and protective of his loved ones. He does well in structured environments and needs to have a routine to operate at his best. He can be clinical and stern. In the extreme negative, he can be a bully or a tyrant and he can be cold or distant if someone is too irrational for his liking. But generally he is analytical and fair-minded. He takes his responsibilities seriously, is dependable and plays by the rules."
+                ],
+                "shadow": [
+                    "In a general context, the King of Swords reversed can represent lack of structure, routine, self-discipline, power or authority. When reversed it is a Minor Arcana card of not using your head or losing your cool. Alternatively, it can represent being power hungry, inhumane or a tyrant. This card reversed signifies a lack of logic, reason, integrity, ethics or morals. The King of Swords reversed can also indicate legal matters not going in your favour. As a person, the King of Swords reversed is a mature male who can be cold, power hungry, controlling, cynical, sarcastic and ruthless. He may be an air sign such as Aquarius, Gemini or Libra. He can be oppressive, judgemental, aggressive, abusive, violent and brutal. This card reversed can represent someone who is intelligent and talkative but uses these qualities for negative means such as to manipulate or hurt others. Alternatively, he can be irrational, illogical, dim-witted, weak and a poor communicator."
+                ]
+            },
+            "name": "King of Swords",
+            "rank": "King",
+            "suit": "Swords"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Ace of Pentacles represents new beginnings and prosperity. It is a very good card to get in a Tarot spread as it signifies starting something new which will be very positive for you. You should be feeling very optimistic when this card appears as it brings with it feelings of positivity, inspiration and new exciting energy. This Minor Arcana card also signifies abundance in all areas of life and security and stability. The Ace of Pentacles Tarot card can indicate that you will be ready to make your dreams a reality. The time is coming for you to manifest your goals, achieve your dreams and realise your potential. You will be motivated and ready for the challenge. -"
+                ],
+                "shadow": [
+                    "In a general context, the Ace of Pentacles reversed represents missed opportunities or lack of opportunities. It is a not a good card to get in a Tarot spread as it can represent opportunities, prospects or deals falling through. It can also signify delays, lack of planning and poor control so make sure you are putting the work and planning into achieving your goals when it appears. This Minor Arcana card in a reversed position can also signify scarcity, deficiency, insecurity or instability. The Ace of Pentacles reversed can indicate that you may be allowing fears of scarcity or not having what you need influence your behaviour and causing you to act in a stingy and greedy manner. It can also represent a lack of forethought and excessive spending. You may have more resources leaving your life than you have coming in when it appears."
+                ]
+            },
+            "name": "Ace of Pentacles",
+            "rank": 1,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Two of Pentacles can indicate that you are trying to find or maintain the balance between various areas of your life. This Minor Arcana card represents the ups and downs of life and indicates that you are resourceful, adaptable and flexible enough to get through them. However, it can be a warning that trying to juggle too many things at once and not prioritising what is important can lead to failure and exhaustion. Try to evaluate where you are putting your energy and cut back on what is not necessary in order to maintain a balanced and happy life. The Two of Pentacles can indicate that decisions need to be made and making these choices may be causing you stress. It can also signify partnership and the struggle to find the right balance between your needs and the needs of someone else. -"
+                ],
+                "shadow": [
+                    "In a general context, the Two of Pentacles reversed can indicate that you are biting off more than you can chew! You may be trying to keep too many balls in the air and finding it impossible to maintain the balance between the various areas of your life. This Minor Arcana card represents feeling overwhelmed, overextending yourself and lack of organisation. The Two of Pentacles reversed can signify that you are making poor choices because you are under pressure and may be getting yourself into more of a mess than you need to. It can also indicate that you need to put contingency plans in place for a rainy day."
+                ]
+            },
+            "name": "Two of Pentacles",
+            "rank": 2,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Three of Pentacles is a positive card to get in a Tarot spread. It represents learning, studying and apprenticeship. It also signifies hard work, determination, dedication and commitment so whatever you are doing at the moment, you are likely to be giving it 100%. It also signifies building on success or foundations. You have worked hard to overcome your challenges and the effort you have put in should be paying off. This Minor Arcana card can also indicate that you may be collaborating with others to achieve your goals. -"
+                ],
+                "shadow": [
+                    "In a general context, the Three of Pentacles reversed is not a great card to get in a Tarot spread as it indicates that you are not learning from your mistakes or are unwilling to do so. You may be overwhelmed with the sense that you do not know what you are doing. However, you are not putting the effort into learning! This card signifies a poor work ethic and a lack of effort, determination or commitment. You may be lacking the concentration and dedication required to achieve your goals or you may not have even set yourself any goals. It can signify feeling apathy toward the various areas of your life and just not giving things your best efforts. Everything just seems lacklustre and there is no motivation or growth. This Minor Arcana card can also indicate delays caused by conflict within a team or a lack of team spirit. -"
+                ]
+            },
+            "name": "Three of Pentacles",
+            "rank": 3,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Four of Pentacles Tarot card can indicate that you are holding on to people, possessions, situations or past issues. It can be an indication that there are deep seated issues affecting you that you need to process and let go of. This Minor Arcana card can indicates that you may be trying very hard to cling onto the people or possessions that give you a sense of security. You may be holding onto things in an unhealthy, possessive, controlling or toxic way or someone may be holding onto you in such a manner. It can indicate that you need to establish your boundaries or respect the boundaries of other people. The Four of Pentacles can also indicate a lack of openness, blocking or obstructing progress, keeping to yourself or a sense of isolation. It can represent wealth, greed, materialism and penny pinching."
+                ],
+                "shadow": [
+                    "In a general context, the Four of Pentacles reversed Tarot card can indicate that you are ready to let go of people, possessions, situations or past issues. You may be releasing toxic people or situations that are no longer healthy for you, shedding old issues or letting go of regrets or fears. You may also be feeling generous and sharing your wealth or possessions by giving to others. Be careful not to go to the extreme in this aspect and allow others to take advantage of you. This Minor Arcana card can indicate that you may have let go of or lost something valuable through theft or gambling or it can be an indication that you are out of control or are engaging in reckless behaviour. However, the Four of Pentacles reversed can also indicate that you having stopped trying to control people or situations and are approaching things with a more relaxed and open attitude. Look to the surrounding cards for clarification."
+                ]
+            },
+            "name": "Four of Pentacles",
+            "rank": 4,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Five of Pentacles is not a great card to get as it represents hardship, rejection or a negative change in circumstances. You may be feeling like the world is against you and nothing is going your way when it appears. It can signify bad luck, struggles or adversity. Homelessness, unemployment, alienation and poverty are all represented by this Minor Arcana card and it can signify illness, divorce, breakups or scandals causing turmoil in your life. If you are feeling left out the cold, firstly, remember that this situation is only temporary and then ask yourself if you are reaching out for any help or support that is available. There is help out there for you. It may be in the form of moral support from friends or family, financial assistance from social welfare, or even the kindness of strangers but whatever it is, take it. Nothing lasts forever and this hardship too shall pass."
+                ],
+                "shadow": [
+                    "In a general context, the Five of Pentacles reversed is a good omen especially if you have been going through a tough time as it represents hardship coming to an end, overcoming adversity or a positive change in circumstances. You have struggled through the hard times. When everything seemed hopeless, you held on and now you can see the light at the end of the tunnel! It can also signify improvement in relationships, finances or luck. This Minor Arcana card can also represent illnesses improving, recovering from problems and being accepted or welcomed back after a period of alienation or isolation. You should be in a much more positive frame of mind, beginning to rebuild your feeling of security and stability and making progress. You may also be finding forgiveness for anyone who may have caused you issues in the past. The Five of Pentacles reversed can also indicate letting go of people or relationships that were toxic for you as you focus on the future."
+                ]
+            },
+            "name": "Five of Pentacles",
+            "rank": 5,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Six of Pentacles Tarot card represents gifts, kindness and generosity. Someone in your life may be very generous towards you with gifts or money or simply generous with their time, knowledge or wisdom. Alternately, you may have so much wealth and prosperity that you are the one in a position to help others. This Minor Arcana card can indicate sharing, support, charity or donations. As such, if you are in a difficult situation at the moment, this card can indicate that there is help available and that someone will assist or support you if you reach out. You may be feeling a strong sense of community spirit or compelled to help those around you when it appears in your Tarot spread. It is also a card of power and control so you may find yourself in a position of authority or being well-respected by others when it appears in your Tarot reading. The Six of Pentacles is usually a positive card to get as it can signify equality and fairness and can also symbolise being well paid, being valued or being rewarded for hard work. If you are prospering when it appears, remember to share your good fortune with those around you!"
+                ],
+                "shadow": [
+                    "In a general context, the Six of Pentacles reversed Tarot card can represent lack of generosity, meanness or gifts that come with strings or conditions attached. Someone in your life may be showing you generosity but have ulterior motives or they may be in a position to help you but they may be abusing that position or trying to make you subservient to them. If you are in a position of power, it can be an indication that you are using your power for ill means. This Minor Arcana card reversed can signify lack of charity or community spirit. It can also represent fake charities, scams, extortion or being conned. When it appears you may need to assess if you are going to the extreme of being too greedy or mean or the other extreme of being too generous or gullible. It can also indicate that you are grovelling or being a kiss-ass to someone with wealth, power or authority or someone is behaving that way towards you."
+                ]
+            },
+            "name": "Six of Pentacles",
+            "rank": 6,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Seven of Pentacles indicates that you have been working very hard and it will soon start to pay off. This Minor Arcana card means that things are coming to fruition so you can expect results when it appears in your Tarot Spread. It is a very welcome card if you have been persevering with a situation or task and have felt like you're getting nowhere, as it tells you success is just around the corner! Whatever you have been putting your energy, you will start to reap the rewards. It can also signify being at a crossroads in terms of which life direction to take or needing to take stock of things and make a decision. The Seven of Pentacles can represent manifestation of ideas, ambitions or goals so now is a great time to focus on what you want to achieve and make it happen. It is also a card of harvesting, cultivation, growing, planning, patience and finishing what you started."
+                ],
+                "shadow": [
+                    "In a general context, the Seven of Pentacles Tarot card reversed can indicate that you may have been working very hard or putting lots of effort into something for little pay or reward. It can also indicate someone taking on too much, overdoing it or being a workaholic. You may be feeling that nothing you do pays off while others seem to get what they want easily. Alternatively, this Minor Arcana card in a reversed position can represent a lack of effort, procrastination, laziness or aimlessness when it appears in your Tarot Spread. It can also signify a change of plans or life direction, a lack of life direction or not taking stock of things and reflecting on things when you should. The Seven of Pentacles reversed represent lack of growth, setbacks, delays, frustration, impatience and not finishing what you started."
+                ]
+            },
+            "name": "Seven of Pentacles",
+            "rank": 7,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Eight of Pentacles Tarot card indicates a time of hard work, commitment, diligence and dedication. The effort you put in will not be in vain as your hard work will pay off and lead to results, rewards or the accomplishment of your goals. When this Minor Arcana card appears in your Tarot reading, it indicates that you are methodically working towards something you want. It may seem boring, mundane or even relentless at the moment but you are on the brink of achieving great success, so don't give up. The skills you are learning at the moment will stand to you later in life and you will come away from this experience not only with the inner wisdom you've gained but with a sense of pride and self-confidence from achieving your ambitions."
+                ],
+                "shadow": [
+                    "In a general context, the Eight of Pentacles Tarot card reversed can indicate laziness, idleness, carelessness, lack of effort or poor concentration. Alternatively, it can indicate focusing on one area to such an extreme that you neglect the other areas of your life such as being mean and materialistic and neglecting your love life or family life or your soul. When this Minor Arcana card appears in your Tarot reading, it indicates that you are not focusing on what you want to achieve or aren't putting the work in that needed to achieve your goals or that you are spreading yourself too thin which is leading to failure. Try to set yourself goals, prioritise what you really want to achieve and take tasks one at a time. Lack of ambition, respect or confidence can all be signified by this Minor Arcana card in reverse."
+                ]
+            },
+            "name": "Eight of Pentacles",
+            "rank": 8,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Nine of Pentacles is a great omen to get as it represents success, independence, confidence, freedom, security and stability. It is a Minor Arcana card of abundance, prosperity and wealth gained through hard work, self-discipline and control and self-reliance. It signifies that you have worked very hard to create the success and status you are experiencing and now is the time to enjoy it. So indulge yourself, pamper yourself and enjoy the luxury and contentment your accomplishments bring you. The Nine of Pentacles also signifies beauty, grace, elegance and sophistication so you may find yourself enjoying the finer things in life when it appears. This card also tells you that you have gained maturity and wisdom through your perseverance. If representing a person, it usually represents a strong, confident, independent woman who is beautiful and sophisticated and has worked hard to get where she is."
+                ],
+                "shadow": [
+                    "In a general context, the Nine of Pentacles reversed can indicate a lack of independence, confidence, freedom, security or stability. This Minor Arcana card in a reversed position can signify that someone may be trying to get rewards without putting the work in. You get out of life what you put in so make the effort. Also, it warns you to remember that material possessions are not the key to happiness and putting all the focus on them can cause people to become superficial and come across as cheap, shallow or tacky. Alternatively, this card can represent someone working so hard in one area of life to the detriment of other areas. There is nothing wrong with focusing on your goals but remember not to let the rest of your life pass you by. There is also an element of dishonesty or deceitfulness represented by this card so be sure you are treating others with honesty and integrity and be wary of dishonesty from others when it appears in your Tarot reading. Also, be careful not to overindulge when this card appears as it can indicate a lack of self-control. The Nine of Pentacles reversed also signifies a lack of grace, elegance, sophistication or style. If representing a person, it can represent a female who is money hungry, superficial, deceitful and reckless or who lacks sophistication, confidence or maturity."
+                ]
+            },
+            "name": "Nine of Pentacles",
+            "rank": 9,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Ten of Pentacles represents solid foundations, security and happiness in all areas of your life. Like all Pentacle cards it is usually connected to financial or material issues so you can expect especially good things in those areas of your life when it appears. It is also a good card to get in relation to family as it represents family responsibilities, family values and support. You could find yourself tracing your ancestry or discovering your family tree when it appears. You may be feeling very close to your family at this time, as the Ten of Pentacles can signify domestic harmony. Or you may be looking forward to a family event, celebration or gathering. This Minor Arcana card can represent being conventional and embracing old school traditions. Life should be stable and settled when it appears in your Tarot reading."
+                ],
+                "shadow": [
+                    "In a general context, the Ten of Pentacles reversed can represent rocky foundations, insecurity and instability your life. There is an element of dishonesty associated with this reversed card and a warning to steer clear or illegal or shady activities as they will not go well for you. It is not a great card to get in relation to family as it can signify family feuds, family burdens, neglecting the family, domestic disputes and disputes over a will or inheritance. You may not be feeling very connected to your family at this time as the Ten of Pentacles can signify disharmony or dreading a family event, celebration or gathering. This Minor Arcana card can represent being unconventional and breaking with traditions. You may experience sudden or unexpected changes or losses or you may be feeling like you have lost everything when it appears. Remember, however, that it is often the most difficult or challenging situations that give us the opportunity to learn and grow."
+                ]
+            },
+            "name": "Ten of Pentacles",
+            "rank": 10,
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general context, the Page of Pentacles is the bearer of good news in earthly matters such as money, business, education, career, property or health. It represents making a solid start or laying the foundation for future success. The message with this Minor Arcana card is to decide what you want and really go for it. Jump in and seize your opportunities while you can. It tells you that if you make the right decisions now and put the groundwork in you will achieve your long terms goals. You may find yourself thinking about your long term future when it appears. If representing a person, the Page of Pentacles represents a young person, child or person who is young at heart, who is grounded, loyal, responsible, dependable and ambitious and who has common sense and excellent future prospects. They may be an Earth sign such as Taurus, Virgo or Capricorn."
+                ],
+                "shadow": [
+                    "In a general context, the Page of Pentacles reversed can be the bearer of bad news in earthly matters. However, often it is an indicator that your present challenges are not due to some outside or unseen force, but rather a consequence of your own behaviour or inaction. It can indicate that lack of goals or lack of follow through may be holding you back and preventing you from reaching your potential. Laziness, foolishness, frustration and impatience are also represented by this card. The message with this Minor Arcana card reversed is to stop procrastinating and go after what you want. The world will not just deliver your destiny to you. You have to ride out to meet it. If you want to achieve your dreams you have to seize every opportunity that comes your way. If representing a person, the Page of Pentacles reversed represents a young person, child or person who is young at heart, who is lazy, immature, disloyal, irresponsible, sullen or rebellious, who has little common sense and poor prospects. They may be an Earth sign such as Taurus, Virgo or Capricorn."
+                ]
+            },
+            "name": "Page of Pentacles",
+            "rank": "Page",
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general Tarot spread, the Knight of Pentacles represents common sense, responsibility, practicality, working hard for what you want and finishing what you start. This Minor Arcana card is a wish card that signifies achieving your wishes or dreams through perseverance and determination. It can also represent being environmentally conscientious and an animal lover. It can also signify defending and protecting your home, family or those close to you. As a person, the Knight of Pentacles represents an adult (usually 20-35 year of age and usually male) who is stable, reliable, loyal and patient. He is ambitious, hard-working, protective and honest. He can also be conservative and a bit stubborn. The Knight of Pentacles may have issues with showing emotions. Usually, this is because he may have been raised by a father figure who had difficulty showing affection (an Emperor or King of Pentacles type of father figure). The Knight shows he cares by working hard to provide for the people he loves much like the father or male role model in his life did. He may be an Earth sign such as Taurus, Virgo or Capricorn."
+                ],
+                "shadow": [
+                    "In a general Tarot spread, the Knight of Pentacles reversed can represent a lack of common sense, irresponsibility, impracticality, wanting the rewards and recognition without being willing to put the work in and not finishing what you started. This Minor Arcana card reversed signifies that your dreams or wishes will slip through your fingers if you do not start putting in the effort required to make them a reality. It can also represent being environmentally unconscientious and abusive towards or neglectful of animals. As a person, the Knight of Pentacles reversed represents an adult (usually 20-35 year of age and usually male) who is unstable, unreliable, disloyal and impatient. He is can be extremely lazy, weak, a gambler, a loser or a slob. Alternatively, he can be the other extreme of a workaholic who is obsessed with money, power, work, materialism or image. He can be dull, pessimistic and boring and ultra -conservative or completely obstinate to other people's views. He may be an Earth sign such as Taurus, Virgo or Capricorn."
+                ]
+            },
+            "name": "Knight of Pentacles",
+            "rank": "Knight",
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general Tarot spread, the Queen of Pentacles represents high social status, prosperity, wealth, luxury, success and financial independence. This Minor Arcana card tells you to approach issues in a sensible, practical, no-nonsense manner and you will be successful. She tells you to set goals and work towards them steadily. As a person, the Queen of Pentacles represents a mature female or feminine person who is generous and usually wealthy or financially independent, has an affinity for the finer things in life and is good in business. She is a social butterfly with high social status and is pleasant, charming, loyal, socially poised, organised, down to earth and practical. She is a wonderful, nurturing mother and a good cook or hostess. People feel welcome in her home, secure in her company and able to confide in her. She may be an Earth sign such as Taurus, Virgo or Capricorn."
+                ],
+                "shadow": [
+                    "In a general Tarot spread, the Queen of Pentacles represents a lack of social status, poverty, failure, dependence and being out of control. This Minor Arcana card tells warns you that if you do not keep your feet on the ground you could lose everything you value. She signifies a lack of common sense or an impractical, dangerous or chaotic approach to life. As a person, the Queen of Pentacles reversed can represent a mature female or feminine person who is mean-spirited and materialistic and who can be spoiled, shallow and pretentious. She can be possessive, jealous, envious or a social climber or in her extreme state, a manipulative sociopath who will step on anyone to get what she wants. She can simply represent a woman who is unpleasant to be around, disorganised, lazy, bad with money or boring. On the other hand, when reversed this woman can appear charming and pleasant but beneath her charm there is a sinister undertone of disloyalty, evilness, wickedness, chaos and danger. The Queen of Pentacles can represent a cheating woman or a prostitute. She can be a neglectful or abusive mother and a bad cook or a careless hostess. She may be an Earth sign such as Taurus, Virgo or Capricorn."
+                ]
+            },
+            "name": "Queen of Pentacles",
+            "rank": "Queen",
+            "suit": "Pentacles"
+        },
+        {
+            "meanings": {
+                "light": [
+                    "In a general Tarot spread, the King of Pentacles represents trying to better oneself, hard work paying off, reaching goals, seeing things through to the end and being proud of your achievements. This Minor Arcana card can represent reaching high social status and being enterprising, resourceful and principled. As a person, the King of Pentacles represents a mature successful grounded man who is good in business, patient, stable, secure, loyal and a hard worker. He is a generous provider but is not careless or frivolous with his wealth and he doesn't gamble or take silly risks. He is conservative and can be stubborn but he is also faithful and a protector. He is a great father in terms of providing stability and security but can come across as a bit blunt when dealing with emotional matters as he copes better with practical matters. He may be an Earth sign such as Taurus, Virgo or Capricorn."
+                ],
+                "shadow": [
+                    "In a general Tarot spread, the King of Pentacles reversed represents losing your grip on things, not reaching your goals or not seeing things through to the end. This Minor Arcana card reversed can represent losing your social status, failure or lack of success, being impractical, unprincipled, taking ill-advised risks, making hasty decisions or having poor judgement. As a person, the King of Pentacles reversed can represent an older unsuccessful or ungrounded man. There can be two extremes of the King of Pentacles in a reversed position. The first is an older male who is a slob, lazy, bad in business or has poor judgement. This King is usually broke, a gambler or unsuccessful risk-taker who is weak and in his extreme negative a complete deadbeat. The other is an older male who is ruthless and corrupt. His greed knows no bounds. He is usually unfaithful. He is a hypocritical cheater who will try to hold everyone around him to exacting standards that he would never reach himself. He is a miser and a money grabber and a terrible father as his obsession with materialism makes him cold, uncaring and unsupportive. He may be an Earth sign such as Taurus, Virgo or Capricorn."
+                ]
+            },
+            "name": "King of Pentacles",
+            "rank": "King",
+            "suit": "Pentacles"
+        }
+    ]
+}

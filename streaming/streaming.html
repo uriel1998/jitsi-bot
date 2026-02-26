@@ -11,26 +11,17 @@
   </head>
 
   <body>
-    <div><h1>Ponpoko</h1><p>Streaming Audio</p></div>
+    <h1>Ponpoko</h1>
     <label for="targetJitsi">Conference URL: </label>
     <input style="width: 20vw" type="url" id="targetJitsi" />
-    <br />
     <button id="start_bot_button">Start Bot.</button>
     <br />
-    <h3>Streaming Control</h3>
     <audio
       src="../audio/nggyu.mp3"
       controls
       id="streaming"
       crossorigin="anonymous"
     ></audio>
-    <video
-      id="videoboard"
-      crossorigin="anonymous"
-      controls
-      src="../video/big-buck-bunny-sample.mp4"
-    ></video>
-    <br />
     <form id="streamingInputForm">
       <label for="streamingSourceInput">Audio Source Input</label>
       <input
@@ -43,7 +34,6 @@
       />
       <button type="submit" id="setStreamingSource">Set Source</button>
     </form>
-    <br />
     <div class="wrapper">
       <section id="logOuter">
         <h3>Jitsi Bot Log</h3>
