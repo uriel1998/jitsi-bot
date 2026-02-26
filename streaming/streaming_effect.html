@@ -28,19 +28,13 @@
       id="streaming"
       crossorigin="anonymous"
     ></audio>
-    <video
-      id="videoboard"
-      crossorigin="anonymous"
-      controls
-      src="/video/fItAll.mp4"
-    ></video>
     <br />
     <label for="streamingSourceInput">Audio Source Input</label>
     <input
       type="url"
       name="streamingSourceInput"
       id="streamingSourceInput"
-      pattern=".*\/\/.*\.mp3"
+      pattern=".*\/\/.*\.(mp3|m4a)"
     />
     <button id="setStreamingSource">Set Source</button>
     <br />

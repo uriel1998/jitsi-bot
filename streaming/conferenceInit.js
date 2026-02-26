@@ -100,17 +100,6 @@ function initStreamingTrack() {
     })
 }
 
-function initVideoboardTrack() {
-  console.log('Initializing local video Track(s).')
-  JitsiMeetJS.createLocalTracks({ devices: ['video'] })
-    .then((tracks) => {
-      onLocalTracks({ type: 'video', tracks })
-    })
-    .catch((error) => {
-      throw error
-    })
-}
-
 streaming.addEventListener('play', () => {
   room.setDisplayName(
     `▶ ${getStreamingCurrentTrackName()} - ${options.streamingDisplayName}`
@@ -128,13 +117,6 @@ streaming.addEventListener('pause', () => {
     `⏸ ${getStreamingCurrentTrackName()} - ${options.streamingDisplayName}`
   )
 })
-
-// Video Related setup Stuff
-
-function playVideo() {
-  initVideoboardTrack()
-  videoboard.play()
-}
 
 /* -------------------------
  * Command Handler Functions
@@ -237,7 +219,6 @@ const help = (userId) => {
     '/loadTrack URL',
     '/pause',
     '/play',
-    '/playVideo',
     '/reload',
     '/toggleLoop',
     '/vol+',
@@ -261,7 +242,6 @@ const commandHandler = {
   '/loadTrack': loadTrack,
   '/pause': pause,
   '/play': play,
-  '/playVideo': playVideo,
   '/reload': reloadBot,
   '/toggleLoop': toggleLoop,
   '/togglePlayOnJoin': togglePlayOnJoin,

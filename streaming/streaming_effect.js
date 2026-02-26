@@ -3,16 +3,11 @@
  */
 
 const streaming = document.querySelector('#streaming')
-const videoboard = document.querySelector('#videoboard')
 
 streaming.volume = 0.4
-videoboard.volume = 0.4
 
-let gainNode = undefined
 let streamingContext = undefined
-
 let destStream = undefined
-
 let initDone = false
 
 async function initAudio() {
@@ -29,17 +24,22 @@ async function initAudio() {
 
   inputNode.connect(destStream)
 
+  // Mix in the audio element alongside the microphone
+  if (streaming) {
+    const streamingSource = audioContext.createMediaElementSource(streaming)
+    streamingSource.connect(destStream)
+  }
+
   log('InitAudio - Preparing Audio Stream')
   log(`AudioContext allowed: ${audioContext.state !== 'suspended'}`)
 
   let delayNode = audioContext.createDelay()
-
-  delayNode.delayTime.value = 0.05 // 1000 ms
+  delayNode.delayTime.value = 0.05
   inputNode.connect(delayNode)
   delayNode.connect(destStream)
 
   let delayNode2 = audioContext.createDelay()
-  delayNode2.delayTime.value = 0.05 // 1000 ms
+  delayNode2.delayTime.value = 0.05
   delayNode.connect(delayNode2)
   delayNode2.connect(destStream)
 
@@ -52,11 +52,6 @@ async function initAudio() {
     await audioContext.resume()
     if (audio) {
       return destStream.stream
-    }
-    if (video) {
-      const videoStream = new MediaStream()
-      videoStream.addTrack(videoboard.captureStream().getVideoTracks()[0])
-      return videoStream
     }
     return destStream.stream
   }
@@ -80,7 +75,10 @@ options.streamingDisplayName = 'Ponpoko'
 options.avatarUrl = window.location.origin + '/images/streaming_icon.png'
 
 function getStreamingCurrentTrackName() {
-  let splittedPath = new URL(streaming.src).pathname.split('/')
-
-  return splittedPath[splittedPath.length - 1].split('.')[0]
+  try {
+    let splittedPath = new URL(streaming.src).pathname.split('/')
+    return splittedPath[splittedPath.length - 1].split('.')[0]
+  } catch {
+    return ''
+  }
 }

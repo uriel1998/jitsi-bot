@@ -97,10 +97,6 @@ video {
   margin: 0.5rem 0;
 }
 
-#videoboard {
-  max-width: 20em;
-  display: block;
-}
 
 /* Soundboard source form */
 #streamingInputForm {

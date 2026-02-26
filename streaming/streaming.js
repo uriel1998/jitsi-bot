@@ -3,16 +3,11 @@
  */
 
 const streaming = document.querySelector('#streaming')
-const videoboard = document.querySelector('#videoboard')
 
 streaming.volume = 0.1
-videoboard.volume = 0.1
 
-let gainNode = undefined
 let streamingContext = undefined
-
 let destStream = undefined
-
 let initDone = false
 
 let playJoinSound = true
@@ -20,33 +15,27 @@ let playJoinSound = true
 function initAudio() {
   if (!streaming) {
     console.error('Error with Streaming Audio Element.')
+    return
   }
 
   const audioContext = new AudioContext()
   streamingContext = audioContext
-  const videoAudio = audioContext.createMediaElementSource(videoboard)
   const track = audioContext.createMediaElementSource(streaming)
   destStream = audioContext.createMediaStreamDestination()
 
-  videoAudio.connect(destStream)
   track.connect(destStream)
 
   log('InitAudio - Preparing Audio Stream')
   log(`AudioContext allowed: ${audioContext.state !== 'suspended'}`)
+
   navigator.mediaDevices.getUserMedia = async function ({ audio, video }) {
     console.log({ audio, video })
     log(
       'UserMedia is being Accessed. - Returning corresponding context stream.'
     )
-
     await audioContext.resume()
     if (audio) {
       return destStream.stream
-    }
-    if (video) {
-      const videoStream = new MediaStream()
-      videoStream.addTrack(videoboard.captureStream().getVideoTracks()[0])
-      return videoStream
     }
     return destStream.stream
   }
@@ -76,9 +65,12 @@ document
 initAudio()
 
 function getStreamingCurrentTrackName() {
-  let splittedPath = new URL(streaming.src).pathname.split('/')
-
-  return splittedPath[splittedPath.length - 1].split('.')[0]
+  try {
+    let splittedPath = new URL(streaming.src).pathname.split('/')
+    return splittedPath[splittedPath.length - 1].split('.')[0]
+  } catch {
+    return ''
+  }
 }
 
 function printParticipants() {
