@@ -2,25 +2,26 @@
  * Credit: Jimmi Music Bot for Jitsi https://github.com/Music-Bot-for-Jitsi/Jimmi
  */
 
-const soundboard = document.querySelector('#soundboard')
+const recording = document.querySelector('#recording')
 const videoboard = document.querySelector('#videoboard')
 
-soundboard.volume = 0.4
+recording.volume = 0.4
 videoboard.volume = 0.4
 
 let gainNode = undefined
-let soundboardContext = undefined
+let recordingContext = undefined
 
 let destStream = undefined
 
 let initDone = false
 
 async function initAudio() {
-
-  let microphoneStream = await navigator.mediaDevices.getUserMedia({audio:true});
+  let microphoneStream = await navigator.mediaDevices.getUserMedia({
+    audio: true,
+  })
 
   let audioContext = new AudioContext()
-  soundboardContext = audioContext
+  recordingContext = audioContext
 
   let inputNode = audioContext.createMediaStreamSource(microphoneStream)
 
@@ -33,16 +34,15 @@ async function initAudio() {
 
   let delayNode = audioContext.createDelay()
 
-  delayNode.delayTime.value = 0.05 // 1000 ms 
-  inputNode.connect(delayNode);
-  delayNode.connect(destStream);
+  delayNode.delayTime.value = 0.05 // 50 ms
+  inputNode.connect(delayNode)
+  delayNode.connect(destStream)
 
   let delayNode2 = audioContext.createDelay()
-  delayNode2.delayTime.value = 0.05 // 1000 ms 
-  delayNode.connect(delayNode2);
-  delayNode2.connect(destStream);
-  
-  
+  delayNode2.delayTime.value = 0.05 // 50 ms
+  delayNode.connect(delayNode2)
+  delayNode2.connect(destStream)
+
   navigator.mediaDevices.getUserMedia = async function ({ audio, video }) {
     console.log({ audio, video })
     log(
@@ -61,26 +61,22 @@ async function initAudio() {
     return destStream.stream
   }
 
-  initDone = true;
+  initDone = true
 }
 
-document
-  .querySelector('#setSoundboardSource')
-  ?.addEventListener('click', () => {
-    const soundboardSourceInput = document.querySelector(
-      '#soundboardSourceInput'
-    )
-    if (!soundboardSourceInput.validity.valid) {
-      return
-    }
-    soundboard.src = soundboardSourceInput.value
-    soundboardSourceInput.value = ''
-  })
+document.querySelector('#setRecordingSource')?.addEventListener('click', () => {
+  const recordingSourceInput = document.querySelector('#recordingSourceInput')
+  if (!recordingSourceInput.validity.valid) {
+    return
+  }
+  recording.src = recordingSourceInput.value
+  recordingSourceInput.value = ''
+})
 
 initAudio()
 
-function getSoundboardCurrentTrackName() {
-  let splittedPath = new URL(soundboard.src).pathname.split('/')
+function getRecordingCurrentTrackName() {
+  let splittedPath = new URL(recording.src).pathname.split('/')
 
   return splittedPath[splittedPath.length - 1].split('.')[0]
 }

@@ -1,16 +1,15 @@
 <!doctype html>
 <html>
   <head>
-    <script src="jquery.min.js"></script>
+    <script src="../jitsi-bot/jquery.min.js"></script>
     <title>Chatbot</title>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="worker-src 'self';" />
-    <link rel="stylesheet" href="jitsi.css" />
+    <link rel="stylesheet" href="chatbot.css" />
   </head>
 
   <body>
-    <h1>Kobuko</h1>
-    <p>The Chatbot</p>
+    <h1>Jitsi Bot</h1>
     <label for="targetJitsi">Conference URL: </label>
     <input style="width: 20vw" type="url" id="targetJitsi" />
     <br />
@@ -31,10 +30,10 @@
   </body>
   <script id="libJitsiMeet"></script>
   <script id="jitsiConfig"></script>
-  <script src="defaults.js"></script>
-  <script src="sharedWorker.js"></script>
-  <script src="botFunctions.js"></script>
-  <script src="botCommands.js"></script>
-  <script src="pageParams.js"></script>
+  <script src="../jitsi-bot/defaults.js"></script>
+  <script src="../jitsi-bot/sharedWorker.js"></script>
+  <script src="../jitsi-bot/botFunctions.js"></script>
+  <script src="../jitsi-bot/botCommands.js"></script>
+  <script src="../jitsi-bot/pageParams.js"></script>
   <script id="confInit"></script>
 </html>

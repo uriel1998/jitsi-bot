@@ -258,6 +258,16 @@ const joinStreamingBot = (userId) => {
   window.open('../streaming/streaming_effect.html' + url.search, '_blank')
 }
 
+const joinChatBot = (userId) => {
+  const url = new URL(window.location.href)
+  window.open('../chatbot/chatbot.html' + url.search, '_blank')
+}
+
+const joinRecordingBot = (userId) => {
+  const url = new URL(window.location.href)
+  window.open('../recording/recording.html' + url.search, '_blank')
+}
+
 const setAdminPass = (userId, argument) => {
   const [oldPass, newPass] = argument.split(' ')
   if (!roomBotOptions.adminPass) {
@@ -498,6 +508,20 @@ const commandHandler = {
     syntax: '/joinStreamingBot',
     requirements: 'None',
     example: '/joinStreamingBot',
+  },
+  '/joinChatBot': {
+    handler: joinChatBot,
+    helptext: 'Attempts to spawn a Chatbot in the current room.',
+    syntax: '/joinChatBot',
+    requirements: 'None',
+    example: '/joinChatBot',
+  },
+  '/joinRecordingBot': {
+    handler: joinRecordingBot,
+    helptext: 'Attempts to spawn a Recording Bot in the current room.',
+    syntax: '/joinRecordingBot',
+    requirements: 'None',
+    example: '/joinRecordingBot',
   },
   '/sendMessage': {
     handler: sendMessage,

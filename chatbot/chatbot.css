@@ -1,0 +1,155 @@
+/* Dracula Theme */
+:root {
+  --bg: #282a36;
+  --bg-alt: #1e1f29;
+  --surface: #44475a;
+  --fg: #f8f8f2;
+  --comment: #6272a4;
+  --cyan: #8be9fd;
+  --green: #50fa7b;
+  --orange: #ffb86c;
+  --pink: #ff79c6;
+  --purple: #bd93f9;
+  --red: #ff5555;
+  --yellow: #f1fa8c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 1rem 2rem;
+}
+
+h1 {
+  color: var(--purple);
+}
+
+h3 {
+  color: var(--pink);
+}
+
+pre {
+  background-color: var(--bg-alt);
+  color: var(--comment);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  border-left: 3px solid var(--purple);
+  font-size: 0.85rem;
+  overflow-x: auto;
+}
+
+label {
+  color: var(--cyan);
+  font-weight: bold;
+}
+
+input[type='url'],
+input[type='text'] {
+  background-color: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--comment);
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input[type='url']:focus,
+input[type='text']:focus {
+  border-color: var(--purple);
+}
+
+button {
+  background-color: var(--purple);
+  color: var(--bg);
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: var(--pink);
+}
+
+button#clearLog {
+  background-color: var(--surface);
+  color: var(--fg);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+}
+
+button#clearLog:hover {
+  background-color: var(--comment);
+}
+
+.wrapper {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#logOuter {
+  width: 60%;
+  background-color: var(--bg-alt);
+  border: 1px solid var(--surface);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+
+#participantsOuter {
+  width: 30%;
+  background-color: var(--bg-alt);
+  border: 1px solid var(--surface);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+
+.participants {
+  flex: auto;
+}
+
+#log {
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+#log > div {
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-bottom: 2px;
+}
+
+/* Log entry classes */
+.privateMessage {
+  background-color: #44295a;
+  color: var(--pink);
+}
+
+.publicMessage {
+  background-color: #1e3a4a;
+  color: var(--cyan);
+}
+
+.event {
+  background-color: #1e3a2a;
+  color: var(--green);
+}
+
+.internal {
+  background-color: var(--surface);
+  color: var(--comment);
+}
+
+/* Participant list */
+.isModerator {
+  color: var(--purple);
+  font-weight: bold;
+}
