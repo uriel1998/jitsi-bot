@@ -71,3 +71,28 @@ disableGuest // (No Value)
 
 [def]: images/privateMessage_help.png
 [showcase]: images/Mini-Showcase.png
+
+Concatenating recording chunks with ffmpeg
+
+Place all chunk files in one directory with names like:
+recording_YYYYMMDD_HHMMSS_part0001.webm
+recording_YYYYMMDD_HHMMSS_part0002.webm
+...
+
+1) Create a concat list file named chunk_list.txt
+Each line must reference one chunk file in order:
+file 'recording_YYYYMMDD_HHMMSS_part0001.webm'
+file 'recording_YYYYMMDD_HHMMSS_part0002.webm'
+
+2) Run ffmpeg
+
+Windows (PowerShell):
+ffmpeg -f concat -safe 0 -i .\chunk_list.txt -c copy .\recording_merged.webm
+
+Linux (bash):
+ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
+
+macOS (zsh/bash):
+ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
+
+If your files are out of order, sort them by part number before creating chunk_list.txt.

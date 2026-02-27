@@ -71,30 +71,6 @@ const segmentDurationMs = 5 * 60 * 1000
 let pingIntervalId = undefined
 let audioPingEnabled = true
 let cuePlaybackQueue = Promise.resolve()
-const CONCAT_AUDIO_GUIDE_TEXT = `Concatenating recording chunks with ffmpeg
-
-Place all chunk files in one directory with names like:
-recording_YYYYMMDD_HHMMSS_part0001.webm
-recording_YYYYMMDD_HHMMSS_part0002.webm
-...
-
-1) Create a concat list file named chunk_list.txt
-Each line must reference one chunk file in order:
-file 'recording_YYYYMMDD_HHMMSS_part0001.webm'
-file 'recording_YYYYMMDD_HHMMSS_part0002.webm'
-
-2) Run ffmpeg
-
-Windows (PowerShell):
-ffmpeg -f concat -safe 0 -i .\chunk_list.txt -c copy .\recording_merged.webm
-
-Linux (bash):
-ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
-
-macOS (zsh/bash):
-ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
-
-If your files are out of order, sort them by part number before creating chunk_list.txt.`
 
 function getCueSourceCandidates(primaryCueUrl, cueFileName) {
   const sameOriginCue = new URL(`/audio/${cueFileName}`, window.location.origin).toString()
@@ -127,32 +103,17 @@ function getRecorderMimeType() {
 }
 
 async function promptForRecordingTarget() {
-  if (!window.showDirectoryPicker) {
-    log('Directory selection is not supported in this browser.')
+  const suggestedName = getDefaultRecordingFilename()
+  const userName = window.prompt('Recording filename (.webm):', suggestedName)
+  if (userName === null) {
+    log('Recording setup was cancelled.')
     return undefined
   }
-
-  const suggestedPrefix = `recording_${makeTimestamp()}`
-  try {
-    const directoryHandle = await window.showDirectoryPicker()
-    const userPrefix = window.prompt(
-      'Recording prefix (used for chunk filenames):',
-      suggestedPrefix
-    )
-    if (userPrefix === null) {
-      log('Recording setup was cancelled.')
-      return undefined
-    }
-    const prefix = (userPrefix.trim() || suggestedPrefix).replace(/\.webm$/i, '')
-    recorderTargetName = `${prefix}.webm`
-    return { mode: 'directory', directoryHandle, prefix }
-  } catch (error) {
-    if (error?.name === 'AbortError') {
-      log('Recording directory selection was cancelled.')
-      return undefined
-    }
-    throw error
-  }
+  const safeName = userName.trim().endsWith('.webm')
+    ? userName.trim()
+    : `${userName.trim() || 'recording'}.webm`
+  recorderTargetName = safeName
+  return { mode: 'download', filename: safeName }
 }
 
 function waitForPlaybackEnd(audioElement) {
@@ -344,23 +305,16 @@ function startMediaRecorder() {
 async function saveRecordedChunks(target, chunks, segmentIndex) {
   const mimeType = getRecorderMimeType() || 'audio/webm'
   const blob = new Blob(chunks, { type: mimeType })
-  const fileName = `${target.prefix}_part${String(segmentIndex).padStart(4, '0')}.webm`
-  const fileHandle = await target.directoryHandle.getFileHandle(fileName, {
-    create: true,
-  })
-  const writable = await fileHandle.createWritable()
-  await writable.write(blob)
-  await writable.close()
+  const rawName = target.filename || recorderTargetName || getDefaultRecordingFilename()
+  const baseName = rawName.replace(/\.webm$/i, '')
+  const fileName = `${baseName}_part${String(segmentIndex).padStart(4, '0')}.webm`
+  const downloadUrl = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = downloadUrl
+  a.download = fileName
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
   return fileName
-}
-
-async function writeConcatGuideToDirectory(directoryHandle) {
-  const fileHandle = await directoryHandle.getFileHandle('concat_audio.txt', {
-    create: true,
-  })
-  const writable = await fileHandle.createWritable()
-  await writable.write(CONCAT_AUDIO_GUIDE_TEXT)
-  await writable.close()
 }
 
 let recordingTarget = undefined
@@ -383,8 +337,6 @@ async function startAutomatedRecordingFlow() {
       segmentRecordingActive = false
       return false
     }
-    await writeConcatGuideToDirectory(recordingTarget.directoryHandle)
-    log('Wrote concat_audio.txt into the selected recording directory.')
 
     await playRecordingCue('on')
     const started = startMediaRecorder()

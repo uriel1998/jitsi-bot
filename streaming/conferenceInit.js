@@ -113,6 +113,32 @@ function initStreamingTrack() {
     })
 }
 
+function startStreamPlaybackWithRetry() {
+  const maxAttempts = 5
+  const attemptDelayMs = 1000
+  let attempt = 0
+
+  const tryPlay = () => {
+    attempt += 1
+    const playPromise = streaming.play()
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch((error) => {
+        if (attempt < maxAttempts) {
+          setTimeout(tryPlay, attemptDelayMs)
+          return
+        }
+        log(
+          `Auto-play failed after ${maxAttempts} attempts: ${
+            error?.message || error
+          }`
+        )
+      })
+    }
+  }
+
+  tryPlay()
+}
+
 streaming.addEventListener('play', () => {
   room.setDisplayName(
     `▶ ${getStreamingCurrentTrackName()} - ${options.streamingDisplayName}`
@@ -409,6 +435,7 @@ function roomInit() {
     room.setLocalParticipantProperty('avatarUrl', avatarUrl)
 
     setTimeout(initStreamingTrack, 2000)
+    setTimeout(startStreamPlaybackWithRetry, 800)
 
     Object.values(localTracks).forEach((tracks) => {
       tracks.forEach((track) => publishLocalTrack(track))

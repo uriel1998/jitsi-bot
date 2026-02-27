@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="recording.css" />
+  <title>Finishing: Ritson</title>
+  <meta http-equiv="Content-Security-Policy" content="worker-src 'self'; media-src *">
+  <meta charset="UTF-8" />
+  <style>
+    .loader-layout {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .left-side {
+      flex: 0 0 25%;
+    }
+
+    .right-side {
+      flex: 0 0 75%;
+    }
+
+    .left-side img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .loader-layout {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .left-side,
+      .right-side {
+        flex: 0 0 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loader-layout">
+    <div class="right-side">
+      <h1>Ritson</h1>
+      <p>Your recording is in chunks in your download directory. To put them back together using ffmpeg, place all chunk files in one directory with names like:</p>
+      <pre>
+recording_YYYYMMDD_HHMMSS_part0001.webm
+recording_YYYYMMDD_HHMMSS_part0002.webm
+</pre>
+<p>If your files are out of order, sort them by part number before creating chunk_list.txt.<br />Then create a concat list file named chunk_list.txt, where each line must reference one chunk file in order:</p>
+<pre>
+file 'recording_YYYYMMDD_HHMMSS_part0001.webm'
+file 'recording_YYYYMMDD_HHMMSS_part0002.webm'
+</pre>
+<p> Then you run ffmpeg: </p>
+<pre>
+Windows (PowerShell):
+ffmpeg -f concat -safe 0 -i .\chunk_list.txt -c copy .\recording_merged.webm
+
+Linux (bash):
+ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
+
+macOS (zsh/bash):
+ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
+</pre>
+      
+      <p>When you've got those instructions done, click the button below to reload the bot.</p>
+      <a href="recording_loader.html"><button>Click here</button></a>
+    </div>
+    <div class="left-side">
+      <img src="../images/switchboard_icon.png" title="Recording" />
+    </div>
+  </div>
+</body>
+
+</html>

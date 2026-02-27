@@ -210,10 +210,31 @@ const stopRecordingFromUi = async () => {
   try {
     await window.stopAutomatedRecordingFlow?.()
     room?.sendMessage('Recording stopped from bot UI.')
+    document.querySelector('#start_recording_button')?.removeAttribute('disabled')
     disconnectBotFromConference()
+    window.location.href = '/recording/recording_ender.html'
   } catch (error) {
     log(`Failed to stop recording from UI: ${error?.message || error}`)
     console.error('Failed to stop automated recording flow from UI:', error)
+  }
+}
+
+const startRecordingFromUi = async () => {
+  if (!roomJoined) {
+    log('Cannot start recording yet: conference is not joined.')
+    return
+  }
+  try {
+    const started = await window.startAutomatedRecordingFlow?.()
+    if (started) {
+      room?.sendMessage('Recording started from bot UI.')
+      document
+        .querySelector('#start_recording_button')
+        ?.setAttribute('disabled', 'disabled')
+    }
+  } catch (error) {
+    log(`Failed to start recording from UI: ${error?.message || error}`)
+    console.error('Failed to start automated recording flow from UI:', error)
   }
 }
 
@@ -504,12 +525,7 @@ function roomInit() {
     roomJoined = true
 
     setTimeout(initRecordingTrack, 2000)
-    setTimeout(async () => {
-      const started = await window.startAutomatedRecordingFlow?.()
-      if (started) {
-        room.sendMessage('Recording started from bot UI.')
-      }
-    }, 500)
+    document.querySelector('#start_recording_button')?.removeAttribute('disabled')
 
     Object.values(localTracks).forEach((tracks) => {
       tracks.forEach((track) => publishLocalTrack(track))
@@ -525,6 +541,9 @@ function roomInit() {
 
   room.on(JitsiMeetJS.events.conference.CONFERENCE_LEFT, () => {
     roomJoined = false
+    document
+      .querySelector('#start_recording_button')
+      ?.setAttribute('disabled', 'disabled')
   })
 
   room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (userId, message) => {
@@ -717,6 +736,9 @@ document.querySelector('#start_bot_button')?.addEventListener('click', openBot)
 document
   .querySelector('#stop_bot_button')
   ?.addEventListener('click', stopRecordingFromUi)
+document
+  .querySelector('#start_recording_button')
+  ?.addEventListener('click', startRecordingFromUi)
 document
   .querySelector('#clearLog')
   ?.addEventListener(
