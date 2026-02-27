@@ -454,6 +454,10 @@ function roomInit() {
   })
 
   room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (userId, message) => {
+    if (!roomJoined || !bot_started) {
+      return
+    }
+
     log(
       'Message received: \n' +
         (getNameById(userId) || getStatsIDById(userId) || userId) +
@@ -465,6 +469,10 @@ function roomInit() {
   room.on(
     JitsiMeetJS.events.conference.PRIVATE_MESSAGE_RECEIVED,
     (userId, message) => {
+      if (!roomJoined || !bot_started) {
+        return
+      }
+
       log(
         'Private Message recieved: \n' +
           (getNameById(userId) || getStatsIDById(userId) || userId) +
