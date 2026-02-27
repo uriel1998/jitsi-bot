@@ -1,6 +1,28 @@
 let reconnectTimeoutId = undefined
 let pendingShardReconnect = false
 
+function applyTextOnlyMode() {
+  // Force text-only behavior for chatbot sessions.
+  options = {
+    ...options,
+    startAudioMuted: 1,
+    startWithAudioMuted: true,
+    startVideoMuted: 1,
+    startWithVideoMuted: true,
+    startSilent: true,
+    disableAudioLevels: true,
+  }
+}
+
+function enforceConferenceTextOnlyMode() {
+  try {
+    room.setAudioMute?.(true)
+    room.setVideoMute?.(true)
+  } catch (error) {
+    console.error('Failed to enforce mute state', error)
+  }
+}
+
 function scheduleReconnect(delayMs, reason = 'unspecified') {
   if (reconnectTimeoutId) {
     clearTimeout(reconnectTimeoutId)
@@ -105,6 +127,7 @@ function roomInit() {
 
   const onConferenceJoined = (ev) => {
     log('Conference Joined')
+    enforceConferenceTextOnlyMode()
 
     bot_started = true
     roomJoined = true
@@ -181,25 +204,41 @@ function roomInit() {
     }
   )
 
-  room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (userId, message) => {
-    log(
-      'Message received: \n\t' +
-        (getNameById(userId) || getStatsIDById(userId) || userId) +
-        ': ' +
-        message,
-      LOGCLASSES.PUBLIC_MESSAGE
-    )
-    if (message.startsWith('/')) {
-      // Possible Slash Command, write user a private message.
-      room.sendMessage(
-        'Potenial slash command detected. I only react to private messages.\nPlease send the command again as a private message to me.\nYou can use /help for a list of commands.',
-        userId
+  room.on(
+    JitsiMeetJS.events.conference.MESSAGE_RECEIVED,
+    async (userId, message) => {
+      if (!roomJoined || !bot_started) {
+        return
+      }
+
+      log(
+        'Message received: \n\t' +
+          (getNameById(userId) || getStatsIDById(userId) || userId) +
+          ': ' +
+          message,
+        LOGCLASSES.PUBLIC_MESSAGE
       )
+
+      if (await handleBangCommand(userId, message, false)) {
+        return
+      }
+
+      if (message.startsWith('/')) {
+        // Possible Slash Command, write user a private message.
+        room.sendMessage(
+          'Potenial slash command detected. I only react to private messages.\nPlease send the command again as a private message to me.\nYou can use /help for a list of commands.',
+          userId
+        )
+      }
     }
-  })
+  )
   room.on(
     JitsiMeetJS.events.conference.PRIVATE_MESSAGE_RECEIVED,
-    (userId, message) => {
+    async (userId, message) => {
+      if (!roomJoined || !bot_started) {
+        return
+      }
+
       log(
         'Private Message recieved: \n\t' +
           (getNameById(userId) || getStatsIDById(userId) || userId) +
@@ -207,6 +246,10 @@ function roomInit() {
           message,
         LOGCLASSES.PRIVATE_MESSAGE
       )
+
+      if (await handleBangCommand(userId, message, true)) {
+        return
+      }
 
       const firstSpaceIndex = message.indexOf(' ')
       function getCommand() {
@@ -367,6 +410,21 @@ function roomInit() {
     console.log(`${track.getType()} - ${track.isMuted()}`)
   })
 
+  room.on(JitsiMeetJS.events.conference.TRACK_ADDED, (track) => {
+    if (!track || track.isLocal?.()) {
+      return
+    }
+
+    // Drop all incoming A/V tracks: chatbot is text-only (deaf/blind).
+    if (track.getType?.() === 'audio' || track.getType?.() === 'video') {
+      try {
+        track.dispose?.()
+      } catch (error) {
+        console.error('Failed disposing remote track', error)
+      }
+    }
+  })
+
   room.on(
     JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED,
     (userId, newName) => {
@@ -436,6 +494,8 @@ function main() {
   if (bot_started) {
     return
   }
+
+  applyTextOnlyMode()
 
   JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.LOG)
 
