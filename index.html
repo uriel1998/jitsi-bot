@@ -78,7 +78,7 @@
 
       .panel iframe {
         width: 100%;
-        min-height: 420px; /* tweak as desired */
+        min-height: 320px; /* tweak as desired */
         border: 0;
         border: 1px solid var(--surface);
         border-radius: 4px;
@@ -87,7 +87,7 @@
       @media screen and (max-width: 768px) {
         /* stack panels one per row on mobile */
         .container2 {
-          grid-template-columns: 1fr;
+
           width: 95% !important;
         }
 
@@ -103,7 +103,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>     
-    <div class="header"><h1>hello there my pretties</h1></div></div>
+    <div class="header"><h1>hello there my pretties</h1><p>Do not have this page in an iframe itself, such as a sidebar tool.</p></div></div>
  
       <!-- Row 1, left: streaming -->
       <div class="panel">
@@ -126,7 +126,7 @@
       <!-- Row 2, right: switchboard -->
       <div class="panel">
 
-        <iframe src="recording/recording_loader.html"></iframe>
+        <iframe allow="microphone *" src="recording/recording_loader.html"></iframe>
       </div>
     </div>
   </body>

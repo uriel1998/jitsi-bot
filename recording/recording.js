@@ -33,6 +33,9 @@ const videoboard = ensureHiddenMediaElement('#videoboard', 'video', {
 })
 const recordingLevelBar = document.querySelector('#recordingLevelBar')
 const recordingLevelValue = document.querySelector('#recordingLevelValue')
+const nativeGetUserMedia = navigator.mediaDevices?.getUserMedia
+  ? navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices)
+  : undefined
 
 recording.volume = 0.1
 videoboard.volume = 0.1
@@ -62,6 +65,9 @@ const pendingRemoteAudioTracks = new Set()
 let recordingLevelAnalyser = undefined
 let recordingLevelData = undefined
 let recordingLevelRafId = undefined
+let selectedMicrophoneStream = undefined
+let selectedMicrophoneSourceNode = undefined
+let selectedMicrophoneGainNode = undefined
 
 const recordingOnCueUrl = 'http://127.0.0.1:5500/audio/_on.webm'
 const recordingOffCueUrl = 'http://127.0.0.1:5500/audio/_off.webm'
@@ -319,6 +325,153 @@ async function saveRecordedChunks(target, chunks, segmentIndex) {
 
 let recordingTarget = undefined
 
+function disconnectSelectedMicrophone() {
+  if (selectedMicrophoneSourceNode) {
+    try {
+      selectedMicrophoneSourceNode.disconnect()
+    } catch (error) {
+      console.log('Failed to disconnect selected microphone source node', error)
+    }
+  }
+  if (selectedMicrophoneGainNode) {
+    try {
+      selectedMicrophoneGainNode.disconnect()
+    } catch (error) {
+      console.log('Failed to disconnect selected microphone gain node', error)
+    }
+  }
+  if (selectedMicrophoneStream) {
+    for (const track of selectedMicrophoneStream.getTracks()) {
+      try {
+        track.stop()
+      } catch (error) {
+        console.log('Failed to stop selected microphone track', error)
+      }
+    }
+  }
+  selectedMicrophoneStream = undefined
+  selectedMicrophoneSourceNode = undefined
+  selectedMicrophoneGainNode = undefined
+}
+
+function connectSelectedMicrophone(stream) {
+  if (!stream || !recordingContext || !recordingInputGainNode) {
+    return false
+  }
+
+  disconnectSelectedMicrophone()
+  try {
+    selectedMicrophoneStream = stream
+    selectedMicrophoneSourceNode = recordingContext.createMediaStreamSource(stream)
+    selectedMicrophoneGainNode = recordingContext.createGain()
+    selectedMicrophoneGainNode.gain.value = 1
+    selectedMicrophoneSourceNode.connect(selectedMicrophoneGainNode)
+    selectedMicrophoneGainNode.connect(recordingInputGainNode)
+    return true
+  } catch (error) {
+    log(`Failed to connect selected microphone: ${error?.message || error}`)
+    disconnectSelectedMicrophone()
+    return false
+  }
+}
+
+async function promptForMicrophoneSelection() {
+  if (!nativeGetUserMedia) {
+    log('Microphone selection unavailable: getUserMedia is not supported.')
+    return false
+  }
+
+  let initialStream = undefined
+  try {
+    initialStream = await nativeGetUserMedia({ audio: true })
+  } catch (error) {
+    log(`Unable to access microphone: ${error?.message || error}`)
+    if (window.self !== window.top) {
+      log(
+        'This page is running in an iframe. Ensure the iframe includes allow="microphone *".'
+      )
+    }
+    return false
+  }
+
+  try {
+    const devices = (await navigator.mediaDevices.enumerateDevices()).filter(
+      (device) => device.kind === 'audioinput'
+    )
+
+    if (!devices.length) {
+      log('No microphone devices found.')
+      for (const track of initialStream.getTracks()) {
+        track.stop()
+      }
+      return false
+    }
+
+    const listText = devices
+      .map((device, index) => `${index + 1}. ${device.label || `Microphone ${index + 1}`}`)
+      .join('\n')
+    const userChoice = window.prompt(
+      `Select microphone for this recording:\n${listText}\n\nEnter number (default: 1):`,
+      '1'
+    )
+
+    if (userChoice === null) {
+      log('Recording start cancelled during microphone selection.')
+      for (const track of initialStream.getTracks()) {
+        track.stop()
+      }
+      return false
+    }
+
+    const parsedIndex = Number.parseInt(userChoice, 10)
+    const selectedIndex =
+      Number.isInteger(parsedIndex) && parsedIndex >= 1 && parsedIndex <= devices.length
+        ? parsedIndex - 1
+        : 0
+    const selectedDevice = devices[selectedIndex]
+
+    let selectedStream = initialStream
+    if (selectedDevice?.deviceId) {
+      try {
+        selectedStream = await nativeGetUserMedia({
+          audio: {
+            deviceId: { exact: selectedDevice.deviceId },
+          },
+        })
+      } catch (error) {
+        log(
+          `Unable to open selected microphone, using default: ${
+            error?.message || error
+          }`
+        )
+      }
+    }
+
+    if (selectedStream !== initialStream) {
+      for (const track of initialStream.getTracks()) {
+        track.stop()
+      }
+    }
+
+    const connected = connectSelectedMicrophone(selectedStream)
+    if (!connected) {
+      for (const track of selectedStream.getTracks()) {
+        track.stop()
+      }
+      return false
+    }
+
+    log(`Selected microphone: ${selectedDevice?.label || 'default microphone'}`)
+    return true
+  } catch (error) {
+    for (const track of initialStream.getTracks()) {
+      track.stop()
+    }
+    log(`Failed during microphone selection: ${error?.message || error}`)
+    return false
+  }
+}
+
 async function startAutomatedRecordingFlow() {
   if (recordingSessionStarted) {
     return false
@@ -331,8 +484,16 @@ async function startAutomatedRecordingFlow() {
   segmentSaveChain = Promise.resolve()
 
   try {
+    const micSelected = await promptForMicrophoneSelection()
+    if (!micSelected) {
+      recordingSessionStarted = false
+      segmentRecordingActive = false
+      return false
+    }
+
     recordingTarget = await promptForRecordingTarget()
     if (!recordingTarget) {
+      disconnectSelectedMicrophone()
       recordingSessionStarted = false
       segmentRecordingActive = false
       return false
@@ -341,6 +502,7 @@ async function startAutomatedRecordingFlow() {
     await playRecordingCue('on')
     const started = startMediaRecorder()
     if (!started) {
+      disconnectSelectedMicrophone()
       recordingSessionStarted = false
       segmentRecordingActive = false
       return false
@@ -348,6 +510,7 @@ async function startAutomatedRecordingFlow() {
     startPeriodicPing()
     return true
   } catch (error) {
+    disconnectSelectedMicrophone()
     recordingSessionStarted = false
     log(`Failed to start automated recording flow: ${error?.message || error}`)
     return false
@@ -429,6 +592,7 @@ async function stopAutomatedRecordingFlow() {
   segmentRecordingActive = false
   isStoppingSegmentRecorder = false
   clearTimeout(segmentStopTimerId)
+  disconnectSelectedMicrophone()
 }
 
 function initAudio() {

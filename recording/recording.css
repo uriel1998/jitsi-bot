@@ -215,3 +215,22 @@ video {
   color: var(--purple);
   font-weight: bold;
 }
+.infobox {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .left-side {
+      flex: 0 0 60%;
+    }
+
+    .right-side {
+      flex: 0 0 25%;
+    }
+    @media (max-width: 768px) {
+      .loader-layout {
+        flex-direction: column;
+        align-items: stretch;
+      }
+ 
