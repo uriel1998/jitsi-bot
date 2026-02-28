@@ -83,17 +83,24 @@ function onRemoteTrack(track) {
   return // we dont need remote audio and video tracks, so just do nothing here.
 }
 
-function initSoundboardTrack() {
+async function initSoundboardTrack() {
   if (!initDone) {
     setTimeout(initSoundboardTrack, 2000)
     return
   }
 
+  const micSelected = await window.promptForSoundboardMicrophoneSelection?.()
+  if (!micSelected) {
+    log('Soundboard start aborted: no microphone selected.')
+    return
+  }
+
+  const selectedMicDeviceId = window.getSelectedSoundboardMicDeviceId?.()
   log('Initializing microphone audio track for bot.')
   log(
     'Mic constraints applied: echoCancellation=false, noiseSuppression=false, autoGainControl=false'
   )
-  JitsiMeetJS.createLocalTracks({
+  const trackOptions = {
     devices: ['audio'],
     constraints: {
       audio: {
@@ -102,7 +109,12 @@ function initSoundboardTrack() {
         autoGainControl: false,
       },
     },
-  })
+  }
+  if (selectedMicDeviceId) {
+    trackOptions.micDeviceId = selectedMicDeviceId
+    trackOptions.constraints.audio.deviceId = { exact: selectedMicDeviceId }
+  }
+  JitsiMeetJS.createLocalTracks(trackOptions)
     .then((tracks) => {
       onLocalTracks({ type: 'audio', tracks })
     })
