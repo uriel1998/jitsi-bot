@@ -11,6 +11,8 @@ function applyTextOnlyMode() {
     startWithVideoMuted: true,
     startSilent: true,
     disableAudioLevels: true,
+    // No incoming video streams for chatbot sessions.
+    channelLastN: 0,
   }
 }
 
@@ -412,6 +414,17 @@ function roomInit() {
 
   room.on(JitsiMeetJS.events.conference.TRACK_ADDED, (track) => {
     if (!track || track.isLocal?.()) {
+      // Chatbot must never publish local audio/video.
+      if (track && (track.getType?.() === 'audio' || track.getType?.() === 'video')) {
+        Promise.resolve(room.removeTrack?.(track)).catch((error) => {
+          console.error('Failed removing local media track', error)
+        })
+        try {
+          track.dispose?.()
+        } catch (error) {
+          console.error('Failed disposing local track', error)
+        }
+      }
       return
     }
 
