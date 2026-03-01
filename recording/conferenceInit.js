@@ -2,12 +2,13 @@
 
 JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR)
 
-// Recording bot should publish audio by default on join.
-options.startAudioMuted = 0
-options.startWithAudioMuted = false
+// Recording bot should not publish any outgoing media.
+options.startAudioMuted = 1
+options.startWithAudioMuted = true
 options.startSilent = false
 options.startVideoMuted = 1
 options.startWithVideoMuted = true
+const allowOutgoingMedia = false
 
 JitsiMeetJS.init(options)
 const publishedLocalTracks = new WeakSet()
@@ -23,6 +24,9 @@ let waitingForConnectionLogged = false
 let usingBoshFallback = false
 
 const publishLocalTrack = async (track) => {
+  if (!allowOutgoingMedia) {
+    return
+  }
   if (!room || !roomJoined || !track || publishedLocalTracks.has(track)) {
     return
   }
@@ -48,6 +52,19 @@ const publishLocalTrack = async (track) => {
  * @param tracks Array with JitsiTrack objects
  */
 function onLocalTracks({ type, tracks }) {
+  if (!allowOutgoingMedia) {
+    log(`Dropping local ${type} track(s): outgoing media is disabled.`)
+    for (let i = 0; i < tracks.length; i++) {
+      try {
+        tracks[i]?.dispose?.()
+      } catch (error) {
+        console.error('Failed disposing local track:', error)
+      }
+    }
+    localTracks[type] = []
+    return
+  }
+
   localTracks[type] = tracks
   console.log(tracks)
   for (let i = 0; i < localTracks[type].length; i++) {
@@ -100,6 +117,10 @@ function onRemoteTrack(track) {
 }
 
 function initRecordingTrack() {
+  if (!allowOutgoingMedia) {
+    log('Skipping local audio track init: outgoing media is disabled.')
+    return
+  }
   if (!initDone) {
     setTimeout(initRecordingTrack, 2000)
     return
@@ -117,6 +138,10 @@ function initRecordingTrack() {
 }
 
 function initVideoboardTrack() {
+  if (!allowOutgoingMedia) {
+    log('Skipping local video track init: outgoing media is disabled.')
+    return
+  }
   console.log('Initializing local video Track(s).')
   JitsiMeetJS.createLocalTracks({ devices: ['video'] })
     .then((tracks) => {

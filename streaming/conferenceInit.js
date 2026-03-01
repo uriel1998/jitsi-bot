@@ -80,7 +80,20 @@ function onLocalTracks({ type, tracks }) {
  * @param track JitsiTrack object
  */
 function onRemoteTrack(track) {
-  return // we dont need remote audio and video tracks, so just do nothing here.
+  if (!track || track.isLocal?.()) {
+    return
+  }
+
+  // Streaming bot is send-only; dispose all incoming A/V tracks immediately.
+  const trackType = track.getType?.()
+  if (trackType !== 'audio' && trackType !== 'video') {
+    return
+  }
+  try {
+    track.dispose?.()
+  } catch (error) {
+    console.error('Failed to dispose remote track:', error)
+  }
 }
 
 function initStreamingTrack() {
