@@ -39,6 +39,7 @@ function scheduleReconnect(delayMs, reason = 'unspecified') {
 function tryReconnect() {
   pendingShardReconnect = false
   connectionEstablished = false
+  window.setTargetJitsiConnectedUi?.(false)
   if (reconnectTimeoutId) {
     clearTimeout(reconnectTimeoutId)
     reconnectTimeoutId = undefined
@@ -78,6 +79,7 @@ function conferenceInit() {
       'Conference crashed, got system Terminated, or your internet is gone. \n Trying Reconnect in 5 minutes.'
     )
     connectionEstablished = false
+    window.setTargetJitsiConnectedUi?.(false)
 
     scheduleReconnect(300000, 'connection failed')
   }
@@ -87,6 +89,7 @@ function conferenceInit() {
   function disconnect() {
     log('Disconnected!')
     connectionEstablished = false
+    window.setTargetJitsiConnectedUi?.(false)
     con.removeEventListener(
       JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
       onConnectionSuccess
@@ -133,6 +136,7 @@ function roomInit() {
 
     bot_started = true
     roomJoined = true
+    window.setTargetJitsiConnectedUi?.(true)
 
     postMessageToWorker(workerMessages.ADD_BOT, { roomName })
 

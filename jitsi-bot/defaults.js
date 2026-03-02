@@ -148,6 +148,34 @@ document
 let d = new Date()
 log(d)
 
+function setTargetJitsiConnectedUi(isConnected) {
+  const targetJitsiInput = document.querySelector('#targetJitsi')
+  if (!targetJitsiInput) {
+    return
+  }
+
+  const cssVars = getComputedStyle(document.documentElement)
+  const surfaceColor = (cssVars.getPropertyValue('--surface') || '').trim()
+  const textColor = (cssVars.getPropertyValue('--fg') || '').trim()
+  const borderColor = (cssVars.getPropertyValue('--comment') || '').trim()
+  const connectedColor = (cssVars.getPropertyValue('--purple') || '').trim()
+  const connectedTextColor = (cssVars.getPropertyValue('--bg') || '').trim()
+
+  if (isConnected) {
+    targetJitsiInput.style.backgroundColor = connectedColor || '#bd93f9'
+    targetJitsiInput.style.color = connectedTextColor || '#282a36'
+    targetJitsiInput.style.borderColor = connectedColor || '#bd93f9'
+    return
+  }
+
+  targetJitsiInput.style.backgroundColor = surfaceColor
+  targetJitsiInput.style.color = textColor
+  targetJitsiInput.style.borderColor = borderColor
+}
+
+window.setTargetJitsiConnectedUi = setTargetJitsiConnectedUi
+setTargetJitsiConnectedUi(false)
+
 // Open new Tab with selected Bot as Parameter
 
 function openBot() {

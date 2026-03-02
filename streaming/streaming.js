@@ -12,6 +12,21 @@ let initDone = false
 
 let playJoinSound = true
 
+function playStreamingIfConnected() {
+  if (!roomJoined) {
+    return
+  }
+
+  const playPromise = streaming.play()
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch((error) => {
+      log(`Auto-play failed for loaded stream: ${error?.message || error}`)
+    })
+  }
+}
+
+window.playStreamingIfConnected = playStreamingIfConnected
+
 function initAudio() {
   if (!streaming) {
     console.error('Error with Streaming Audio Element.')
@@ -55,12 +70,17 @@ document
     try {
       log(`Trying to load URL ${streamingSourceInput.value}`)
       streaming.src = streamingSourceInput.value
+      playStreamingIfConnected()
       streamingSourceInput.value = ''
     } catch (error) {
       console.log(error)
       log(`Error Loading Audiofile.`)
     }
   })
+
+streaming.addEventListener('loadedmetadata', () => {
+  playStreamingIfConnected()
+})
 
 initAudio()
 

@@ -224,6 +224,7 @@ function conferenceInit() {
     }
 
     connectionEstablished = false
+    window.setTargetJitsiConnectedUi?.(false)
     log(
       reason ? `Connecting to Jitsi (${reason})...` : 'Connecting to Jitsi...'
     )
@@ -244,6 +245,7 @@ function conferenceInit() {
     const onConnectionFailed = (ev) => {
       console.log('Connection Failed')
       log('Connection failed.')
+      window.setTargetJitsiConnectedUi?.(false)
       scheduleReconnect('failed')
     }
 
@@ -253,6 +255,7 @@ function conferenceInit() {
     function disconnect() {
       console.log('disconnect!')
       log('Connection disconnected.')
+      window.setTargetJitsiConnectedUi?.(false)
       con.removeEventListener(
         JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
         onConnectionSuccess
@@ -311,6 +314,7 @@ function roomInit() {
 
     bot_started = true
     roomJoined = true
+    window.setTargetJitsiConnectedUi?.(true)
 
     setTimeout(initSoundboardTrack, 2000)
 
@@ -328,6 +332,7 @@ function roomInit() {
 
   room.on(JitsiMeetJS.events.conference.CONFERENCE_LEFT, () => {
     roomJoined = false
+    window.setTargetJitsiConnectedUi?.(false)
   })
 
   room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (userId, message) => {

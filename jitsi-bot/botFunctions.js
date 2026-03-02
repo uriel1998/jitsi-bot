@@ -251,6 +251,7 @@ function needBreakout() {
 
 function cleanupOnRoomLeft() {
   roomJoined = false
+  window.setTargetJitsiConnectedUi?.(false)
   clearInterval(workerHeartbeatIntervalId)
   workerHeartbeatIntervalId = undefined
 
