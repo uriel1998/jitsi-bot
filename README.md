@@ -1,98 +1,140 @@
-# Jitsi Bot
+# Jitsi Bot (Fork)
 
-Repository for my Jitsi Bot.
+This repository is a fork of [Bloodiko/jitsi-bot](https://github.com/Bloodiko/jitsi-bot).
 
-Repository contains 
-* Jitsi Bot
-* Jitsi Soundboard Bot
-* Service Worker (non functional for now)
-* some audio and video files for the Soundboard - I do Not own the rights to these files, they are owned by their respective owners and only included for showcase purposes.
-
-### Run the Bot Online here:
-
-[Bot Selection Site](https://bloodiko.github.io/jitsi-bot/jitsi-bot/jitsi.html) ← Click to try it out
-
-jitsi.html?room=jitsiroomname
-
-## Features:
-
-- /help # Use this to show all available commands. 
-- /ban
-- /banlist
-- /unban
-- /muteAll
-- /admin passwd - grants Moderator
-- /quit - exits bot
-- /reload - reloads bot
-- /timeoutConf [time in minutes] - Forcefully ends the conference for all
-  participants after the given time. - Will notify in certain intervals.
-- /setSubject [title] - sets Jitsi Room Name (Top of the screen next to
-  Duration)
-- /joinSoundboard - joins the Soundboard to the conference - Uses the same Query Parameters as the bot. 
-- ... Many more 
-
-## Other files 
-[Audio Files](audio) - Contains some audio files for the Soundboard
-[Video Files](video) - Contains some video files for the Soundboard
+This is also a really crap README, and I'll update it soon.
 
 
-## Installation
+It includes browser-based bots for Jitsi Meet:
+- Jitsi Bot (`jitsi-bot/`)
+- Soundboard Bot (`soundboard/`)
+- Streaming Bot (`streaming/`)
+- Recording Bot (`recording/`)
+- Chat Bot (`chatbot/`)
 
-To try it before cloning you can use the [Bot Selection Site](https://bloodiko.github.io/jitsi-bot/jitsi-bot/jitsi.html) ← Click to try it out
+## Quick Start
 
-1. Download Repository
-2. Run a static webserver (e.g. `python3 -m http.server 8080`) or just run the
-   `jitsi.html` file
-3. Open `http://localhost:8080/jitsi.html?room=jitsiroomname` in your browser
-4. Enter your the Roomname and select "custom" in the dropdown
+1. Clone this repository.
+2. Serve this whole directory from a web server (project root as web root).
 
-## Usage
-
-**Important**: On the Public meet.jit.si Server you need to open the Room first manually.
-Send a Private Message to the Bot with a command.
-
-For a different Domain you need to pass additional parameters to the URL:
-
-```js
-// join params with &
-domain // domain as listed in config.hosts (e.g. meet.jit.si)
-bosh // BOSH URL (e.g. https://meet.jit.si/http-bind) can often be omitted
-wsKeepAlive //(Websocket Keep Alive URL, without domain) can often be omitted
-useTurnUdp // (No Value)
-disableAnonymousdomain // (No Value)
-disableFocus // (No Value)
-disableGuest // (No Value)
+```bash
+python3 start_server.py
 ```
 
-![Mini Showcase][showcase]
+Alternative:
 
-![Help Command in Chat][def]
+```bash
+python3 -m http.server 5500
+```
 
+You can also use a more sophisticated web server (for example Nginx or Caddy), as long as it serves this repository root.
 
-[def]: images/privateMessage_help.png
-[showcase]: images/Mini-Showcase.png
+3. Open the launcher page (recommended):
 
-Concatenating recording chunks with ffmpeg
+```text
+http://localhost:5500/
+```
 
-Place all chunk files in one directory with names like:
-recording_YYYYMMDD_HHMMSS_part0001.webm
-recording_YYYYMMDD_HHMMSS_part0002.webm
-...
+This launches the four main bots from `index.html`:
+- Streaming Bot
+- Chat Bot
+- Soundboard Bot
+- Recording Bot
 
-1) Create a concat list file named chunk_list.txt
-Each line must reference one chunk file in order:
+4. Optional: open the single main bot directly:
+
+```text
+http://localhost:5500/jitsi-bot/jitsi.html?room=your-room-name
+```
+
+## Basic Usage
+
+1. Join your target Jitsi room in a browser tab.
+2. Open the bot page and enter the conference URL (or use `?room=...`).
+3. Click `Toggle Bot`.
+4. Send commands to the bot as **private messages** in Jitsi chat.
+
+Note: on `meet.jit.si`, open the room manually first, then start the bot.
+
+## Public meet.jit.si Note
+
+On the public `meet.jit.si` instance, only the Chat Bot is typically reliable.
+
+Use this hash suffix when joining on public Jitsi:
+
+```text
+#config.prejoinConfig.enabled=false&disableThirdPartyRequests=true
+```
+
+Example:
+
+```text
+http://localhost:5500/chatbot/chatbot.html?room=myroom&domain=meet.jit.si#config.prejoinConfig.enabled=false&disableThirdPartyRequests=true
+```
+
+## URL Parameters
+
+Common query parameters:
+
+```text
+room=your-room-name
+domain=meet.jit.si
+bosh=https://meet.jit.si/http-bind
+wsKeepAlive=/xmpp-websocket
+useTurnUdp
+disableAnonymousdomain
+disableFocus
+disableGuest
+```
+
+Example:
+
+```text
+http://localhost:5500/jitsi-bot/jitsi.html?room=myroom&domain=meet.jit.si
+```
+
+## Commands
+
+Use `/help` in a private message to list all available commands.
+
+Common commands:
+- `/help`
+- `/admin PASSWORD`
+- `/reload`
+- `/muteAll`
+- `/setSubject SUBJECT`
+- `/ban DISPLAYNAME`
+- `/unban DISPLAYNAME`
+- `/banlist`
+- `/timeoutConf MINUTES`
+- `/quit`
+- `/joinSoundBot`
+- `/joinStreamingBot`
+- `/joinChatBot`
+- `/joinRecordingBot`
+- `/about`
+
+The full command set is defined in `jitsi-bot/botCommands.js`.
+
+## Assets
+
+- `audio/` contains sample audio files used by bot features.
+- `images/` contains screenshots and icons.
+- Some media files are included for demonstration purposes and remain the property of their respective owners.
+
+## Merge Recording Chunks (ffmpeg)
+
+If you have split recording chunks:
+
+1. Create `chunk_list.txt` with ordered entries:
+
+```text
 file 'recording_YYYYMMDD_HHMMSS_part0001.webm'
 file 'recording_YYYYMMDD_HHMMSS_part0002.webm'
+```
 
-2) Run ffmpeg
+2. Merge with ffmpeg:
 
-Windows (PowerShell):
-ffmpeg -f concat -safe 0 -i .\chunk_list.txt -c copy .\recording_merged.webm
-
-Linux (bash):
+```bash
 ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
-
-macOS (zsh/bash):
-ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
-
-If your files are out of order, sort them by part number before creating chunk_list.txt.
+```
