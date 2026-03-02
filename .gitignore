@@ -1,4 +1,38 @@
+# Dependencies
 **/node_modules/**
+
+# Local/editor settings
+.vscode/
+.idea/
+
+# Python cache/env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Environment and logs
+.env
+.env.*
+*.log
+
+# Generated/local media artifacts
+audio/*.mp3
+audio/*.wav
+audio/now_recording_*.webm
+audio/ending_recording_*.webm
+video/
+recording_*.webm
+recording_merged.webm
+chunk_list.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local project directories
 jitsipuppeteer/
 jitsi-bot-main
 1_reference
