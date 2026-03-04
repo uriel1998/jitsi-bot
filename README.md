@@ -51,7 +51,7 @@ This launches the four main bots from `index.html`:
 
 On the public `meet.jit.si` instance, only the Chat Bot is typically reliable.
 
-Use this hash suffix when joining on public Jitsi:
+Use this hash suffix for the meeting room URL for the bot when joining on public Jitsi:
 
 ```text
 #config.prejoinConfig.enabled=false&disableThirdPartyRequests=true
@@ -60,7 +60,7 @@ Use this hash suffix when joining on public Jitsi:
 Example:
 
 ```text
-http://localhost:5500/chatbot/chatbot.html?room=myroom&domain=meet.jit.si#config.prejoinConfig.enabled=false&disableThirdPartyRequests=true
+https://meet.jit.si/YourMeetingRoomName#config.prejoinConfig.enabled=false&disableThirdPartyRequests=true
 ```
 
 ### Bot-Specific Usage
