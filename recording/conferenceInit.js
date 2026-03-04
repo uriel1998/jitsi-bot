@@ -237,7 +237,7 @@ const stopRecordingFromUi = async () => {
     room?.sendMessage('Recording stopped from bot UI.')
     document.querySelector('#start_recording_button')?.removeAttribute('disabled')
     disconnectBotFromConference()
-    window.location.href = '/recording/recording_ender.html'
+    window.location.href = 'recording/recording_ender.html'
   } catch (error) {
     log(`Failed to stop recording from UI: ${error?.message || error}`)
     console.error('Failed to stop automated recording flow from UI:', error)
