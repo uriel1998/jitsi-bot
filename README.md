@@ -68,7 +68,7 @@ http://localhost:5500/chatbot/chatbot.html?room=myroom&domain=meet.jit.si#config
 - Pokpoko will stream mp3/ogg from an https stream into the audio of the conference. Put the full source URL in "Audio Source Input" and "Set Source".
 - Kobuko will respond to multiple commands in the text chat of the conference; try !command.  You can load your own text into `/lib/Custom` for it to respond with. 
 - Mochi will pipe audio from a virtual microphone into the audio of the conference. Have a virtual microphone set up *prior* to loading the bot; examples are linked on the bot's loading page. When the bot loads, choose the virtual microphone your app (such as Kenku) is playing on.
-- Ritson will record audio from the conference. After joining the room, you must specifically tell it to begin recording. It plays an audio file when it begins and ends recording, as well as a ping every few minutes and a text chat alert. It saves the audio every few minutes in a `webm` file in your browser's download directory.  Once you're done recording, follow the instructions (or use the helper scripts) to stitch the audio back together. 
+- Ritson will record audio from the conference. After joining the room, you must specifically tell it to begin recording. It sends text chat notifications when recording begins, when it ends, and every few minutes while recording. It saves the audio every few minutes in a `webm` file in your browser's download directory.  Once you're done recording, follow the instructions (or use the helper scripts) to stitch the audio back together. 
 
 
 ## Assets

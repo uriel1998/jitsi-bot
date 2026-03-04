@@ -263,34 +263,6 @@ const startRecordingFromUi = async () => {
   }
 }
 
-const setAudioPingQuiet = (userId) => {
-  const sender = room.getParticipantById(userId)
-  if (!sender?.isModerator?.()) {
-    room.sendMessage(
-      'Only moderators can change recording ping audio with /quiet or /loud.',
-      userId
-    )
-    return
-  }
-
-  window.setAudioPingEnabled?.(false)
-  room.sendMessage('Audio pings silenced.', userId)
-}
-
-const setAudioPingLoud = (userId) => {
-  const sender = room.getParticipantById(userId)
-  if (!sender?.isModerator?.()) {
-    room.sendMessage(
-      'Only moderators can change recording ping audio with /quiet or /loud.',
-      userId
-    )
-    return
-  }
-
-  window.setAudioPingEnabled?.(true)
-  room.sendMessage('Audio pings resumed.', userId)
-}
-
 const currentTrack = (userId) => {
   const track = recording.src
   room.sendMessage(`Currently loaded: ${track}`, userId)
@@ -310,14 +282,6 @@ const loadTrack = (userId, url) => {
   } catch (error) {
     log(`Error on loading new source "${url}", check url.`)
   }
-}
-
-const play = () => {
-  recording.play()
-}
-
-const pause = () => {
-  recording.pause()
 }
 
 const toggleLoop = (userId) => {
@@ -351,26 +315,12 @@ const setVol = (userId, argument) => {
   room.sendMessage(`Volume set to ${recording.volume * 100}%`, userId)
 }
 
-const togglePlayOnJoin = (userId) => {
-  playJoinSound = !playJoinSound
-  if (playJoinSound) {
-    room.sendMessage(
-      `OnJoinSound enabled (-Tea.mp3 needs to be set from host.)`,
-      userId
-    )
-  } else {
-    room.sendMessage(`OnJoinSound disabled.`, userId)
-  }
-}
-
 const help = (userId) => {
   const commands = [
     'Available Commands:',
     '/currentTrack',
     '/help',
     '/loadTrack URL',
-    '/pause',
-    '/play',
     '/playVideo',
     '/reload',
     '/toggleLoop',
@@ -378,10 +328,7 @@ const help = (userId) => {
     '/vol-',
     '/setVol x # x: vol between 0 .. 100',
     '/stop # moderator only',
-    '/quiet # moderator only (silence audio pings)',
-    '/loud # moderator only (resume audio pings)',
     '/quit',
-    '/togglePlayOnJoin',
   ]
 
   room.sendMessage(commands.join('\n'), userId)
@@ -396,18 +343,13 @@ const commandHandler = {
   '/currentTrack': currentTrack,
   '/help': help,
   '/loadTrack': loadTrack,
-  '/pause': pause,
-  '/play': play,
   '/playVideo': playVideo,
   '/reload': reloadBot,
   '/toggleLoop': toggleLoop,
-  '/togglePlayOnJoin': togglePlayOnJoin,
   '/vol+': increaseVol,
   '/vol-': reduceVol,
   '/setVol': setVol,
   '/stop': stopRecording,
-  '/quiet': setAudioPingQuiet,
-  '/loud': setAudioPingLoud,
   '/quit': quit,
 }
 
@@ -643,11 +585,6 @@ function roomInit() {
   )
   // onJoin
   room.on(JitsiMeetJS.events.conference.USER_JOINED, (userId, userObj) => {
-    if (playJoinSound) {
-      if (recording.src == `${window.location.host}/audio/-Tea.mp3`) {
-        play()
-      }
-    }
     printParticipants()
     log('USER JOINED EVENT ' + userId + ': ' + userObj._displayName)
   })

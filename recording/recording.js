@@ -47,7 +47,6 @@ let recordingInputGainNode = undefined
 
 let initDone = false
 
-let playJoinSound = true
 let recordingSessionStarted = false
 let recorderTargetName = undefined
 let mediaRecorder = undefined
@@ -63,19 +62,9 @@ let recordingLevelAnalyser = undefined
 let recordingLevelData = undefined
 let recordingLevelRafId = undefined
 
-const recordingOnCueUrl = '/audio/_on.webm'
-const recordingOffCueUrl = '/audio/_off.webm'
-const recordingPingCueUrl = '/audio/_ping.webm'
 const pingIntervalMs = 5 * 60 * 1000
 const segmentDurationMs = 5 * 60 * 1000
 let pingIntervalId = undefined
-let audioPingEnabled = true
-let cuePlaybackQueue = Promise.resolve()
-
-function getCueSourceCandidates(primaryCueUrl, cueFileName) {
-  const sameOriginCue = new URL(`/audio/${cueFileName}`, window.location.origin).toString()
-  return [...new Set([sameOriginCue, primaryCueUrl])]
-}
 
 function makeTimestamp() {
   const now = new Date()
@@ -116,98 +105,6 @@ async function promptForRecordingTarget() {
   return { mode: 'download', filename: safeName }
 }
 
-function waitForPlaybackEnd(audioElement) {
-  return new Promise((resolve) => {
-    const finish = () => {
-      audioElement.removeEventListener('ended', finish)
-      audioElement.removeEventListener('error', finish)
-      resolve()
-    }
-    audioElement.addEventListener('ended', finish, { once: true })
-    audioElement.addEventListener('error', finish, { once: true })
-  })
-}
-
-function waitForMediaReady(audioElement) {
-  if (audioElement.readyState >= 2) {
-    return Promise.resolve()
-  }
-  return new Promise((resolve) => {
-    const done = () => {
-      audioElement.removeEventListener('canplay', done)
-      audioElement.removeEventListener('loadeddata', done)
-      audioElement.removeEventListener('error', done)
-      resolve()
-    }
-    audioElement.addEventListener('canplay', done, { once: true })
-    audioElement.addEventListener('loadeddata', done, { once: true })
-    audioElement.addEventListener('error', done, { once: true })
-  })
-}
-
-async function playRecordingCue(cueType = 'on', cueVolume = 1) {
-  const previousSrc = recording.src
-  const previousLoop = recording.loop
-  const wasPaused = recording.paused
-  const previousVolume = recording.volume
-
-  recording.pause()
-  recording.loop = false
-  let cueFileName = '_on.webm'
-  let primaryCueUrl = recordingOnCueUrl
-  if (cueType === 'off') {
-    cueFileName = '_off.webm'
-    primaryCueUrl = recordingOffCueUrl
-  } else if (cueType === 'ping') {
-    cueFileName = '_ping.webm'
-    primaryCueUrl = recordingPingCueUrl
-  }
-  const cueCandidates = getCueSourceCandidates(primaryCueUrl, cueFileName)
-
-  try {
-    recording.volume = cueVolume
-    let played = false
-    for (const cueSrc of cueCandidates) {
-      recording.src = cueSrc
-      try {
-        recording.load()
-        await waitForMediaReady(recording)
-        recording.currentTime = 0
-        await recording.play()
-        await waitForPlaybackEnd(recording)
-        played = true
-        break
-      } catch (error) {
-        log(`Cue source failed (${cueSrc}): ${error?.message || error}`)
-      }
-    }
-    if (!played) {
-      log('Failed to play cue sound from all configured sources.')
-    }
-  } finally {
-    recording.pause()
-    recording.src = previousSrc
-    recording.loop = previousLoop
-    recording.volume = previousVolume
-    if (!wasPaused) {
-      try {
-        await recording.play()
-      } catch (error) {
-        log('Unable to resume previous recording source after cue playback.')
-      }
-    }
-  }
-}
-
-function enqueueCuePlayback(cueType, cueVolume = 1) {
-  cuePlaybackQueue = cuePlaybackQueue
-    .then(() => playRecordingCue(cueType, cueVolume))
-    .catch((error) => {
-      log(`Cue playback failed: ${error?.message || error}`)
-    })
-  return cuePlaybackQueue
-}
-
 function stopPeriodicPing() {
   if (!pingIntervalId) {
     return
@@ -223,9 +120,6 @@ function startPeriodicPing() {
       return
     }
     room?.sendMessage?.('🎤 recording ongoing.')
-    if (audioPingEnabled) {
-      enqueueCuePlayback('ping', 0.5)
-    }
   }, pingIntervalMs)
 }
 
@@ -324,7 +218,6 @@ async function startAutomatedRecordingFlow() {
     return false
   }
   recordingSessionStarted = true
-  audioPingEnabled = true
   recordingSegmentIndex = 0
   segmentRecordingActive = true
   isStoppingSegmentRecorder = false
@@ -337,14 +230,13 @@ async function startAutomatedRecordingFlow() {
       segmentRecordingActive = false
       return false
     }
-
-    await playRecordingCue('on')
     const started = startMediaRecorder()
     if (!started) {
       recordingSessionStarted = false
       segmentRecordingActive = false
       return false
     }
+    room?.sendMessage?.('🎤 recording started.')
     startPeriodicPing()
     return true
   } catch (error) {
@@ -424,7 +316,7 @@ async function stopAutomatedRecordingFlow() {
     log('No active recording to stop.')
   }
 
-  await enqueueCuePlayback('off')
+  room?.sendMessage?.('🛑 recording stopped.')
   recordingSessionStarted = false
   segmentRecordingActive = false
   isStoppingSegmentRecorder = false
@@ -648,8 +540,4 @@ window.setRecordingBotInputVolume = (value = 100) => {
   const normalized = numeric > 1 ? numeric / 100 : numeric
   const clamped = Math.min(1, Math.max(0, normalized))
   recordingInputGainNode.gain.setValueAtTime(clamped, recordingContext.currentTime)
-}
-
-window.setAudioPingEnabled = (enabled = true) => {
-  audioPingEnabled = Boolean(enabled)
 }
