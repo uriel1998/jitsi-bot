@@ -63,9 +63,9 @@ let recordingLevelAnalyser = undefined
 let recordingLevelData = undefined
 let recordingLevelRafId = undefined
 
-const recordingOnCueUrl = 'http://127.0.0.1:5500/audio/_on.webm'
-const recordingOffCueUrl = 'http://127.0.0.1:5500/audio/_off.webm'
-const recordingPingCueUrl = 'http://127.0.0.1:5500/audio/_ping.webm'
+const recordingOnCueUrl = '/audio/_on.webm'
+const recordingOffCueUrl = '/audio/_off.webm'
+const recordingPingCueUrl = '/audio/_ping.webm'
 const pingIntervalMs = 5 * 60 * 1000
 const segmentDurationMs = 5 * 60 * 1000
 let pingIntervalId = undefined

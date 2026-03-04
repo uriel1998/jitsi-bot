@@ -1,18 +1,21 @@
 # Jitsi Bot (Fork)
 
-This repository is a fork of [Bloodiko/jitsi-bot](https://github.com/Bloodiko/jitsi-bot).
-
-This is also a really crap README, and I'll update it soon.
+This repository is a fork of [Bloodiko/jitsi-bot](https://github.com/Bloodiko/jitsi-bot) with a lot of additional features.
 
 
 It includes browser-based bots for Jitsi Meet:
-- Jitsi Bot (`jitsi-bot/`)
 - Soundboard Bot (`soundboard/`)
 - Streaming Bot (`streaming/`)
 - Recording Bot (`recording/`)
 - Chat Bot (`chatbot/`)
 
 ## Quick Start
+
+### From GitHub Pages
+
+Go to <a href="https://uriel1998.github.io/jitsi-bot/">https://uriel1998.github.io/jitsi-bot/</a>.
+
+### Self-Hosting
 
 1. Clone this repository.
 2. Serve this whole directory from a web server (project root as web root).
@@ -21,15 +24,9 @@ It includes browser-based bots for Jitsi Meet:
 python3 start_server.py
 ```
 
-Alternative:
-
-```bash
-python3 -m http.server 5500
-```
-
 You can also use a more sophisticated web server (for example Nginx or Caddy), as long as it serves this repository root.
 
-3. Open the launcher page (recommended):
+3. Open the launcher page:
 
 ```text
 http://localhost:5500/
@@ -41,20 +38,14 @@ This launches the four main bots from `index.html`:
 - Soundboard Bot
 - Recording Bot
 
-4. Optional: open the single main bot directly:
-
-```text
-http://localhost:5500/jitsi-bot/jitsi.html?room=your-room-name
-```
-
 ## Basic Usage
 
-1. Join your target Jitsi room in a browser tab.
-2. Open the bot page and enter the conference URL (or use `?room=...`).
+1. Join your target Jitsi room in a browser tab. See below about the public instance.
+2. Open the bot page and enter the conference URL.
 3. Click `Toggle Bot`.
-4. Send commands to the bot as **private messages** in Jitsi chat.
+4. You can either `Toggle Bot` or `Reset Bot` to unload the bot.
 
-Note: on `meet.jit.si`, open the room manually first, then start the bot.
+
 
 ## Public meet.jit.si Note
 
@@ -72,49 +63,13 @@ Example:
 http://localhost:5500/chatbot/chatbot.html?room=myroom&domain=meet.jit.si#config.prejoinConfig.enabled=false&disableThirdPartyRequests=true
 ```
 
-## URL Parameters
+### Bot-Specific Usage
 
-Common query parameters:
+- Pokpoko will stream mp3/ogg from an https stream into the audio of the conference. Put the full source URL in "Audio Source Input" and "Set Source".
+- Kobuko will respond to multiple commands in the text chat of the conference; try !command.  You can load your own text into `/lib/Custom` for it to respond with. 
+- Mochi will pipe audio from a virtual microphone into the audio of the conference. Have a virtual microphone set up *prior* to loading the bot; examples are linked on the bot's loading page. When the bot loads, choose the virtual microphone your app (such as Kenku) is playing on.
+- Ritson will record audio from the conference. It plays an audio file when it begins and ends recording, as well as a ping every few minutes and a text chat alert. It saves the audio every few minutes in a `webm` file in your browser's download directory.  Once you're done recording, follow the instructions (or use the helper scripts) to stitch the audio back together. 
 
-```text
-room=your-room-name
-domain=meet.jit.si
-bosh=https://meet.jit.si/http-bind
-wsKeepAlive=/xmpp-websocket
-useTurnUdp
-disableAnonymousdomain
-disableFocus
-disableGuest
-```
-
-Example:
-
-```text
-http://localhost:5500/jitsi-bot/jitsi.html?room=myroom&domain=meet.jit.si
-```
-
-## Commands
-
-Use `/help` in a private message to list all available commands.
-
-Common commands:
-- `/help`
-- `/admin PASSWORD`
-- `/reload`
-- `/muteAll`
-- `/setSubject SUBJECT`
-- `/ban DISPLAYNAME`
-- `/unban DISPLAYNAME`
-- `/banlist`
-- `/timeoutConf MINUTES`
-- `/quit`
-- `/joinSoundBot`
-- `/joinStreamingBot`
-- `/joinChatBot`
-- `/joinRecordingBot`
-- `/about`
-
-The full command set is defined in `jitsi-bot/botCommands.js`.
 
 ## Assets
 
