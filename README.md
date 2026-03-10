@@ -77,19 +77,41 @@ https://meet.jit.si/YourMeetingRoomName#config.prejoinConfig.enabled=false&disab
 - `images/` contains screenshots and icons.
 - Some media files are included for demonstration purposes and remain the property of their respective owners.
 
-## Merge Recording Chunks (ffmpeg)
+## Merge Recording Chunks
 
-If you have split recording chunks:
+If the Recording Bot saves split `.webm` chunks, use the helper script for your OS:
 
-1. Create `chunk_list.txt` with ordered entries:
+- Linux: `./merge_recordings_linux.sh`
+- macOS: `./merge_recordings_macos.sh`
+- PowerShell: `.\merge_recordings.ps1`
+
+Each script scans the current directory for files matching:
 
 ```text
-file 'recording_YYYYMMDD_HHMMSS_part0001.webm'
-file 'recording_YYYYMMDD_HHMMSS_part0002.webm'
+recording_YYYYMMDD_HHMMSS_partNNNN.webm
+recording_YYYYMMDD_HHMMSS_<participant>_partNNNN.webm
+recording_YYYYMMDD_HHMMSS__<participant>_partNNNN.webm
 ```
 
-2. Merge with ffmpeg:
+The scripts group chunks by timestamp and participant name, merge each ordered chunk set with `ffmpeg`, and write outputs under `./recording/<timestamp>/`.
 
-```bash
-ffmpeg -f concat -safe 0 -i ./chunk_list.txt -c copy ./recording_merged.webm
+Examples:
+
+```text
+recording_20260310_185513_T3_69337f62_part0001.webm
+  -> ./recording/20260310_185513/T3_69337f62.webm
+
+recording_20260310_185513_Steven_58170157_part0001.webm
+recording_20260310_185513_Steven_58170157_part0002.webm
+  -> ./recording/20260310_185513/Steven_58170157.webm
+
+recording_20260310_185513__Ponpoko_cf8c3192_part0001.webm
+recording_20260310_185513__Ponpoko_cf8c3192_part0002.webm
+  -> ./recording/20260310_185513/Ponpoko_cf8c3192.webm
+
+recording_20260310_185513_part0001.webm
+recording_20260310_185513_part0002.webm
+  -> ./recording/20260310_185513/recording.webm
 ```
+
+Run any script with `--help` to print usage and examples.

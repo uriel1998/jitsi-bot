@@ -58,6 +58,9 @@ let isStoppingSegmentRecorder = false
 let segmentSaveChain = Promise.resolve()
 const remoteAudioNodes = new WeakMap()
 const pendingRemoteAudioTracks = new Set()
+const speakerRecorders = new Map()
+const generatedTrackIds = new WeakMap()
+let generatedTrackIdCounter = 0
 let recordingLevelAnalyser = undefined
 let recordingLevelData = undefined
 let recordingLevelRafId = undefined
@@ -79,6 +82,61 @@ function makeTimestamp() {
 
 function getDefaultRecordingFilename() {
   return `recording_${makeTimestamp()}.webm`
+}
+
+function sanitizeFilenameToken(value, fallback = 'unknown') {
+  const raw = String(value ?? '')
+    .trim()
+    .replace(/\s+/g, '_')
+    .replace(/[^A-Za-z0-9_.-]/g, '')
+  return raw || fallback
+}
+
+function getSessionBaseName() {
+  const rawName =
+    recordingTarget?.filename || recorderTargetName || getDefaultRecordingFilename()
+  return rawName.replace(/\.webm$/i, '')
+}
+
+function getStableTrackId(track) {
+  const fromTrack = track?.getTrackId?.()
+  if (fromTrack) {
+    return String(fromTrack)
+  }
+  if (generatedTrackIds.has(track)) {
+    return generatedTrackIds.get(track)
+  }
+  generatedTrackIdCounter += 1
+  const generatedId = `generatedTrack${generatedTrackIdCounter}`
+  generatedTrackIds.set(track, generatedId)
+  return generatedId
+}
+
+function buildSpeakerRecorderKey(track) {
+  const participantId = track?.getParticipantId?.() || 'unknownParticipant'
+  return `${participantId}__${getStableTrackId(track)}`
+}
+
+function getParticipantDisplayName(participantId) {
+  if (!participantId || !room?.getParticipantById) {
+    return 'unknownSpeaker'
+  }
+  return room.getParticipantById(participantId)?._displayName || participantId
+}
+
+function getSpeakerSegmentFilename(speakerState, segmentIndex) {
+  const baseName = getSessionBaseName()
+  const speakerToken = sanitizeFilenameToken(
+    speakerState.displayName || speakerState.participantId || 'speaker',
+    'speaker'
+  )
+  const participantToken = sanitizeFilenameToken(
+    speakerState.participantId || speakerState.key,
+    'participant'
+  )
+  return `${baseName}_${speakerToken}_${participantToken}_part${String(
+    segmentIndex
+  ).padStart(4, '0')}.webm`
 }
 
 function getRecorderMimeType() {
@@ -211,6 +269,145 @@ async function saveRecordedChunks(target, chunks, segmentIndex) {
   return fileName
 }
 
+async function saveSpeakerRecordedChunks(speakerState, chunks, segmentIndex) {
+  const mimeType = getRecorderMimeType() || 'audio/webm'
+  const blob = new Blob(chunks, { type: mimeType })
+  const fileName = getSpeakerSegmentFilename(speakerState, segmentIndex)
+  const downloadUrl = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = downloadUrl
+  a.download = fileName
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
+  return fileName
+}
+
+function startSpeakerMediaRecorder(speakerState) {
+  if (
+    !speakerState ||
+    !speakerState.destStream?.stream ||
+    !window.MediaRecorder ||
+    !segmentRecordingActive ||
+    speakerState.mediaRecorder?.state === 'recording'
+  ) {
+    return false
+  }
+
+  speakerState.currentSegmentChunks = []
+  speakerState.segmentIndex += 1
+  speakerState.isStopping = false
+
+  const mimeType = getRecorderMimeType()
+  const recorderOptions = mimeType ? { mimeType } : undefined
+  speakerState.mediaRecorder = new MediaRecorder(
+    speakerState.destStream.stream,
+    recorderOptions
+  )
+
+  speakerState.mediaRecorder.addEventListener('dataavailable', (event) => {
+    if (event.data && event.data.size > 0) {
+      speakerState.currentSegmentChunks.push(event.data)
+    }
+  })
+
+  speakerState.mediaRecorder.addEventListener(
+    'stop',
+    () => {
+      const finalizedChunks = speakerState.currentSegmentChunks
+      speakerState.currentSegmentChunks = []
+      const finalizedIndex = speakerState.segmentIndex
+
+      speakerState.saveChain = speakerState.saveChain
+        .then(async () => {
+          if (!finalizedChunks.length) {
+            return
+          }
+          const savedAs = await saveSpeakerRecordedChunks(
+            speakerState,
+            finalizedChunks,
+            finalizedIndex
+          )
+          log(
+            `Saved speaker segment ${finalizedIndex}: ${savedAs} (${speakerState.displayName})`
+          )
+        })
+        .catch((error) => {
+          log(
+            `Failed to save speaker segment for ${
+              speakerState.displayName
+            }: ${error?.message || error}`
+          )
+        })
+        .finally(() => {
+          if (segmentRecordingActive && speakerRecorders.has(speakerState.key)) {
+            startSpeakerMediaRecorder(speakerState)
+          }
+        })
+    },
+    { once: true }
+  )
+
+  speakerState.mediaRecorder.start()
+  clearTimeout(speakerState.segmentStopTimerId)
+  speakerState.segmentStopTimerId = setTimeout(() => {
+    const recorder = speakerState.mediaRecorder
+    if (recorder && recorder.state === 'recording' && !speakerState.isStopping) {
+      recorder.stop()
+    }
+  }, segmentDurationMs)
+
+  log(
+    `Speaker segment ${speakerState.segmentIndex} started: ${speakerState.displayName}`
+  )
+  return true
+}
+
+function stopSpeakerMediaRecorder(speakerState) {
+  return new Promise((resolve) => {
+    if (
+      !speakerState?.mediaRecorder ||
+      speakerState.mediaRecorder.state === 'inactive'
+    ) {
+      resolve(false)
+      return
+    }
+
+    speakerState.isStopping = true
+    clearTimeout(speakerState.segmentStopTimerId)
+    speakerState.mediaRecorder.addEventListener(
+      'stop',
+      () => {
+        resolve(true)
+      },
+      { once: true }
+    )
+    speakerState.mediaRecorder.stop()
+  })
+}
+
+function startSpeakerRecordersForActiveSession() {
+  if (!segmentRecordingActive) {
+    return
+  }
+  for (const speakerState of speakerRecorders.values()) {
+    startSpeakerMediaRecorder(speakerState)
+  }
+}
+
+async function stopAllSpeakerRecorders() {
+  const stopPromises = []
+
+  for (const speakerState of speakerRecorders.values()) {
+    stopPromises.push(stopSpeakerMediaRecorder(speakerState))
+  }
+
+  await Promise.all(stopPromises)
+  const savePromises = [...speakerRecorders.values()].map(
+    (speakerState) => speakerState.saveChain
+  )
+  await Promise.all(savePromises)
+}
+
 let recordingTarget = undefined
 
 async function startAutomatedRecordingFlow() {
@@ -236,6 +433,7 @@ async function startAutomatedRecordingFlow() {
       segmentRecordingActive = false
       return false
     }
+    startSpeakerRecordersForActiveSession()
     room?.sendMessage?.('🎤 recording started.')
     startPeriodicPing()
     return true
@@ -310,7 +508,7 @@ function initRecordingLevelMeter(audioContext) {
 
 async function stopAutomatedRecordingFlow() {
   stopPeriodicPing()
-  const stopped = await stopMediaRecorder()
+  const [stopped] = await Promise.all([stopMediaRecorder(), stopAllSpeakerRecorders()])
   await segmentSaveChain
   if (!stopped) {
     log('No active recording to stop.')
@@ -446,10 +644,40 @@ function connectRemoteAudioTrack(track) {
   try {
     const sourceNode = recordingContext.createMediaStreamSource(originalStream)
     const recordingGainNode = recordingContext.createGain()
+    const speakerGainNode = recordingContext.createGain()
+    const speakerDestStream = recordingContext.createMediaStreamDestination()
     recordingGainNode.gain.value = 1
+    speakerGainNode.gain.value = 1
+
+    const participantId = track.getParticipantId?.() || 'unknownParticipant'
+    const speakerState = {
+      key: buildSpeakerRecorderKey(track),
+      participantId,
+      displayName: getParticipantDisplayName(participantId),
+      destStream: speakerDestStream,
+      mediaRecorder: undefined,
+      currentSegmentChunks: [],
+      segmentIndex: 0,
+      segmentStopTimerId: undefined,
+      isStopping: false,
+      saveChain: Promise.resolve(),
+    }
+
     sourceNode.connect(recordingGainNode)
+    sourceNode.connect(speakerGainNode)
     recordingGainNode.connect(recordingInputGainNode)
-    remoteAudioNodes.set(track, { sourceNode, recordingGainNode })
+    speakerGainNode.connect(speakerDestStream)
+    speakerRecorders.set(speakerState.key, speakerState)
+    remoteAudioNodes.set(track, {
+      sourceNode,
+      recordingGainNode,
+      speakerGainNode,
+      speakerState,
+    })
+
+    if (recordingSessionStarted && segmentRecordingActive) {
+      startSpeakerMediaRecorder(speakerState)
+    }
     return true
   } catch (error) {
     log(`Failed to connect remote audio track: ${error?.message || error}`)
@@ -501,6 +729,17 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
   if (!nodes) {
     return
   }
+  const speakerState = nodes.speakerState
+  speakerRecorders.delete(speakerState?.key)
+  stopSpeakerMediaRecorder(speakerState)
+    .then(() => speakerState?.saveChain)
+    .catch((error) => {
+      log(
+        `Failed to stop speaker recorder for ${
+          speakerState?.displayName || 'unknown speaker'
+        }: ${error?.message || error}`
+      )
+    })
   try {
     nodes.sourceNode.disconnect()
   } catch (error) {
@@ -510,6 +749,11 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
     nodes.recordingGainNode.disconnect()
   } catch (error) {
     console.log('Failed to disconnect remote gain node', error)
+  }
+  try {
+    nodes.speakerGainNode?.disconnect()
+  } catch (error) {
+    console.log('Failed to disconnect speaker gain node', error)
   }
   remoteAudioNodes.delete(track)
 }
