@@ -79,6 +79,14 @@ https://meet.jit.si/YourMeetingRoomName#config.prejoinConfig.enabled=false&disab
 
 ## Merge Recording Chunks
 
+`ffmpeg` must be installed and available on your `PATH` before running any merge script.
+
+Install instructions:
+
+- Windows: [FFmpeg download page (Windows builds)](https://www.ffmpeg.org/download.html)
+- Linux: [FFmpeg download page (Linux packages)](https://www.ffmpeg.org/download.html)
+- macOS: [Homebrew `ffmpeg` formula](https://formulae.brew.sh/formula/ffmpeg)
+
 If the Recording Bot saves split `.webm` chunks, use the helper script for your OS:
 
 - Linux: `./merge_recordings_linux.sh`
