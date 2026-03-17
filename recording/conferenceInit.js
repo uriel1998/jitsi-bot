@@ -23,6 +23,36 @@ let retryTimeoutId = undefined
 let waitingForConnectionLogged = false
 let usingBoshFallback = false
 
+function getRecordingConferenceState() {
+  return {
+    connectionAttemptCount,
+    waitingForConnectionLogged,
+    usingBoshFallback,
+    roomJoined: window.roomJoined ?? null,
+    connectionEstablished: window.connectionEstablished ?? null,
+    roomName,
+    targetJitsi: options.targetJitsi?.origin || '',
+    serviceUrl: options.serviceUrl || '',
+    allowOutgoingMedia,
+  }
+}
+
+function recordingConferenceLog(message, details = {}) {
+  log(message)
+  void window.persistRecordingLog?.('info', message, {
+    conference: getRecordingConferenceState(),
+    ...details,
+  })
+}
+
+function recordingConferenceWarn(message, details = {}) {
+  log(message)
+  void window.persistRecordingLog?.('warning', message, {
+    conference: getRecordingConferenceState(),
+    ...details,
+  })
+}
+
 const publishLocalTrack = async (track) => {
   if (!allowOutgoingMedia) {
     return
@@ -36,11 +66,17 @@ const publishLocalTrack = async (track) => {
     }
     await room.addTrack(track)
     publishedLocalTracks.add(track)
-    log(`Published local ${track.getType()} track.`)
+    recordingConferenceLog(`Published local ${track.getType()} track.`, {
+      trackType: track.getType?.() || 'unknown',
+      muted: track.isMuted?.() ?? null,
+    })
   } catch (error) {
     const details = String(error?.message || error?.name || error || 'unknown')
-    log(`Failed to publish ${track.getType()} track: ${details}`)
-    log(
+    recordingConferenceWarn(`Failed to publish ${track.getType()} track: ${details}`, {
+      error: details,
+      trackType: track.getType?.() || 'unknown',
+    })
+    recordingConferenceWarn(
       'If room AV moderation is enabled, a moderator must allow participant media to publish audio.'
     )
     console.error('Failed to publish local track:', error)
@@ -53,7 +89,10 @@ const publishLocalTrack = async (track) => {
  */
 function onLocalTracks({ type, tracks }) {
   if (!allowOutgoingMedia) {
-    log(`Dropping local ${type} track(s): outgoing media is disabled.`)
+    recordingConferenceLog(`Dropping local ${type} track(s): outgoing media is disabled.`, {
+      type,
+      trackCount: tracks.length,
+    })
     for (let i = 0; i < tracks.length; i++) {
       try {
         tracks[i]?.dispose?.()
@@ -112,7 +151,18 @@ function onRemoteTrack(track) {
 
   if (track.getType() === 'audio') {
     window.registerRemoteAudioTrackForRecording?.(track)
-    log(`Remote audio track added from ${participantId || 'unknown participant'}.`)
+    recordingConferenceLog(
+      `Remote audio track added from ${participantId || 'unknown participant'}.`,
+      {
+        participantId: participantId || '',
+        trackType: track.getType?.() || '',
+      }
+    )
+  } else {
+    recordingConferenceLog('Non-audio remote track added.', {
+      participantId: participantId || '',
+      trackType: track.getType?.() || '',
+    })
   }
 }
 
@@ -123,6 +173,7 @@ function onRemoteTrack(track) {
 
 const reloadBot = (userId) => {
   // FIXME Needs fix for node ?
+  recordingConferenceWarn('Reload bot command invoked', { userId: userId || '' })
   room.sendMessage('Reloading Bot, see ya in a second. ')
   location.reload()
 }
@@ -132,6 +183,7 @@ const unknownCommand = (userId) => {
 }
 
 const quit = (userId) => {
+  recordingConferenceWarn('Quit command invoked', { userId: userId || '' })
   room.sendMessage(`Recording bot leaving.`)
   room.room.doLeave()
   window.close()
@@ -149,23 +201,35 @@ const stopRecording = async (userId) => {
 
   try {
     await window.stopAutomatedRecordingFlow?.()
+    recordingConferenceWarn('Stop recording command completed', { userId })
     room.sendMessage('Recording stopped.', userId)
     disconnectBotFromConference()
   } catch (error) {
     room.sendMessage('Failed to stop recording.', userId)
+    recordingConferenceWarn('Failed to stop automated recording flow', {
+      userId,
+      error: error?.message || String(error),
+    })
     console.error('Failed to stop automated recording flow:', error)
   }
 }
 
 const disconnectBotFromConference = () => {
   try {
+    recordingConferenceWarn('Disconnecting recording bot from conference.')
     room?.room?.doLeave()
   } catch (error) {
+    recordingConferenceWarn('Error while leaving conference room', {
+      error: error?.message || String(error),
+    })
     console.error('Error while leaving conference room:', error)
   }
   try {
     con?.disconnect()
   } catch (error) {
+    recordingConferenceWarn('Error while disconnecting conference connection', {
+      error: error?.message || String(error),
+    })
     console.error('Error while disconnecting conference connection:', error)
   }
 }
@@ -173,6 +237,7 @@ const disconnectBotFromConference = () => {
 const stopRecordingFromUi = async () => {
   try {
     await window.stopAutomatedRecordingFlow?.()
+    recordingConferenceWarn('Stop recording requested from UI.')
     room?.sendMessage('Recording stopped from bot UI.')
     document.querySelector('#start_recording_button')?.removeAttribute('disabled')
     disconnectBotFromConference()
@@ -185,12 +250,13 @@ const stopRecordingFromUi = async () => {
 
 const startRecordingFromUi = async () => {
   if (!roomJoined) {
-    log('Cannot start recording yet: conference is not joined.')
+    recordingConferenceWarn('Cannot start recording yet: conference is not joined.')
     return
   }
   try {
     const started = await window.startAutomatedRecordingFlow?.()
     if (started) {
+      recordingConferenceLog('Recording started from UI.')
       room?.sendMessage('Recording started from bot UI.')
       document
         .querySelector('#start_recording_button')
@@ -238,10 +304,15 @@ function conferenceInit() {
     connectionAttemptCount += 1
     const attemptLabel = `${connectionAttemptCount}/${connectionRetryConfig.maxAttempts}`
     log(
-      `Connection failed (${reason}). Retrying in ${
-        connectionRetryConfig.intervalMs / 1000
-      }s (${attemptLabel})...`
-    )
+        `Connection failed (${reason}). Retrying in ${
+          connectionRetryConfig.intervalMs / 1000
+        }s (${attemptLabel})...`
+      )
+      window.recordingWarningLog?.('Scheduling recording reconnect', {
+        reason,
+        attemptLabel,
+        conference: getRecordingConferenceState(),
+      })
 
     if (retryTimeoutId) {
       clearTimeout(retryTimeoutId)
@@ -269,15 +340,17 @@ function conferenceInit() {
       if (fallbackBosh) {
         options.serviceUrl = fallbackBosh
         usingBoshFallback = true
-        log(`Switching to BOSH: ${fallbackBosh}`)
+        recordingConferenceWarn(`Switching to BOSH: ${fallbackBosh}`, {
+          fallbackBosh,
+        })
       } else {
-        log('BOSH fallback requested but no endpoint is available.')
+        recordingConferenceWarn('BOSH fallback requested but no endpoint is available.')
       }
     }
 
     connectionEstablished = false
     window.setTargetJitsiConnectedUi?.(false)
-    log(
+    recordingConferenceLog(
       reason ? `Connecting to Jitsi (${reason})...` : 'Connecting to Jitsi...'
     )
 
@@ -285,7 +358,7 @@ function conferenceInit() {
 
     const onConnectionSuccess = (ev) => {
       console.log('Connection Success')
-      log('Connection established.')
+      recordingConferenceLog('Connection established.')
       connectionEstablished = true
       waitingForConnectionLogged = false
       connectionAttemptCount = 0
@@ -296,7 +369,9 @@ function conferenceInit() {
     }
     const onConnectionFailed = (ev) => {
       console.log('Connection Failed')
-      log('Connection failed.')
+      recordingConferenceWarn('Connection failed.', {
+        error: ev?.message || ev?.type || 'unknown',
+      })
       window.setTargetJitsiConnectedUi?.(false)
       scheduleReconnect('failed')
     }
@@ -306,7 +381,9 @@ function conferenceInit() {
      */
     function disconnect() {
       console.log('disconnect!')
-      log('Connection disconnected.')
+      recordingConferenceWarn('Connection disconnected.', {
+        conference: getRecordingConferenceState(),
+      })
       window.setTargetJitsiConnectedUi?.(false)
       con.removeEventListener(
         JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
@@ -353,7 +430,7 @@ const getStatsIDById = (userId) => {
 function roomInit() {
   if (!connectionEstablished) {
     if (!waitingForConnectionLogged) {
-      log('Waiting for connection to establish...')
+      recordingConferenceLog('Waiting for connection to establish...')
       waitingForConnectionLogged = true
     }
     setTimeout(roomInit, 1000)
@@ -362,7 +439,7 @@ function roomInit() {
 
   const onConferenceJoined = (ev) => {
     console.log('Conference Joined')
-    log('Conference joined.')
+    recordingConferenceLog('Conference joined.')
 
     bot_started = true
     roomJoined = true
@@ -385,6 +462,7 @@ function roomInit() {
   room.on(JitsiMeetJS.events.conference.CONFERENCE_LEFT, () => {
     roomJoined = false
     window.setTargetJitsiConnectedUi?.(false)
+    recordingConferenceWarn('Conference left.')
     document
       .querySelector('#start_recording_button')
       ?.setAttribute('disabled', 'disabled')
@@ -458,11 +536,17 @@ function roomInit() {
   // onJoin
   room.on(JitsiMeetJS.events.conference.USER_JOINED, (userId, userObj) => {
     printParticipants()
-    log('USER JOINED EVENT ' + userId + ': ' + userObj._displayName)
+    recordingConferenceLog('USER JOINED EVENT ' + userId + ': ' + userObj._displayName, {
+      participantId: userId,
+      displayName: userObj?._displayName || '',
+    })
   })
 
   room.on(JitsiMeetJS.events.conference.USER_LEFT, (userId, userObj) => {
-    log('USER LEFT EVENT ' + userId + ': ' + userObj._displayName)
+    recordingConferenceWarn('USER LEFT EVENT ' + userId + ': ' + userObj._displayName, {
+      participantId: userId,
+      displayName: userObj?._displayName || '',
+    })
     printParticipants()
     const tracks = remoteTracks[userId]
     if (!tracks?.length) {
@@ -482,6 +566,10 @@ function roomInit() {
     if (!track || track.isLocal?.()) {
       return
     }
+    recordingConferenceWarn('Remote track removed', {
+      participantId: track.getParticipantId?.() || '',
+      trackType: track.getType?.() || '',
+    })
     if (track.getType?.() === 'audio') {
       window.unregisterRemoteAudioTrackForRecording?.(track)
     }
@@ -555,9 +643,12 @@ function roomInit() {
   )
 
   room.on(JitsiMeetJS.events.conference.KICKED, (kickedByUser, message) => {
-    log(
+    recordingConferenceWarn(
       `\tI got kicked by ${kickedByUser._displayName}. \n\tReason: ${message}`,
-      LOGCLASSES.MYSELF_KICKED
+      {
+        kickedBy: kickedByUser?._displayName || '',
+        message,
+      }
     )
   })
 
@@ -575,7 +666,7 @@ function main() {
 
   conferenceInit()
 
-  log('Target: ' + roomName)
+  recordingConferenceLog('Target: ' + roomName, { roomName })
   roomInit()
 }
 

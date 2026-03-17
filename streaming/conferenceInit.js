@@ -19,6 +19,35 @@ let retryTimeoutId = undefined
 let waitingForConnectionLogged = false
 let usingBoshFallback = false
 
+function getStreamingConferenceState() {
+  return {
+    connectionAttemptCount,
+    waitingForConnectionLogged,
+    usingBoshFallback,
+    roomJoined: window.roomJoined ?? null,
+    connectionEstablished: window.connectionEstablished ?? null,
+    roomName,
+    targetJitsi: options.targetJitsi?.origin || '',
+    serviceUrl: options.serviceUrl || '',
+  }
+}
+
+function streamingConferenceLog(message, details = {}) {
+  log(message)
+  void window.persistStreamingLog?.('info', message, {
+    conference: getStreamingConferenceState(),
+    ...details,
+  })
+}
+
+function streamingConferenceWarn(message, details = {}) {
+  log(message)
+  void window.persistStreamingLog?.('warning', message, {
+    conference: getStreamingConferenceState(),
+    ...details,
+  })
+}
+
 const publishLocalTrack = async (track) => {
   if (!room || !roomJoined || !track || publishedLocalTracks.has(track)) {
     return
@@ -29,11 +58,17 @@ const publishLocalTrack = async (track) => {
     }
     await room.addTrack(track)
     publishedLocalTracks.add(track)
-    log(`Published local ${track.getType()} track.`)
+    streamingConferenceLog(`Published local ${track.getType()} track.`, {
+      trackType: track.getType?.() || 'unknown',
+      muted: track.isMuted?.() ?? null,
+    })
   } catch (error) {
     const details = String(error?.message || error?.name || error || 'unknown')
-    log(`Failed to publish ${track.getType()} track: ${details}`)
-    log(
+    streamingConferenceWarn(`Failed to publish ${track.getType()} track: ${details}`, {
+      error: details,
+      trackType: track.getType?.() || 'unknown',
+    })
+    streamingConferenceWarn(
       'If room AV moderation is enabled, a moderator must allow participant media to publish audio.'
     )
     console.error('Failed to publish local track:', error)
@@ -92,6 +127,11 @@ function onRemoteTrack(track) {
   try {
     track.dispose?.()
   } catch (error) {
+    streamingConferenceWarn('Failed to dispose remote track', {
+      error: error?.message || String(error),
+      trackType,
+      participantId: track.getParticipantId?.() || '',
+    })
     console.error('Failed to dispose remote track:', error)
   }
 }
@@ -107,10 +147,9 @@ function initStreamingTrack() {
     noiseSuppression: false,
     autoGainControl: false,
   }
-  log('Initializing local audio Track(s).')
-  log(
-    `Streaming audio constraints: ${JSON.stringify(streamingAudioConstraints)}`
-  )
+  streamingConferenceLog('Initializing local audio track(s).', {
+    constraints: streamingAudioConstraints,
+  })
   if (typeof window.logStreamingDiagnostics === 'function') {
     window.logStreamingDiagnostics('Before JitsiMeetJS.createLocalTracks')
   }
@@ -122,13 +161,15 @@ function initStreamingTrack() {
     },
   })
     .then((tracks) => {
-      log(`createLocalTracks resolved with ${tracks.length} track(s).`)
+      streamingConferenceLog(`createLocalTracks resolved with ${tracks.length} track(s).`, {
+        trackCount: tracks.length,
+      })
       tracks.forEach((track, index) => {
-        log(
-          `Local track[${index}] type=${track.getType?.() || 'unknown'} muted=${
-            track.isMuted?.() ?? 'unknown'
-          }`
-        )
+        streamingConferenceLog(`Local track[${index}] ready`, {
+          index,
+          type: track.getType?.() || 'unknown',
+          muted: track.isMuted?.() ?? 'unknown',
+        })
       })
       if (typeof window.logStreamingDiagnostics === 'function') {
         window.logStreamingDiagnostics('After JitsiMeetJS.createLocalTracks')
@@ -139,7 +180,9 @@ function initStreamingTrack() {
       if (typeof window.logStreamingDiagnostics === 'function') {
         window.logStreamingDiagnostics('createLocalTracks rejected')
       }
-      log(`createLocalTracks failed: ${error?.message || error}`)
+      streamingConferenceWarn('createLocalTracks failed', {
+        error: error?.message || String(error),
+      })
       throw error
     })
 }
@@ -167,19 +210,19 @@ function startStreamPlaybackWithRetry() {
     if (playPromise && typeof playPromise.catch === 'function') {
       playPromise.catch((error) => {
         if (attempt < maxAttempts) {
-          log(
-            `Retry play attempt ${attempt}/${maxAttempts} failed: ${
-              error?.message || error
-            }`
-          )
+          streamingConferenceWarn(`Retry play attempt ${attempt}/${maxAttempts} failed`, {
+            attempt,
+            maxAttempts,
+            error: error?.message || String(error),
+          })
           setTimeout(tryPlay, attemptDelayMs)
           return
         }
-        log(
-          `Auto-play failed after ${maxAttempts} attempts: ${
-            error?.message || error
-          }`
-        )
+        streamingConferenceWarn(`Auto-play failed after ${maxAttempts} attempts`, {
+          attempt,
+          maxAttempts,
+          error: error?.message || String(error),
+        })
       })
     }
   }
@@ -212,6 +255,7 @@ streaming.addEventListener('pause', () => {
 
 const reloadBot = (userId) => {
   // FIXME Needs fix for node ?
+  streamingConferenceWarn('Reload bot command invoked', { userId: userId || '' })
   room.sendMessage('Reloading Bot, see ya in a second. ')
   location.reload()
 }
@@ -221,6 +265,7 @@ const unknownCommand = (userId) => {
 }
 
 const quit = (userId) => {
+  streamingConferenceWarn('Quit command invoked', { userId: userId || '' })
   room.sendMessage(`Streaming bot leaving.`)
   room.room.doLeave()
   window.close()
@@ -350,11 +395,16 @@ function conferenceInit() {
 
     connectionAttemptCount += 1
     const attemptLabel = `${connectionAttemptCount}/${connectionRetryConfig.maxAttempts}`
-    log(
-      `Connection failed (${reason}). Retrying in ${
-        connectionRetryConfig.intervalMs / 1000
-      }s (${attemptLabel})...`
-    )
+      log(
+        `Connection failed (${reason}). Retrying in ${
+          connectionRetryConfig.intervalMs / 1000
+        }s (${attemptLabel})...`
+      )
+      window.streamingWarningLog?.('Scheduling streaming reconnect', {
+        reason,
+        attemptLabel,
+        conference: getStreamingConferenceState(),
+      })
 
     if (retryTimeoutId) {
       clearTimeout(retryTimeoutId)
@@ -382,15 +432,17 @@ function conferenceInit() {
       if (fallbackBosh) {
         options.serviceUrl = fallbackBosh
         usingBoshFallback = true
-        log(`Switching to BOSH: ${fallbackBosh}`)
+        streamingConferenceWarn(`Switching to BOSH: ${fallbackBosh}`, {
+          fallbackBosh,
+        })
       } else {
-        log('BOSH fallback requested but no endpoint is available.')
+        streamingConferenceWarn('BOSH fallback requested but no endpoint is available.')
       }
     }
 
     connectionEstablished = false
     window.setTargetJitsiConnectedUi?.(false)
-    log(
+    streamingConferenceLog(
       reason ? `Connecting to Jitsi (${reason})...` : 'Connecting to Jitsi...'
     )
 
@@ -398,7 +450,7 @@ function conferenceInit() {
 
     const onConnectionSuccess = (ev) => {
       console.log('Connection Success')
-      log('Connection established.')
+      streamingConferenceLog('Connection established.')
       connectionEstablished = true
       waitingForConnectionLogged = false
       connectionAttemptCount = 0
@@ -409,7 +461,9 @@ function conferenceInit() {
     }
     const onConnectionFailed = (ev) => {
       console.log('Connection Failed')
-      log('Connection failed.')
+      streamingConferenceWarn('Connection failed.', {
+        error: ev?.message || ev?.type || 'unknown',
+      })
       window.setTargetJitsiConnectedUi?.(false)
       scheduleReconnect('failed')
     }
@@ -419,7 +473,9 @@ function conferenceInit() {
      */
     function disconnect() {
       console.log('disconnect!')
-      log('Connection disconnected.')
+      streamingConferenceWarn('Connection disconnected.', {
+        conference: getStreamingConferenceState(),
+      })
       window.setTargetJitsiConnectedUi?.(false)
       con.removeEventListener(
         JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
@@ -466,7 +522,7 @@ const getStatsIDById = (userId) => {
 function roomInit() {
   if (!connectionEstablished) {
     if (!waitingForConnectionLogged) {
-      log('Waiting for connection to establish...')
+      streamingConferenceLog('Waiting for connection to establish...')
       waitingForConnectionLogged = true
     }
     setTimeout(roomInit, 1000)
@@ -475,7 +531,7 @@ function roomInit() {
 
   const onConferenceJoined = (ev) => {
     console.log('Conference Joined')
-    log('Conference joined.')
+    streamingConferenceLog('Conference joined.')
 
     bot_started = true
     roomJoined = true
@@ -505,6 +561,7 @@ function roomInit() {
   room.on(JitsiMeetJS.events.conference.CONFERENCE_LEFT, () => {
     roomJoined = false
     window.setTargetJitsiConnectedUi?.(false)
+    streamingConferenceWarn('Conference left.')
   })
 
   room.on(JitsiMeetJS.events.conference.MESSAGE_RECEIVED, (userId, message) => {
@@ -580,24 +637,35 @@ function roomInit() {
       }
     }
     printParticipants()
-    log('USER JOINED EVENT ' + userId + ': ' + userObj._displayName)
+    streamingConferenceLog('USER JOINED EVENT ' + userId + ': ' + userObj._displayName, {
+      participantId: userId,
+      displayName: userObj?._displayName || '',
+    })
   })
 
   room.on(JitsiMeetJS.events.conference.USER_LEFT, (userId, userObj) => {
-    log('USER LEFT EVENT ' + userId + ': ' + userObj._displayName)
+    streamingConferenceWarn('USER LEFT EVENT ' + userId + ': ' + userObj._displayName, {
+      participantId: userId,
+      displayName: userObj?._displayName || '',
+    })
     printParticipants()
     if (!remoteTracks[userId]) {
       return
     }
-    const tracks = remoteTracks[id]
+    const tracks = remoteTracks[userId]
 
     for (let i = 0; i < tracks.length; i++) {
-      tracks[i].detach($(`#${id}${tracks[i].getType()}`))
+      tracks[i].detach($(`#${userId}${tracks[i].getType()}`))
     }
   })
 
   room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack)
   room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, (track) => {
+    streamingConferenceWarn('Remote track removed', {
+      participantId: track?.getParticipantId?.() || '',
+      trackType: track?.getType?.() || '',
+      isLocal: track?.isLocal?.() ?? null,
+    })
     console.log(`track removed!!!${track}`)
   })
 
@@ -659,9 +727,12 @@ function roomInit() {
   )
 
   room.on(JitsiMeetJS.events.conference.KICKED, (kickedByUser, message) => {
-    log(
+    streamingConferenceWarn(
       `\tI got kicked by ${kickedByUser._displayName}. \n\tReason: ${message}`,
-      LOGCLASSES.MYSELF_KICKED
+      {
+        kickedBy: kickedByUser?._displayName || '',
+        message,
+      }
     )
   })
 
@@ -679,7 +750,7 @@ function main() {
 
   conferenceInit()
 
-  log('Target: ' + roomName)
+  streamingConferenceLog('Target: ' + roomName, { roomName })
   roomInit()
 }
 
