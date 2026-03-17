@@ -31,7 +31,7 @@ let lastChunkTimestamp = 0
 let localChunkServiceState = 'unknown'
 
 const pingIntervalMs = 5 * 60 * 1000
-const segmentDurationMs = 5 * 60 * 1000
+const segmentDurationMs = 60 * 1000
 const healthLogIntervalMs = 60 * 1000
 const minTerminalChunkBytes = 2048
 let pingIntervalId = undefined

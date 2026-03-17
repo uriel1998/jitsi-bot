@@ -12,6 +12,7 @@ __pycache__/
 .mypy_cache/
 .venv/
 venv/
+recording_tests
 
 # Environment and logs
 .env
