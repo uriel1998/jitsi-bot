@@ -1,4 +1,4 @@
-// recording audio element should already be defined
+// recording support should already be initialized
 
 JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR)
 
@@ -116,67 +116,6 @@ function onRemoteTrack(track) {
   }
 }
 
-function initRecordingTrack() {
-  if (!allowOutgoingMedia) {
-    log('Skipping local audio track init: outgoing media is disabled.')
-    return
-  }
-  if (!initDone) {
-    setTimeout(initRecordingTrack, 2000)
-    return
-  }
-
-  log('Initializing local audio Track(s).')
-  // we also dont need local video stream, we just want the audio stream transmitted from the "audio recording" html element
-  JitsiMeetJS.createLocalTracks({ devices: ['audio'] })
-    .then((tracks) => {
-      onLocalTracks({ type: 'audio', tracks })
-    })
-    .catch((error) => {
-      throw error
-    })
-}
-
-function initVideoboardTrack() {
-  if (!allowOutgoingMedia) {
-    log('Skipping local video track init: outgoing media is disabled.')
-    return
-  }
-  console.log('Initializing local video Track(s).')
-  JitsiMeetJS.createLocalTracks({ devices: ['video'] })
-    .then((tracks) => {
-      onLocalTracks({ type: 'video', tracks })
-    })
-    .catch((error) => {
-      throw error
-    })
-}
-
-recording.addEventListener('play', () => {
-  room.setDisplayName(
-    `▶ ${getRecordingCurrentTrackName()} - ${options.recordingbotDisplayName}`
-  )
-})
-
-recording.addEventListener('ended', () => {
-  room.setDisplayName(
-    `⏹ ${getRecordingCurrentTrackName()} - ${options.recordingbotDisplayName}`
-  )
-})
-
-recording.addEventListener('pause', () => {
-  room.setDisplayName(
-    `⏸ ${getRecordingCurrentTrackName()} - ${options.recordingbotDisplayName}`
-  )
-})
-
-// Video Related setup Stuff
-
-function playVideo() {
-  initVideoboardTrack()
-  videoboard.play()
-}
-
 /* -------------------------
  * Command Handler Functions
  * -------------------------
@@ -263,70 +202,11 @@ const startRecordingFromUi = async () => {
   }
 }
 
-const currentTrack = (userId) => {
-  const track = recording.src
-  room.sendMessage(`Currently loaded: ${track}`, userId)
-}
-
-const loadTrack = (userId, url) => {
-  const mp3Reg = new RegExp('.*//.*.mp3')
-
-  if (!mp3Reg.test(url)) {
-    room.sendMessage('Invalid URL.', userId)
-    return
-  }
-
-  try {
-    recording.src = url
-    room.sendMessage(`Source set.`, userId)
-  } catch (error) {
-    log(`Error on loading new source "${url}", check url.`)
-  }
-}
-
-const toggleLoop = (userId) => {
-  room.sendMessage(`Track Repeating set to ${!recording.loop}`, userId)
-  recording.loop = !recording.loop
-}
-
-const increaseVol = (userId) => {
-  recording.volume += 0.1
-  room.sendMessage(`Volume set to ${recording.volume * 100}%`, userId)
-}
-
-const reduceVol = (userId) => {
-  recording.volume -= 0.1
-  room.sendMessage(`Volume set to ${recording.volume * 100}%`, userId)
-}
-
-const setVol = (userId, argument) => {
-  const vol = parseFloat(argument)
-  if (isNaN(vol)) {
-    room.sendMessage(`Argument is NaN`, userId)
-  }
-  if (vol < 0 || vol > 100) {
-    room.sendMessage(
-      `Argument invalid. Please write Number between 0 and 100.`,
-      userId
-    )
-  }
-
-  recording.volume = vol / 100
-  room.sendMessage(`Volume set to ${recording.volume * 100}%`, userId)
-}
-
 const help = (userId) => {
   const commands = [
     'Available Commands:',
-    '/currentTrack',
     '/help',
-    '/loadTrack URL',
-    '/playVideo',
     '/reload',
-    '/toggleLoop',
-    '/vol+',
-    '/vol-',
-    '/setVol x # x: vol between 0 .. 100',
     '/stop # moderator only',
     '/quit',
   ]
@@ -340,15 +220,8 @@ const help = (userId) => {
  */
 
 const commandHandler = {
-  '/currentTrack': currentTrack,
   '/help': help,
-  '/loadTrack': loadTrack,
-  '/playVideo': playVideo,
   '/reload': reloadBot,
-  '/toggleLoop': toggleLoop,
-  '/vol+': increaseVol,
-  '/vol-': reduceVol,
-  '/setVol': setVol,
   '/stop': stopRecording,
   '/quit': quit,
 }
@@ -495,7 +368,6 @@ function roomInit() {
     roomJoined = true
     window.setTargetJitsiConnectedUi?.(true)
 
-    setTimeout(initRecordingTrack, 2000)
     document.querySelector('#start_recording_button')?.removeAttribute('disabled')
 
     Object.values(localTracks).forEach((tracks) => {

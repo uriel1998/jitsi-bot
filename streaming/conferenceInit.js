@@ -111,6 +111,9 @@ function initStreamingTrack() {
   log(
     `Streaming audio constraints: ${JSON.stringify(streamingAudioConstraints)}`
   )
+  if (typeof window.logStreamingDiagnostics === 'function') {
+    window.logStreamingDiagnostics('Before JitsiMeetJS.createLocalTracks')
+  }
   // we also dont need local video stream, we just want the audio stream transmitted from the "audio streaming" html element
   JitsiMeetJS.createLocalTracks({
     devices: ['audio'],
@@ -119,9 +122,24 @@ function initStreamingTrack() {
     },
   })
     .then((tracks) => {
+      log(`createLocalTracks resolved with ${tracks.length} track(s).`)
+      tracks.forEach((track, index) => {
+        log(
+          `Local track[${index}] type=${track.getType?.() || 'unknown'} muted=${
+            track.isMuted?.() ?? 'unknown'
+          }`
+        )
+      })
+      if (typeof window.logStreamingDiagnostics === 'function') {
+        window.logStreamingDiagnostics('After JitsiMeetJS.createLocalTracks')
+      }
       onLocalTracks({ type: 'audio', tracks })
     })
     .catch((error) => {
+      if (typeof window.logStreamingDiagnostics === 'function') {
+        window.logStreamingDiagnostics('createLocalTracks rejected')
+      }
+      log(`createLocalTracks failed: ${error?.message || error}`)
       throw error
     })
 }
@@ -133,10 +151,27 @@ function startStreamPlaybackWithRetry() {
 
   const tryPlay = () => {
     attempt += 1
+    if (typeof window.logStreamingDiagnostics === 'function') {
+      window.logStreamingDiagnostics(`Retry play attempt ${attempt}/${maxAttempts}`)
+    }
     const playPromise = streaming.play()
+    if (playPromise && typeof playPromise.then === 'function') {
+      playPromise.then(() => {
+        if (typeof window.logStreamingDiagnostics === 'function') {
+          window.logStreamingDiagnostics(
+            `Retry play attempt ${attempt}/${maxAttempts} resolved`
+          )
+        }
+      })
+    }
     if (playPromise && typeof playPromise.catch === 'function') {
       playPromise.catch((error) => {
         if (attempt < maxAttempts) {
+          log(
+            `Retry play attempt ${attempt}/${maxAttempts} failed: ${
+              error?.message || error
+            }`
+          )
           setTimeout(tryPlay, attemptDelayMs)
           return
         }

@@ -2,48 +2,11 @@
  * Credit: Jimmi Music Bot for Jitsi https://github.com/Music-Bot-for-Jitsi/Jimmi
  */
 
-function ensureHiddenMediaElement(selector, tagName, defaults = {}) {
-  let element = document.querySelector(selector)
-  if (element) {
-    return element
-  }
-
-  element = document.createElement(tagName)
-  if (selector.startsWith('#')) {
-    element.id = selector.slice(1)
-  }
-  element.crossOrigin = 'anonymous'
-  element.preload = 'auto'
-  element.style.display = 'none'
-  if (defaults.src) {
-    element.src = defaults.src
-  }
-  if (tagName === 'video') {
-    element.playsInline = true
-  }
-  document.body.appendChild(element)
-  return element
-}
-
-const recording = ensureHiddenMediaElement('#recording', 'audio', {
-  src: '../audio/nggyu.mp3',
-})
-const videoboard = ensureHiddenMediaElement('#videoboard', 'video', {
-  src: '../video/big-buck-bunny-sample.mp4',
-})
 const recordingLevelBar = document.querySelector('#recordingLevelBar')
 const recordingLevelValue = document.querySelector('#recordingLevelValue')
 
-recording.volume = 0.1
-videoboard.volume = 0.1
-
-let gainNode = undefined
 let recordingContext = undefined
-
 let recordingDestStream = undefined
-let serverDestStream = undefined
-let serverOutputGainNode = undefined
-let recordingInputGainNode = undefined
 
 let initDone = false
 
@@ -58,9 +21,6 @@ let isStoppingSegmentRecorder = false
 let segmentSaveChain = Promise.resolve()
 const remoteAudioNodes = new WeakMap()
 const pendingRemoteAudioTracks = new Set()
-const speakerRecorders = new Map()
-const generatedTrackIds = new WeakMap()
-let generatedTrackIdCounter = 0
 let recordingLevelAnalyser = undefined
 let recordingLevelData = undefined
 let recordingLevelRafId = undefined
@@ -82,71 +42,6 @@ function makeTimestamp() {
 
 function getDefaultRecordingFilename() {
   return `recording_${makeTimestamp()}.webm`
-}
-
-function sanitizeFilenameToken(value, fallback = 'unknown') {
-  const raw = String(value ?? '')
-    .trim()
-    .replace(/\s+/g, '_')
-    .replace(/[^A-Za-z0-9_.-]/g, '')
-  return raw || fallback
-}
-
-function getSessionBaseName() {
-  const rawName =
-    recordingTarget?.filename || recorderTargetName || getDefaultRecordingFilename()
-  return rawName.replace(/\.webm$/i, '')
-}
-
-function getStableTrackId(track) {
-  const fromTrack = track?.getTrackId?.()
-  if (fromTrack) {
-    return String(fromTrack)
-  }
-  if (generatedTrackIds.has(track)) {
-    return generatedTrackIds.get(track)
-  }
-  generatedTrackIdCounter += 1
-  const generatedId = `generatedTrack${generatedTrackIdCounter}`
-  generatedTrackIds.set(track, generatedId)
-  return generatedId
-}
-
-function buildSpeakerRecorderKey(track) {
-  const participantId = track?.getParticipantId?.() || 'unknownParticipant'
-  return `${participantId}__${getStableTrackId(track)}`
-}
-
-function getParticipantDisplayName(participantId) {
-  if (!participantId || !room?.getParticipantById) {
-    return 'unknownSpeaker'
-  }
-  return room.getParticipantById(participantId)?._displayName || participantId
-}
-
-function getSpeakerSegmentFilename(speakerState, segmentIndex) {
-  const baseName = getSessionBaseName()
-  const speakerToken = sanitizeFilenameToken(
-    speakerState.displayName || speakerState.participantId || 'speaker',
-    'speaker'
-  )
-  const participantToken = sanitizeFilenameToken(
-    speakerState.participantId || speakerState.key,
-    'participant'
-  )
-  return `${baseName}_${speakerToken}_${participantToken}_part${String(
-    segmentIndex
-  ).padStart(4, '0')}.webm`
-}
-
-function getRecorderMimeType() {
-  if (window.MediaRecorder?.isTypeSupported('audio/webm;codecs=opus')) {
-    return 'audio/webm;codecs=opus'
-  }
-  if (window.MediaRecorder?.isTypeSupported('audio/webm')) {
-    return 'audio/webm'
-  }
-  return ''
 }
 
 async function promptForRecordingTarget() {
@@ -179,6 +74,16 @@ function startPeriodicPing() {
     }
     room?.sendMessage?.('🎤 recording ongoing.')
   }, pingIntervalMs)
+}
+
+function getRecorderMimeType() {
+  if (window.MediaRecorder?.isTypeSupported('audio/webm;codecs=opus')) {
+    return 'audio/webm;codecs=opus'
+  }
+  if (window.MediaRecorder?.isTypeSupported('audio/webm')) {
+    return 'audio/webm'
+  }
+  return ''
 }
 
 function startMediaRecorder() {
@@ -269,145 +174,6 @@ async function saveRecordedChunks(target, chunks, segmentIndex) {
   return fileName
 }
 
-async function saveSpeakerRecordedChunks(speakerState, chunks, segmentIndex) {
-  const mimeType = getRecorderMimeType() || 'audio/webm'
-  const blob = new Blob(chunks, { type: mimeType })
-  const fileName = getSpeakerSegmentFilename(speakerState, segmentIndex)
-  const downloadUrl = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = downloadUrl
-  a.download = fileName
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
-  return fileName
-}
-
-function startSpeakerMediaRecorder(speakerState) {
-  if (
-    !speakerState ||
-    !speakerState.destStream?.stream ||
-    !window.MediaRecorder ||
-    !segmentRecordingActive ||
-    speakerState.mediaRecorder?.state === 'recording'
-  ) {
-    return false
-  }
-
-  speakerState.currentSegmentChunks = []
-  speakerState.segmentIndex += 1
-  speakerState.isStopping = false
-
-  const mimeType = getRecorderMimeType()
-  const recorderOptions = mimeType ? { mimeType } : undefined
-  speakerState.mediaRecorder = new MediaRecorder(
-    speakerState.destStream.stream,
-    recorderOptions
-  )
-
-  speakerState.mediaRecorder.addEventListener('dataavailable', (event) => {
-    if (event.data && event.data.size > 0) {
-      speakerState.currentSegmentChunks.push(event.data)
-    }
-  })
-
-  speakerState.mediaRecorder.addEventListener(
-    'stop',
-    () => {
-      const finalizedChunks = speakerState.currentSegmentChunks
-      speakerState.currentSegmentChunks = []
-      const finalizedIndex = speakerState.segmentIndex
-
-      speakerState.saveChain = speakerState.saveChain
-        .then(async () => {
-          if (!finalizedChunks.length) {
-            return
-          }
-          const savedAs = await saveSpeakerRecordedChunks(
-            speakerState,
-            finalizedChunks,
-            finalizedIndex
-          )
-          log(
-            `Saved speaker segment ${finalizedIndex}: ${savedAs} (${speakerState.displayName})`
-          )
-        })
-        .catch((error) => {
-          log(
-            `Failed to save speaker segment for ${
-              speakerState.displayName
-            }: ${error?.message || error}`
-          )
-        })
-        .finally(() => {
-          if (segmentRecordingActive && speakerRecorders.has(speakerState.key)) {
-            startSpeakerMediaRecorder(speakerState)
-          }
-        })
-    },
-    { once: true }
-  )
-
-  speakerState.mediaRecorder.start()
-  clearTimeout(speakerState.segmentStopTimerId)
-  speakerState.segmentStopTimerId = setTimeout(() => {
-    const recorder = speakerState.mediaRecorder
-    if (recorder && recorder.state === 'recording' && !speakerState.isStopping) {
-      recorder.stop()
-    }
-  }, segmentDurationMs)
-
-  log(
-    `Speaker segment ${speakerState.segmentIndex} started: ${speakerState.displayName}`
-  )
-  return true
-}
-
-function stopSpeakerMediaRecorder(speakerState) {
-  return new Promise((resolve) => {
-    if (
-      !speakerState?.mediaRecorder ||
-      speakerState.mediaRecorder.state === 'inactive'
-    ) {
-      resolve(false)
-      return
-    }
-
-    speakerState.isStopping = true
-    clearTimeout(speakerState.segmentStopTimerId)
-    speakerState.mediaRecorder.addEventListener(
-      'stop',
-      () => {
-        resolve(true)
-      },
-      { once: true }
-    )
-    speakerState.mediaRecorder.stop()
-  })
-}
-
-function startSpeakerRecordersForActiveSession() {
-  if (!segmentRecordingActive) {
-    return
-  }
-  for (const speakerState of speakerRecorders.values()) {
-    startSpeakerMediaRecorder(speakerState)
-  }
-}
-
-async function stopAllSpeakerRecorders() {
-  const stopPromises = []
-
-  for (const speakerState of speakerRecorders.values()) {
-    stopPromises.push(stopSpeakerMediaRecorder(speakerState))
-  }
-
-  await Promise.all(stopPromises)
-  const savePromises = [...speakerRecorders.values()].map(
-    (speakerState) => speakerState.saveChain
-  )
-  await Promise.all(savePromises)
-}
-
 let recordingTarget = undefined
 
 async function startAutomatedRecordingFlow() {
@@ -421,6 +187,9 @@ async function startAutomatedRecordingFlow() {
   segmentSaveChain = Promise.resolve()
 
   try {
+    if (recordingContext?.state === 'suspended') {
+      await recordingContext.resume()
+    }
     recordingTarget = await promptForRecordingTarget()
     if (!recordingTarget) {
       recordingSessionStarted = false
@@ -433,7 +202,6 @@ async function startAutomatedRecordingFlow() {
       segmentRecordingActive = false
       return false
     }
-    startSpeakerRecordersForActiveSession()
     room?.sendMessage?.('🎤 recording started.')
     startPeriodicPing()
     return true
@@ -508,7 +276,7 @@ function initRecordingLevelMeter(audioContext) {
 
 async function stopAutomatedRecordingFlow() {
   stopPeriodicPing()
-  const [stopped] = await Promise.all([stopMediaRecorder(), stopAllSpeakerRecorders()])
+  const stopped = await stopMediaRecorder()
   await segmentSaveChain
   if (!stopped) {
     log('No active recording to stop.')
@@ -522,79 +290,19 @@ async function stopAutomatedRecordingFlow() {
 }
 
 function initAudio() {
-  if (!recording) {
-    console.error('Error with Recording Audio Element.')
-  }
-
   const audioContext = new AudioContext()
   recordingContext = audioContext
-  const videoAudio = audioContext.createMediaElementSource(videoboard)
-  const track = audioContext.createMediaElementSource(recording)
   recordingDestStream = audioContext.createMediaStreamDestination()
-  serverDestStream = audioContext.createMediaStreamDestination()
-  serverOutputGainNode = audioContext.createGain()
-  recordingInputGainNode = audioContext.createGain()
-  serverOutputGainNode.gain.value = 1
-  recordingInputGainNode.gain.value = 1
   initRecordingLevelMeter(audioContext)
 
-  videoAudio.connect(recordingInputGainNode)
-  track.connect(recordingInputGainNode)
-  recordingInputGainNode.connect(recordingDestStream)
-  videoAudio.connect(serverOutputGainNode)
-  track.connect(serverOutputGainNode)
-  serverOutputGainNode.connect(serverDestStream)
-
-  log('InitAudio - Preparing Audio Stream')
+  log('InitAudio - Preparing conference audio recording stream.')
   log(`AudioContext allowed: ${audioContext.state !== 'suspended'}`)
-  navigator.mediaDevices.getUserMedia = async function ({ audio, video }) {
-    console.log({ audio, video })
-    log(
-      'UserMedia is being Accessed. - Returning corresponding context stream.'
-    )
-
-    await audioContext.resume()
-    if (audio) {
-      return serverDestStream.stream
-    }
-    if (video) {
-      const videoStream = new MediaStream()
-      videoStream.addTrack(videoboard.captureStream().getVideoTracks()[0])
-      return videoStream
-    }
-    return serverDestStream.stream
-  }
 
   initDone = true
   flushPendingRemoteAudioTracks()
 }
 
-document
-  .querySelector('#recordingInputForm')
-  ?.addEventListener('submit', (ev) => {
-    ev.preventDefault()
-    ev.stopPropagation()
-    const recordingSourceInput = document.querySelector('#recordingSourceInput')
-    if (!recordingSourceInput.validity.valid) {
-      return false
-    }
-    try {
-      log(`Trying to load URL ${recordingSourceInput.value}`)
-      recording.src = recordingSourceInput.value
-      recordingSourceInput.value = ''
-    } catch (error) {
-      console.log(error)
-      log(`Error Loading Audiofile.`)
-    }
-  })
-
 initAudio()
-
-function getRecordingCurrentTrackName() {
-  let splittedPath = new URL(recording.src).pathname.split('/')
-
-  return splittedPath[splittedPath.length - 1].split('.')[0]
-}
 
 function printParticipants() {
   const participants = room.getParticipants()
@@ -618,13 +326,7 @@ window.startAutomatedRecordingFlow = startAutomatedRecordingFlow
 window.stopAutomatedRecordingFlow = stopAutomatedRecordingFlow
 
 function connectRemoteAudioTrack(track) {
-  if (
-    !recordingContext ||
-    !recordingDestStream?.stream ||
-    !serverOutputGainNode ||
-    !recordingInputGainNode ||
-    !track
-  ) {
+  if (!recordingContext || !recordingDestStream?.stream || !track) {
     return false
   }
   if (track.getType?.() !== 'audio') {
@@ -643,41 +345,15 @@ function connectRemoteAudioTrack(track) {
 
   try {
     const sourceNode = recordingContext.createMediaStreamSource(originalStream)
-    const recordingGainNode = recordingContext.createGain()
-    const speakerGainNode = recordingContext.createGain()
-    const speakerDestStream = recordingContext.createMediaStreamDestination()
-    recordingGainNode.gain.value = 1
-    speakerGainNode.gain.value = 1
+    const gainNode = recordingContext.createGain()
+    gainNode.gain.value = 1
 
-    const participantId = track.getParticipantId?.() || 'unknownParticipant'
-    const speakerState = {
-      key: buildSpeakerRecorderKey(track),
-      participantId,
-      displayName: getParticipantDisplayName(participantId),
-      destStream: speakerDestStream,
-      mediaRecorder: undefined,
-      currentSegmentChunks: [],
-      segmentIndex: 0,
-      segmentStopTimerId: undefined,
-      isStopping: false,
-      saveChain: Promise.resolve(),
-    }
-
-    sourceNode.connect(recordingGainNode)
-    sourceNode.connect(speakerGainNode)
-    recordingGainNode.connect(recordingInputGainNode)
-    speakerGainNode.connect(speakerDestStream)
-    speakerRecorders.set(speakerState.key, speakerState)
+    sourceNode.connect(gainNode)
+    gainNode.connect(recordingDestStream)
     remoteAudioNodes.set(track, {
       sourceNode,
-      recordingGainNode,
-      speakerGainNode,
-      speakerState,
+      gainNode,
     })
-
-    if (recordingSessionStarted && segmentRecordingActive) {
-      startSpeakerMediaRecorder(speakerState)
-    }
     return true
   } catch (error) {
     log(`Failed to connect remote audio track: ${error?.message || error}`)
@@ -686,13 +362,7 @@ function connectRemoteAudioTrack(track) {
 }
 
 function flushPendingRemoteAudioTracks() {
-  if (
-    !recordingContext ||
-    !recordingDestStream?.stream ||
-    !serverOutputGainNode ||
-    !recordingInputGainNode ||
-    pendingRemoteAudioTracks.size === 0
-  ) {
+  if (!recordingContext || !recordingDestStream?.stream || pendingRemoteAudioTracks.size === 0) {
     return
   }
 
@@ -707,13 +377,7 @@ window.registerRemoteAudioTrackForRecording = (track) => {
   if (!track || track.getType?.() !== 'audio') {
     return
   }
-  if (
-    !initDone ||
-    !recordingContext ||
-    !recordingDestStream?.stream ||
-    !serverOutputGainNode ||
-    !recordingInputGainNode
-  ) {
+  if (!initDone || !recordingContext || !recordingDestStream?.stream) {
     pendingRemoteAudioTracks.add(track)
     return
   }
@@ -729,59 +393,15 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
   if (!nodes) {
     return
   }
-  const speakerState = nodes.speakerState
-  speakerRecorders.delete(speakerState?.key)
-  stopSpeakerMediaRecorder(speakerState)
-    .then(() => speakerState?.saveChain)
-    .catch((error) => {
-      log(
-        `Failed to stop speaker recorder for ${
-          speakerState?.displayName || 'unknown speaker'
-        }: ${error?.message || error}`
-      )
-    })
   try {
     nodes.sourceNode.disconnect()
   } catch (error) {
     console.log('Failed to disconnect remote source node', error)
   }
   try {
-    nodes.recordingGainNode.disconnect()
+    nodes.gainNode.disconnect()
   } catch (error) {
     console.log('Failed to disconnect remote gain node', error)
   }
-  try {
-    nodes.speakerGainNode?.disconnect()
-  } catch (error) {
-    console.log('Failed to disconnect speaker gain node', error)
-  }
   remoteAudioNodes.delete(track)
-}
-
-window.setRecordingBotOutputVolume = (value = 0) => {
-  if (!serverOutputGainNode || !recordingContext) {
-    return
-  }
-
-  const numeric = Number(value)
-  if (!Number.isFinite(numeric)) {
-    return
-  }
-  const normalized = numeric > 1 ? numeric / 100 : numeric
-  const clamped = Math.min(1, Math.max(0, normalized))
-  serverOutputGainNode.gain.setValueAtTime(clamped, recordingContext.currentTime)
-}
-
-window.setRecordingBotInputVolume = (value = 100) => {
-  if (!recordingInputGainNode || !recordingContext) {
-    return
-  }
-
-  const numeric = Number(value)
-  if (!Number.isFinite(numeric)) {
-    return
-  }
-  const normalized = numeric > 1 ? numeric / 100 : numeric
-  const clamped = Math.min(1, Math.max(0, normalized))
-  recordingInputGainNode.gain.setValueAtTime(clamped, recordingContext.currentTime)
 }
