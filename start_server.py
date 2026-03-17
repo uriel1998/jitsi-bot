@@ -2,6 +2,7 @@
 
 import http.server
 import json
+import urllib.parse
 from datetime import datetime, timezone
 from http.server import HTTPServer
 from pathlib import Path
@@ -11,6 +12,7 @@ from pathlib import Path
 
 LOG_DIR = Path("server_logs")
 CLIENT_LOG_FILE = LOG_DIR / "client-events.log"
+RECORDING_DIR = Path("recording_tests")
 
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -24,10 +26,17 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Expires", "0")
 
     def do_POST(self):
-        if self.path != "/__client_log":
-            self.send_error(404, "Unknown endpoint")
+        if self.path == "/__client_log":
+            self.handle_client_log()
             return
 
+        if self.path == "/__recording_chunk":
+            self.handle_recording_chunk()
+            return
+
+        self.send_error(404, "Unknown endpoint")
+
+    def handle_client_log(self):
         content_length = int(self.headers.get("Content-Length", "0") or "0")
         raw_body = self.rfile.read(content_length)
 
@@ -49,6 +58,54 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(204)
         self.end_headers()
 
+    def handle_recording_chunk(self):
+        encoded_filename = self.headers.get("X-Filename", "")
+        if not encoded_filename:
+            self.send_error(400, "Missing X-Filename header")
+            return
+        chunk_index = int(self.headers.get("X-Chunk-Index", "0") or "0")
+        append_requested = self.headers.get("X-Append", "false").lower() == "true"
+
+        content_length = int(self.headers.get("Content-Length", "0") or "0")
+        raw_body = self.rfile.read(content_length)
+        if not raw_body:
+            self.send_error(400, "Empty recording chunk")
+            return
+
+        try:
+            filename = urllib.parse.unquote(encoded_filename)
+        except Exception:
+            filename = encoded_filename
+
+        safe_name = Path(filename).name
+        if not safe_name:
+            self.send_error(400, "Invalid filename")
+            return
+
+        RECORDING_DIR.mkdir(parents=True, exist_ok=True)
+        output_path = RECORDING_DIR / safe_name
+        if append_requested and chunk_index > 1 and output_path.exists():
+            with output_path.open("ab") as handle:
+                handle.write(raw_body)
+        else:
+            output_path.write_bytes(raw_body)
+
+        response_body = json.dumps(
+            {
+                "savedAs": safe_name,
+                "path": str(output_path.resolve()),
+                "size": len(raw_body),
+                "chunkIndex": chunk_index,
+                "appendRequested": append_requested,
+            }
+        ).encode("utf-8")
+
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(response_body)))
+        self.end_headers()
+        self.wfile.write(response_body)
+
 
 def run(server_class=HTTPServer, handler_class=MyHTTPRequestHandler):
     server_address = ("", 5500)
@@ -56,6 +113,7 @@ def run(server_class=HTTPServer, handler_class=MyHTTPRequestHandler):
         f"Launching HTTP Server for current directory at {server_address[0]}:{server_address[1]}"
     )
     print(f"Client event log file: {CLIENT_LOG_FILE.resolve()}")
+    print(f"Recording chunk output dir: {RECORDING_DIR.resolve()}")
     httpd = server_class(server_address, handler_class)
     try:
         httpd.serve_forever()

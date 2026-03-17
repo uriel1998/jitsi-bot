@@ -28,6 +28,7 @@ let recordingLevelRafId = undefined
 let healthLogIntervalId = undefined
 let lastMeterPercent = 0
 let lastChunkTimestamp = 0
+let localChunkServiceState = 'unknown'
 
 const pingIntervalMs = 5 * 60 * 1000
 const segmentDurationMs = 5 * 60 * 1000
@@ -108,6 +109,25 @@ async function persistClientLog(level, message, details = {}) {
   } catch (error) {
     console.log('fetch logging failed', error)
   }
+}
+
+async function uploadChunkToLocalService(blob, fileName, chunkIndex) {
+  const response = await fetch('/__recording_chunk', {
+    method: 'POST',
+    headers: {
+      'Content-Type': blob.type || 'application/octet-stream',
+      'X-Filename': encodeURIComponent(fileName),
+      'X-Chunk-Index': String(chunkIndex),
+      'X-Append': 'true',
+    },
+    body: blob,
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`)
+  }
+
+  return response.json()
 }
 
 function verboseLog(message, details = {}) {
@@ -379,14 +399,42 @@ async function saveRecordedChunks(target, chunks, segmentIndex) {
   const blob = new Blob(chunks, { type: mimeType })
   const rawName = target.filename || recorderTargetName || getDefaultRecordingFilename()
   const baseName = rawName.replace(/\.webm$/i, '')
-  const fileName = `${baseName}_part${String(segmentIndex).padStart(4, '0')}.webm`
+  const uploadFileName = `${baseName}.webm`
+  const fallbackFileName = `${baseName}_part${String(segmentIndex).padStart(4, '0')}.webm`
+
+  if (localChunkServiceState !== 'unavailable') {
+    try {
+      const uploadResult = await uploadChunkToLocalService(
+        blob,
+        uploadFileName,
+        segmentIndex
+      )
+      localChunkServiceState = 'available'
+      verboseLog('Saved recording segment via local service', {
+        fileName: uploadFileName,
+        path: uploadResult?.path || '',
+        size: blob.size,
+        chunkIndex: segmentIndex,
+      })
+      return uploadResult?.savedAs || uploadFileName
+    } catch (error) {
+      if (localChunkServiceState !== 'unavailable') {
+        warningLog('Local recording chunk service unavailable; falling back to browser download', {
+          fileName: uploadFileName,
+          error: error?.message || String(error),
+        })
+      }
+      localChunkServiceState = 'unavailable'
+    }
+  }
+
   const downloadUrl = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = downloadUrl
-  a.download = fileName
+  a.download = fallbackFileName
   a.click()
   setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
-  return fileName
+  return fallbackFileName
 }
 
 let recordingTarget = undefined
