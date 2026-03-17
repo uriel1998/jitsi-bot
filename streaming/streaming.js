@@ -9,19 +9,37 @@ streaming.volume = 0.1
 let streamingContext = undefined
 let destStream = undefined
 let initDone = false
+let lastStreamingProgressAt = 0
+let lastStreamingTime = 0
+let streamingHealthIntervalId = undefined
 
 let playJoinSound = true
 
+const streamingHealthLogIntervalMs = 60 * 1000
+
+function summarizeStreamingMemory() {
+  const mem = performance?.memory
+  if (!mem) {
+    return { available: false }
+  }
+  return {
+    available: true,
+    usedJSHeapSize: mem.usedJSHeapSize,
+    totalJSHeapSize: mem.totalJSHeapSize,
+    jsHeapSizeLimit: mem.jsHeapSizeLimit,
+  }
+}
+
 function summarizeUserActivation() {
-  return JSON.stringify({
+  return {
     isActive: document.userActivation?.isActive ?? null,
     hasBeenActive: document.userActivation?.hasBeenActive ?? null,
-  })
+  }
 }
 
 function summarizeStreamingElementState() {
   if (!streaming) {
-    return 'streaming element missing'
+    return { missing: true }
   }
 
   const mediaError = streaming.error
@@ -31,7 +49,7 @@ function summarizeStreamingElementState() {
       }
     : null
 
-  return JSON.stringify({
+  return {
     currentSrc: streaming.currentSrc || streaming.src || '',
     readyState: streaming.readyState,
     networkState: streaming.networkState,
@@ -47,37 +65,182 @@ function summarizeStreamingElementState() {
       ? Number(streaming.duration.toFixed(3))
       : null,
     error: mediaError,
-  })
+    lastProgressAt: lastStreamingProgressAt || null,
+    msSinceProgress: lastStreamingProgressAt
+      ? Date.now() - lastStreamingProgressAt
+      : null,
+  }
 }
 
 function summarizeDestStreamState() {
   const audioTrack = destStream?.stream?.getAudioTracks?.()?.[0]
-  return JSON.stringify({
+  return {
     hasDestStream: Boolean(destStream?.stream),
     audioTrackCount: destStream?.stream?.getAudioTracks?.()?.length ?? 0,
     audioTrackEnabled: audioTrack?.enabled ?? null,
     audioTrackMuted: audioTrack?.muted ?? null,
     audioTrackReadyState: audioTrack?.readyState ?? null,
     audioTrackLabel: audioTrack?.label || '',
+  }
+}
+
+function summarizeStreamingRuntimeState() {
+  return {
+    streaming: summarizeStreamingElementState(),
+    dest: summarizeDestStreamState(),
+    userActivation: summarizeUserActivation(),
+    audioContextState: streamingContext?.state || 'missing',
+    initDone,
+    roomJoined: window.roomJoined ?? null,
+    connectionEstablished: window.connectionEstablished ?? null,
+    memory: summarizeStreamingMemory(),
+  }
+}
+
+async function persistStreamingLog(level, message, details = {}) {
+  const payload = JSON.stringify({
+    ts: new Date().toISOString(),
+    page: window.location.pathname,
+    level,
+    message,
+    details,
+  })
+
+  try {
+    if (navigator.sendBeacon) {
+      const blob = new Blob([payload], { type: 'application/json' })
+      if (navigator.sendBeacon('/__client_log', blob)) {
+        return
+      }
+    }
+  } catch (error) {
+    console.log('sendBeacon streaming logging failed', error)
+  }
+
+  try {
+    await fetch('/__client_log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true,
+    })
+  } catch (error) {
+    console.log('fetch streaming logging failed', error)
+  }
+}
+
+function streamingVerboseLog(message, details = {}) {
+  const detailText =
+    details && Object.keys(details).length ? ` ${JSON.stringify(details)}` : ''
+  log(`${message}${detailText}`)
+  void persistStreamingLog('info', message, details)
+}
+
+function streamingWarningLog(message, details = {}) {
+  const detailText =
+    details && Object.keys(details).length ? ` ${JSON.stringify(details)}` : ''
+  log(`${message}${detailText}`)
+  void persistStreamingLog('warning', message, details)
+}
+
+function attachStreamingCrashSignalLogging() {
+  window.addEventListener('error', (event) => {
+    void persistStreamingLog('error', 'window.error', {
+      message: event.message,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+      error: event.error?.stack || String(event.error || ''),
+      runtime: summarizeStreamingRuntimeState(),
+    })
+  })
+
+  window.addEventListener('unhandledrejection', (event) => {
+    void persistStreamingLog('error', 'window.unhandledrejection', {
+      reason: event.reason?.stack || String(event.reason || ''),
+      runtime: summarizeStreamingRuntimeState(),
+    })
+  })
+
+  document.addEventListener('visibilitychange', () => {
+    void persistStreamingLog('info', 'document.visibilitychange', {
+      visibilityState: document.visibilityState,
+      runtime: summarizeStreamingRuntimeState(),
+    })
+  })
+
+  window.addEventListener('pagehide', () => {
+    void persistStreamingLog('warning', 'window.pagehide', {
+      runtime: summarizeStreamingRuntimeState(),
+    })
+  })
+
+  window.addEventListener('beforeunload', () => {
+    void persistStreamingLog('warning', 'window.beforeunload', {
+      runtime: summarizeStreamingRuntimeState(),
+    })
+  })
+}
+
+function stopStreamingHealthLogging() {
+  if (!streamingHealthIntervalId) {
+    return
+  }
+  clearInterval(streamingHealthIntervalId)
+  streamingHealthIntervalId = undefined
+}
+
+function startStreamingHealthLogging() {
+  stopStreamingHealthLogging()
+  streamingHealthIntervalId = setInterval(() => {
+    streamingVerboseLog('Streaming health heartbeat', summarizeStreamingRuntimeState())
+    if (
+      lastStreamingProgressAt &&
+      Date.now() - lastStreamingProgressAt > streamingHealthLogIntervalMs * 2
+    ) {
+      streamingWarningLog('Streaming media element has not advanced recently', summarizeStreamingRuntimeState())
+    }
+    if (streaming?.ended || streaming?.readyState === HTMLMediaElement.HAVE_NOTHING) {
+      streamingWarningLog('Streaming media element is ended or empty during heartbeat', summarizeStreamingRuntimeState())
+    }
+  }, streamingHealthLogIntervalMs)
+}
+
+function noteStreamingProgress(reason) {
+  const now = Date.now()
+  const currentTime = Number.isFinite(streaming?.currentTime)
+    ? Number(streaming.currentTime.toFixed(3))
+    : null
+  const progressed =
+    currentTime !== null && (lastStreamingTime === 0 || currentTime !== lastStreamingTime)
+  if (progressed) {
+    lastStreamingProgressAt = now
+    lastStreamingTime = currentTime
+  }
+  streamingVerboseLog(`Streaming progress signal: ${reason}`, {
+    currentTime,
+    progressed,
+    runtime: summarizeStreamingRuntimeState(),
   })
 }
 
 function logStreamingDiagnostics(context) {
-  log(
-    `${context} | element=${summarizeStreamingElementState()} | dest=${summarizeDestStreamState()} | userActivation=${summarizeUserActivation()}`
-  )
+  streamingVerboseLog(context, summarizeStreamingRuntimeState())
 }
 
 function logStreamingSourceOrigin(urlLike) {
   try {
     const sourceUrl = new URL(urlLike, window.location.href)
-    log(
-      `Streaming source origin check: sourceOrigin=${sourceUrl.origin}, pageOrigin=${window.location.origin}, sameOrigin=${
-        sourceUrl.origin === window.location.origin
-      }`
-    )
+    streamingVerboseLog('Streaming source origin check', {
+      sourceOrigin: sourceUrl.origin,
+      pageOrigin: window.location.origin,
+      sameOrigin: sourceUrl.origin === window.location.origin,
+      href: sourceUrl.href,
+    })
   } catch (error) {
-    log(`Streaming source origin check failed: ${error?.message || error}`)
+    streamingWarningLog('Streaming source origin check failed', {
+      error: error?.message || String(error),
+    })
   }
 }
 
@@ -99,12 +262,20 @@ function playStreamingIfConnected() {
       log(
         `Auto-play failed for loaded stream: ${error?.message || error}; diagnostics=${summarizeStreamingElementState()}; userActivation=${summarizeUserActivation()}`
       )
+      void persistStreamingLog('warning', 'streaming.play() rejected', {
+        error: error?.message || String(error),
+        runtime: summarizeStreamingRuntimeState(),
+      })
     })
   }
 }
 
 window.playStreamingIfConnected = playStreamingIfConnected
 window.logStreamingDiagnostics = logStreamingDiagnostics
+window.persistStreamingLog = persistStreamingLog
+window.streamingVerboseLog = streamingVerboseLog
+window.streamingWarningLog = streamingWarningLog
+window.getStreamingRuntimeState = summarizeStreamingRuntimeState
 
 function initAudio() {
   if (!streaming) {
@@ -119,40 +290,45 @@ function initAudio() {
 
   track.connect(destStream)
 
-  log('InitAudio - Preparing Audio Stream')
-  log(`AudioContext allowed: ${audioContext.state !== 'suspended'}`)
-  log(
-    `Autoplay environment: iframe=${window.self !== window.top}, autoplayAllowed=${
-      document.featurePolicy?.allowsFeature?.('autoplay') ?? 'unknown'
-    }, userActivation=${summarizeUserActivation()}`
-  )
+  streamingVerboseLog('InitAudio - Preparing Audio Stream', {
+    audioContextAllowed: audioContext.state !== 'suspended',
+    autoplayEnvironment: {
+      iframe: window.self !== window.top,
+      autoplayAllowed:
+        document.featurePolicy?.allowsFeature?.('autoplay') ?? 'unknown',
+    },
+    runtime: summarizeStreamingRuntimeState(),
+  })
   logStreamingDiagnostics('Streaming audio initialized')
 
   audioContext.addEventListener('statechange', () => {
-    log(
-      `AudioContext state changed to ${audioContext.state}; userActivation=${summarizeUserActivation()}`
-    )
+    streamingVerboseLog('AudioContext state changed', summarizeStreamingRuntimeState())
   })
 
   const destTrack = destStream.stream.getAudioTracks()[0]
   if (destTrack) {
     destTrack.addEventListener('ended', () => {
-      log(`Destination audio track ended; state=${summarizeDestStreamState()}`)
+      streamingWarningLog('Destination audio track ended', summarizeStreamingRuntimeState())
     })
     destTrack.addEventListener('mute', () => {
-      log(`Destination audio track muted; state=${summarizeDestStreamState()}`)
+      streamingWarningLog('Destination audio track muted', summarizeStreamingRuntimeState())
     })
     destTrack.addEventListener('unmute', () => {
-      log(`Destination audio track unmuted; state=${summarizeDestStreamState()}`)
+      streamingVerboseLog('Destination audio track unmuted', summarizeStreamingRuntimeState())
     })
   } else {
-    log('Destination audio stream was created without an audio track.')
+    streamingWarningLog('Destination audio stream was created without an audio track.')
   }
 
   navigator.mediaDevices.getUserMedia = async function ({ audio, video }) {
     console.log({ audio, video })
-    log(
-      'UserMedia is being Accessed. - Returning corresponding context stream.'
+    streamingVerboseLog(
+      'UserMedia is being accessed. Returning corresponding context stream.',
+      {
+        audioRequested: Boolean(audio),
+        videoRequested: Boolean(video),
+        runtime: summarizeStreamingRuntimeState(),
+      }
     )
     logStreamingDiagnostics(
       `getUserMedia interception before resume (audio=${Boolean(audio)}, video=${Boolean(video)})`
@@ -211,11 +387,26 @@ for (const eventName of [
 ]) {
   streaming.addEventListener(eventName, () => {
     logStreamingDiagnostics(`Streaming media event: ${eventName}`)
+    if (
+      eventName === 'playing' ||
+      eventName === 'canplay' ||
+      eventName === 'canplaythrough' ||
+      eventName === 'timeupdate'
+    ) {
+      noteStreamingProgress(eventName)
+    }
     if (eventName === 'loadedmetadata') {
       playStreamingIfConnected()
     }
   })
 }
+
+streaming.addEventListener('timeupdate', () => {
+  noteStreamingProgress('timeupdate')
+})
+
+attachStreamingCrashSignalLogging()
+startStreamingHealthLogging()
 
 initAudio()
 

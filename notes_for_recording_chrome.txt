@@ -1,0 +1,110 @@
+Chrome/Chromium notes for /recording
+====================================
+
+Purpose
+- Capture what has been learned about why /recording behaves differently in Chrome/Chromium versus Firefox.
+- Tailored for future Codex sessions working on this repo.
+
+Confirmed observations
+- /recording can work in Firefox.
+- In Chromium, the recorder often showed:
+  - MediaRecorder state = recording
+  - destination track live and not muted
+  - remote audio tracks connected
+  - recording level meter pinned at 0%
+  - no useful dataavailable chunks
+- Chromium was able to play the remote room audio to speakers during testing.
+- Even when hidden remote audio elements were playing successfully in Chromium, recording still did not capture useful audio.
+
+Important conclusion
+- In this repo, "audio is audible in Chromium" does NOT imply "the Web Audio graph can re-capture it for MediaRecorder".
+- Chromium is stricter/more fragile than Firefox around these synthetic audio paths.
+
+What was already true in this repo
+- This project already loads lib-jitsi-meet via script tag, not npm import.
+- Therefore, the known fix "use <script src=...> instead of importing lib-jitsi-meet-dist" was already effectively in place here.
+- So the Chrome problem in this repo was NOT the npm-package early-AudioContext issue.
+
+What was tested and learned
+1. Raw getOriginalStream() path
+- /recording mixed remote Jitsi audio using:
+  - track.getOriginalStream()
+  - AudioContext.createMediaStreamSource(originalStream)
+  - MediaStreamDestination
+  - MediaRecorder on the destination stream
+- Firefox could work with this.
+- Chromium often produced silence even though tracks appeared structurally alive.
+
+2. Hidden <audio> playback path
+- Remote Jitsi tracks were attached to hidden audio elements with track.attach(audioEl).
+- Chromium logs showed playback did start:
+  - play / playing events fired
+  - readyState = 4
+  - paused = false
+- But recording still captured nothing.
+- Therefore, "attach to hidden audio elements and then createMediaElementSource(audioEl)" did NOT solve Chromium recording in this repo.
+
+3. startSilent
+- Setting options.startSilent = true stopped Firefox from receiving/recording room audio.
+- It was reverted.
+- Do not use startSilent as a generic "disable mic capture" fix for /recording.
+
+Chrome/Chromium-specific constraints to remember
+- Chromium may accept a synthetic or remote-derived stream object while still not producing actual capturable audio samples downstream.
+- Chromium autoplay / user-activation rules are relevant, but they were not the only blocker here.
+- Chromium can render remote audio while still failing to make it available to this recorder pipeline.
+- If a future solution depends on "what is being played to speakers", assume Chromium may block or isolate that path from page-level recapture.
+
+Recording architecture notes
+- Long-lived MediaRecorder + requestData() is better for Firefox stability than stop/restart segmentation.
+- However, requestData() blobs are not safe to treat as individually playable standalone WebM files.
+- The local service now appends chunks into one recording file on the server side instead of saving each chunk as an independent valid WebM segment.
+
+Current local-service behavior
+- Preferred path:
+  - browser POSTs chunks to /__recording_chunk on the local server
+  - server appends them into one file in recording_tests/
+- Fallback path:
+  - browser downloads chunk files if the local service is unavailable
+
+What NOT to assume in future work
+- Do not assume Chrome recording failure is caused by the lib-jitsi-meet npm import issue in this repo.
+- Do not assume audible speaker playback means MediaRecorder input is healthy.
+- Do not assume hidden audio element playback fixes Chrome recording.
+- Do not assume requestData() chunks are standalone valid WebM files.
+
+Best summary for future Codex runs
+- Firefox and Chromium diverge significantly for /recording.
+- Chrome/Chromium appears to restrict or break the recorder's access to these Web Audio / remote-track-derived capture paths even when audio is audible.
+- The problem is upstream of MediaRecorder state management.
+- If revisiting Chromium support, look for a fundamentally different capture path rather than minor tweaks to the current graph.
+
+Possible Chromium-only workaround: virtual output sink
+- A possible workaround is to avoid trying to re-capture Chromium audio inside the page.
+- Instead:
+  - attach remote Jitsi audio to browser audio elements
+  - route those elements to a chosen output device using setSinkId()
+  - choose a virtual output sink / loopback device
+  - let the OS or a local helper program capture that sink
+
+Important distinctions
+- This is NOT the same as using a virtual microphone directly from the page.
+- The browser can choose an OUTPUT device, but it cannot directly command the OS to record that output.
+- Actual capture must happen outside the browser.
+
+What Chromium can do
+- HTMLMediaElement.setSinkId() can route an audio element to a chosen output device.
+- MediaDevices.selectAudioOutput() can prompt the user to choose an output device.
+
+What is required for this approach
+- A virtual output sink / loopback device that Chrome can play into.
+- An external local program or OS-level audio routing tool that records or forwards that sink.
+- If using something like virtual-mic.sh, confirm whether it creates:
+  - only a virtual input device
+  - or also a virtual output sink / loopback target
+- For this approach, a virtual input alone is not enough; a capturable output sink is needed.
+
+Feasibility summary
+- This approach is more plausible in Chromium than the current in-page re-capture attempts.
+- The browser would handle playback routing only.
+- The operating system or another local program would handle the actual recording/capture.

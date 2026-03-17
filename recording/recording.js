@@ -144,6 +144,11 @@ function warningLog(message, details = {}) {
   void persistClientLog('warning', message, details)
 }
 
+window.persistRecordingLog = persistClientLog
+window.recordingVerboseLog = verboseLog
+window.recordingWarningLog = warningLog
+window.getRecordingRuntimeState = summarizeRecorderState
+
 function attachCrashSignalLogging() {
   window.addEventListener('error', (event) => {
     void persistClientLog('error', 'window.error', {
