@@ -11,6 +11,7 @@ let recordingDestStream = undefined
 let initDone = false
 
 let recordingSessionStarted = false
+let recordingSessionStartMs = 0
 let recorderTargetName = undefined
 let mediaRecorder = undefined
 let currentChunkBytes = 0
@@ -19,9 +20,10 @@ let segmentFlushIntervalId = undefined
 let segmentRecordingActive = false
 let isStoppingSegmentRecorder = false
 let segmentSaveChain = Promise.resolve()
-const remoteAudioNodes = new WeakMap()
+const remoteAudioNodes = new Map()
 const pendingRemoteAudioTracks = new Set()
 let connectedRemoteAudioTrackCount = 0
+let activePerSpeakerRecorderCount = 0
 let recordingLevelAnalyser = undefined
 let recordingLevelData = undefined
 let recordingLevelRafId = undefined
@@ -68,9 +70,11 @@ function summarizeRecorderState() {
     isStoppingSegmentRecorder,
     recorderState: mediaRecorder?.state || 'inactive',
     segmentIndex: recordingSegmentIndex,
+    recordingSessionStartMs,
     currentChunkBytes,
     remoteAudioNodeCount: connectedRemoteAudioTrackCount,
     pendingRemoteAudioTracks: pendingRemoteAudioTracks.size,
+    activePerSpeakerRecorderCount,
     audioContextState: recordingContext?.state || 'missing',
     lastMeterPercent,
     msSinceLastChunk: lastChunkTimestamp ? Date.now() - lastChunkTimestamp : null,
@@ -203,6 +207,51 @@ function getDefaultRecordingFilename() {
   return `recording_${makeTimestamp()}.webm`
 }
 
+function sanitizeFilenamePart(value, fallback = 'speaker') {
+  const normalized = String(value || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/[<>:"/\\|?*\u0000-\u001f]/g, '')
+    .replace(/\.+$/g, '')
+  return normalized || fallback
+}
+
+function getRecordingBaseName() {
+  const rawName = recordingTarget?.filename || recorderTargetName || getDefaultRecordingFilename()
+  return rawName.replace(/\.webm$/i, '')
+}
+
+function buildSpeakerRecordingFilename(label, startedAtMs) {
+  const baseName = getRecordingBaseName()
+  const safeLabel = sanitizeFilenamePart(label, 'speaker')
+  const offsetSeconds = Math.max(
+    0,
+    Math.floor((startedAtMs - recordingSessionStartMs) / 1000)
+  )
+  if (offsetSeconds > 0) {
+    return `${baseName}_${safeLabel}_${offsetSeconds}.webm`
+  }
+  return `${baseName}_${safeLabel}.webm`
+}
+
+function getParticipantRecordingLabel(track) {
+  const participantId = track?.getParticipantId?.()
+  const participant =
+    participantId && typeof room?.getParticipantById === 'function'
+      ? room.getParticipantById(participantId)
+      : undefined
+
+  return sanitizeFilenamePart(
+    participant?._displayName ||
+      participant?.getDisplayName?.() ||
+      participant?._statsID ||
+      participant?.getStatsID?.() ||
+      participantId ||
+      track?.getTrackId?.(),
+    'speaker'
+  )
+}
+
 async function promptForRecordingTarget() {
   const suggestedName = getDefaultRecordingFilename()
   const userName = window.prompt('Recording filename (.webm):', suggestedName)
@@ -282,29 +331,69 @@ function stopSegmentFlushTimer() {
 function startSegmentFlushTimer() {
   stopSegmentFlushTimer()
   segmentFlushIntervalId = setInterval(() => {
-    if (!segmentRecordingActive || mediaRecorder?.state !== 'recording') {
+    if (!segmentRecordingActive) {
       return
     }
     verboseLog('Requesting recorder data flush', summarizeRecorderState())
-    try {
-      mediaRecorder.requestData()
-    } catch (error) {
-      warningLog('MediaRecorder.requestData failed', {
-        error: error?.message || String(error),
-        recorder: summarizeRecorderState(),
+
+    const activeRecorders = []
+    if (mediaRecorder?.state === 'recording') {
+      activeRecorders.push({
+        recorder: mediaRecorder,
+        kind: 'mix',
       })
+    }
+    for (const entry of remoteAudioNodes.values()) {
+      if (entry?.recorder?.state === 'recording') {
+        activeRecorders.push({
+          recorder: entry.recorder,
+          kind: 'speaker',
+          participantId: entry.participantId,
+          fileName: entry.target?.filename || '',
+        })
+      }
+    }
+
+    for (const activeRecorder of activeRecorders) {
+      try {
+        activeRecorder.recorder.requestData()
+      } catch (error) {
+        warningLog('MediaRecorder.requestData failed', {
+          kind: activeRecorder.kind,
+          participantId: activeRecorder.participantId || '',
+          fileName: activeRecorder.fileName || '',
+          error: error?.message || String(error),
+          recorder: summarizeRecorderState(),
+        })
+      }
     }
   }, segmentDurationMs)
 }
 
-function handleRecordedChunk(event) {
+function handleRecordedChunk(event, options = {}) {
   lastChunkTimestamp = Date.now()
   const size = event.data?.size || 0
-  currentChunkBytes = size
+  const {
+    target = recordingTarget,
+    setChunkBytes = (value) => {
+      currentChunkBytes = value
+    },
+    getSegmentIndex = () => recordingSegmentIndex,
+    setSegmentIndex = (value) => {
+      recordingSegmentIndex = value
+    },
+    getSaveChain = () => segmentSaveChain,
+    setSaveChain = (chain) => {
+      segmentSaveChain = chain
+    },
+    logContext = {},
+  } = options
+  setChunkBytes(size)
 
   verboseLog('Recorder dataavailable event fired', {
     size,
     type: event.data?.type || '',
+    ...logContext,
     recorder: summarizeRecorderState(),
   })
 
@@ -322,35 +411,35 @@ function handleRecordedChunk(event) {
     return
   }
 
-  recordingSegmentIndex += 1
-  const finalizedIndex = recordingSegmentIndex
+  const finalizedIndex = getSegmentIndex() + 1
+  setSegmentIndex(finalizedIndex)
   const finalizedChunk = event.data
 
-  segmentSaveChain = segmentSaveChain
+  const nextSaveChain = getSaveChain()
     .then(async () => {
-      if (!recordingTarget) {
+      if (!target) {
         warningLog('Skipping chunk save because recording target is missing.', {
           segmentIndex: finalizedIndex,
+          ...logContext,
         })
         return
       }
-      const savedAs = await saveRecordedChunks(
-        recordingTarget,
-        [finalizedChunk],
-        finalizedIndex
-      )
+      const savedAs = await saveRecordedChunks(target, [finalizedChunk], finalizedIndex)
       verboseLog('Saved recording segment', {
         segmentIndex: finalizedIndex,
         fileName: savedAs,
         size,
+        ...logContext,
       })
     })
     .catch((error) => {
       warningLog('Failed to save recording segment', {
         segmentIndex: finalizedIndex,
+        ...logContext,
         error: error?.message || String(error),
       })
     })
+  setSaveChain(nextSaveChain)
 }
 
 function startMediaRecorder() {
@@ -376,7 +465,7 @@ function startMediaRecorder() {
   mediaRecorder.addEventListener('start', () => {
     verboseLog('MediaRecorder started', summarizeRecorderState())
   })
-  mediaRecorder.addEventListener('dataavailable', handleRecordedChunk)
+  mediaRecorder.addEventListener('dataavailable', (event) => handleRecordedChunk(event))
   mediaRecorder.addEventListener('stop', () => {
     verboseLog('MediaRecorder stopped', summarizeRecorderState())
     stopSegmentFlushTimer()
@@ -444,6 +533,159 @@ async function saveRecordedChunks(target, chunks, segmentIndex) {
 
 let recordingTarget = undefined
 
+function createPerSpeakerRecorderEntry(track, sourceNode, gainNode) {
+  return {
+    track,
+    participantId: track.getParticipantId?.() || 'unknownParticipant',
+    label: getParticipantRecordingLabel(track),
+    sourceNode,
+    gainNode,
+    individualDest: undefined,
+    recorder: undefined,
+    target: undefined,
+    segmentIndex: 0,
+    currentChunkBytes: 0,
+    saveChain: Promise.resolve(),
+    startedAtMs: 0,
+  }
+}
+
+function startPerSpeakerRecorder(entry) {
+  if (
+    !entry ||
+    entry.recorder ||
+    !recordingSessionStarted ||
+    !recordingContext ||
+    !recordingTarget ||
+    mediaRecorder?.state !== 'recording'
+  ) {
+    return false
+  }
+
+  const originalStream = entry.track?.getOriginalStream?.()
+  if (!originalStream || originalStream.getAudioTracks().length === 0) {
+    warningLog('Cannot start per-speaker recorder: no source stream.', {
+      participantId: entry.participantId,
+      label: entry.label,
+    })
+    return false
+  }
+
+  entry.label = getParticipantRecordingLabel(entry.track)
+  const startedAtMs = Date.now()
+  const target = {
+    mode: 'download',
+    filename: buildSpeakerRecordingFilename(entry.label, startedAtMs),
+  }
+  const individualDest = recordingContext.createMediaStreamDestination()
+  const mimeType = getRecorderMimeType()
+  const recorderOptions = mimeType ? { mimeType } : undefined
+  const recorder = new MediaRecorder(individualDest.stream, recorderOptions)
+
+  entry.gainNode.connect(individualDest)
+  entry.individualDest = individualDest
+  entry.recorder = recorder
+  entry.target = target
+  entry.segmentIndex = 0
+  entry.currentChunkBytes = 0
+  entry.saveChain = Promise.resolve()
+  entry.startedAtMs = startedAtMs
+  activePerSpeakerRecorderCount += 1
+
+  recorder.addEventListener('start', () => {
+    verboseLog('Per-speaker MediaRecorder started', {
+      participantId: entry.participantId,
+      label: entry.label,
+      fileName: target.filename,
+    })
+  })
+  recorder.addEventListener('dataavailable', (event) =>
+    handleRecordedChunk(event, {
+      target: entry.target,
+      setChunkBytes: (value) => {
+        entry.currentChunkBytes = value
+      },
+      getSegmentIndex: () => entry.segmentIndex,
+      setSegmentIndex: (value) => {
+        entry.segmentIndex = value
+      },
+      getSaveChain: () => entry.saveChain,
+      setSaveChain: (chain) => {
+        entry.saveChain = chain
+      },
+      logContext: {
+        kind: 'speaker',
+        participantId: entry.participantId,
+        label: entry.label,
+        fileName: entry.target?.filename || '',
+      },
+    })
+  )
+  recorder.addEventListener('stop', () => {
+    verboseLog('Per-speaker MediaRecorder stopped', {
+      participantId: entry.participantId,
+      label: entry.label,
+      fileName: entry.target?.filename || '',
+    })
+  })
+  recorder.addEventListener('error', (event) => {
+    warningLog('Per-speaker MediaRecorder error event', {
+      participantId: entry.participantId,
+      label: entry.label,
+      fileName: entry.target?.filename || '',
+      error: event.error?.message || String(event.error || 'unknown'),
+    })
+  })
+
+  recorder.start()
+  return true
+}
+
+async function stopPerSpeakerRecorder(entry) {
+  if (!entry?.recorder || entry.recorder.state === 'inactive') {
+    return false
+  }
+
+  const recorder = entry.recorder
+  await new Promise((resolve) => {
+    recorder.addEventListener(
+      'stop',
+      () => {
+        resolve()
+      },
+      { once: true }
+    )
+    try {
+      recorder.requestData()
+    } catch (error) {
+      warningLog('Final per-speaker MediaRecorder.requestData failed before stop', {
+        participantId: entry.participantId,
+        label: entry.label,
+        fileName: entry.target?.filename || '',
+        error: error?.message || String(error),
+      })
+    }
+    recorder.stop()
+  })
+
+  await entry.saveChain
+  if (entry.individualDest) {
+    try {
+      entry.gainNode.disconnect(entry.individualDest)
+    } catch (error) {
+      console.log('Failed to disconnect per-speaker destination', error)
+    }
+  }
+  entry.recorder = undefined
+  entry.target = undefined
+  entry.segmentIndex = 0
+  entry.currentChunkBytes = 0
+  entry.startedAtMs = 0
+  entry.individualDest = undefined
+  activePerSpeakerRecorderCount = Math.max(0, activePerSpeakerRecorderCount - 1)
+  return true
+}
+
 async function startAutomatedRecordingFlow() {
   if (recordingSessionStarted) {
     warningLog('Recording start ignored because a session is already active.', {
@@ -452,6 +694,7 @@ async function startAutomatedRecordingFlow() {
     return false
   }
   recordingSessionStarted = true
+  recordingSessionStartMs = Date.now()
   segmentRecordingActive = true
   isStoppingSegmentRecorder = false
   segmentSaveChain = Promise.resolve()
@@ -464,14 +707,19 @@ async function startAutomatedRecordingFlow() {
     recordingTarget = await promptForRecordingTarget()
     if (!recordingTarget) {
       recordingSessionStarted = false
+      recordingSessionStartMs = 0
       segmentRecordingActive = false
       return false
     }
     const started = startMediaRecorder()
     if (!started) {
       recordingSessionStarted = false
+      recordingSessionStartMs = 0
       segmentRecordingActive = false
       return false
+    }
+    for (const entry of remoteAudioNodes.values()) {
+      startPerSpeakerRecorder(entry)
     }
     room?.sendMessage?.('🎤 recording started.')
     startPeriodicPing()
@@ -479,6 +727,7 @@ async function startAutomatedRecordingFlow() {
     return true
   } catch (error) {
     recordingSessionStarted = false
+    recordingSessionStartMs = 0
     segmentRecordingActive = false
     warningLog('Failed to start automated recording flow', {
       error: error?.message || String(error),
@@ -562,6 +811,9 @@ async function stopAutomatedRecordingFlow() {
   stopPeriodicPing()
   stopHealthLogging()
   const stopped = await stopMediaRecorder()
+  await Promise.all(
+    [...remoteAudioNodes.values()].map((entry) => stopPerSpeakerRecorder(entry))
+  )
   await segmentSaveChain
   if (!stopped) {
     verboseLog('No active recording to stop.')
@@ -569,6 +821,7 @@ async function stopAutomatedRecordingFlow() {
 
   room?.sendMessage?.('🛑 recording stopped.')
   recordingSessionStarted = false
+  recordingSessionStartMs = 0
   segmentRecordingActive = false
   isStoppingSegmentRecorder = false
 }
@@ -657,14 +910,16 @@ function connectRemoteAudioTrack(track) {
 
     sourceNode.connect(gainNode)
     gainNode.connect(recordingDestStream)
-    remoteAudioNodes.set(track, {
-      sourceNode,
-      gainNode,
-    })
+    const entry = createPerSpeakerRecorderEntry(track, sourceNode, gainNode)
+    remoteAudioNodes.set(track, entry)
     connectedRemoteAudioTrackCount += 1
+    if (recordingSessionStarted) {
+      startPerSpeakerRecorder(entry)
+    }
     verboseLog('Connected remote audio track to recording mix', {
       participantId,
       trackId: track.getTrackId?.() || '',
+      label: entry.label,
       recorder: summarizeRecorderState(),
     })
     return true
@@ -709,26 +964,38 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
     return
   }
   pendingRemoteAudioTracks.delete(track)
-  const nodes = remoteAudioNodes.get(track)
-  if (!nodes) {
+  const entry = remoteAudioNodes.get(track)
+  if (!entry) {
     return
   }
-  try {
-    nodes.sourceNode.disconnect()
-  } catch (error) {
-    console.log('Failed to disconnect remote source node', error)
-  }
-  try {
-    nodes.gainNode.disconnect()
-  } catch (error) {
-    console.log('Failed to disconnect remote gain node', error)
-  }
-  remoteAudioNodes.delete(track)
-  connectedRemoteAudioTrackCount = Math.max(0, connectedRemoteAudioTrackCount - 1)
-  verboseLog('Disconnected remote audio track from recording mix', {
-    participantId: track.getParticipantId?.() || 'unknownParticipant',
-    recorder: summarizeRecorderState(),
-  })
+  Promise.resolve()
+    .then(() => stopPerSpeakerRecorder(entry))
+    .catch((error) => {
+      warningLog('Failed to stop per-speaker recorder during track removal', {
+        participantId: entry.participantId,
+        label: entry.label,
+        error: error?.message || String(error),
+      })
+    })
+    .finally(() => {
+      try {
+        entry.sourceNode.disconnect()
+      } catch (error) {
+        console.log('Failed to disconnect remote source node', error)
+      }
+      try {
+        entry.gainNode.disconnect()
+      } catch (error) {
+        console.log('Failed to disconnect remote gain node', error)
+      }
+      remoteAudioNodes.delete(track)
+      connectedRemoteAudioTrackCount = Math.max(0, connectedRemoteAudioTrackCount - 1)
+      verboseLog('Disconnected remote audio track from recording mix', {
+        participantId: track.getParticipantId?.() || 'unknownParticipant',
+        label: entry.label,
+        recorder: summarizeRecorderState(),
+      })
+    })
 }
 
 attachCrashSignalLogging()

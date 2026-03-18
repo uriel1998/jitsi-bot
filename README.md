@@ -14,7 +14,6 @@ It includes browser-based bots for Jitsi Meet:
 These are active issues and should be treated as current limitations:
 
 - Chrome/Chromium recording is unreliable. Firefox is currently the browser to use for the Recording Bot.
-- The Recording Bot now records a single mixed conference audio stream, not separate participant recordings.
 - Both the Streaming Bot and Recording Bot appear to stop or disconnect after roughly one hour of runtime in current testing.
 - Current debugging also includes checking whether automatic browser tab unloading is causing the one-hour stop/disconnect behavior.
 - The Chrome/Chromium recording problem and the roughly one-hour bot disconnect problem are both tracked in the project issue tracker.
@@ -78,9 +77,12 @@ https://meet.jit.si/YourMeetingRoomName#config.prejoinConfig.enabled=false&disab
 - Pokpoko will stream mp3/ogg from an https stream into the audio of the conference. Put the full source URL in "Audio Source Input" and "Set Source".
 - Kobuko will respond to multiple commands in the text chat of the conference; try !command.  You can load your own text into `/lib/Custom` for it to respond with. 
 - Mochi will pipe audio from a virtual microphone into the audio of the conference. Have a virtual microphone set up *prior* to loading the bot; examples are linked on the bot's loading page. When the bot loads, choose the virtual microphone your app (such as Kenku) is playing on.
-- Ritson records a single mixed conference audio stream from the room. After joining the room, you must specifically tell it to begin recording.
+- Ritson records the mixed conference audio stream and also writes one file per speaker. Per-speaker files are named from the chosen base filename as `_Speaker Name`, with an additional `_<offsetSeconds>` suffix if that speaker starts after the session has already begun. After joining the room, you must specifically tell it to begin recording.
 - When the local helper server from `start_server.py` is running, the Recording Bot prefers uploading chunks to the server so they can be appended into one recording file under `recording_tests/`.
 - If the local helper server is not available, the Recording Bot falls back to browser downloads.
+- On GitHub Pages, recordings are always browser downloads because GitHub Pages cannot run `start_server.py` or accept upload writes.
+- If you self-host behind Nginx or Apache, recordings are still only saved server-side when `POST /__recording_chunk` is handled by the Python helper server. Nginx or Apache alone do not save the files.
+- When uploads are proxied to `start_server.py`, files are written under `recording_tests/` relative to the working directory of that Python process. If you launch it from the repo root, that is `./recording_tests/`.
 - It sends text chat notifications when recording begins, when it ends, and periodically while recording.
 - Firefox is currently the preferred browser for recording. Chrome/Chromium recording remains unreliable.
 
