@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Protected URL Patterns</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <main class="page">
+        <h1>Never Unload URL Patterns</h1>
+        <p class="intro">
+            Enter one hostname or WebExtension match pattern per line. Matching tabs will be set to
+            <code>autoDiscardable=false</code>.
+        </p>
+        <p class="examples">
+            Examples: <code>localhost</code>, <code>*.example.com</code>,
+            <code>*://mail.example.com/*</code>, <code>https://docs.example.com/path/*</code>,
+            <code>uriel1998.github.io/jitsi-bot/*</code>
+        </p>
+
+        <label class="field" for="patterns">Protected patterns</label>
+        <textarea id="patterns" spellcheck="false" rows="12"></textarea>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+
+        <div class="actions">
+            <button id="save" type="button">Save</button>
+            <button id="reset" type="button" class="secondary">Restore defaults</button>
+        </div>
+    </main>
+
+    <script src="options.js"></script>
+</body>
+</html>

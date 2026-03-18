@@ -1,5 +1,7 @@
 # Dependencies
 **/node_modules/**
+1_reference
+1_reference/*
 
 # Local/editor settings
 .vscode/
@@ -28,6 +30,11 @@ video/
 recording_*.webm
 recording_merged.webm
 chunk_list.txt
+
+# AMO submission/local extension artifacts
+firefox-protect-tabs/AMO_SUBMISSION.md
+firefox-protect-tabs/.amo-upload-uuid
+firefox-protect-tabs/web-ext-artifacts/
 
 # OS files
 .DS_Store

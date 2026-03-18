@@ -1,0 +1,20 @@
+[
+  {
+    "file": "settings_page.png",
+    "caption": {
+      "en-US": "Settings page"
+    }
+  },
+  {
+    "file": "before_application.png",
+    "caption": {
+      "en-US": "about:unloads before extension"
+    }
+  },
+  {
+    "file": "after_application.png",
+    "caption": {
+      "en-US": "about:unloads after extension"
+    }
+  }
+]

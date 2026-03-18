@@ -1,0 +1,20 @@
+{
+  "default_locale": "en-US",
+  "summary": {
+    "en-US": "Prevent tabs from being unloaded based on user-defined matching rules."
+  },
+  "description": {
+    "en-US": "While tab unloading is often useful, there are times you do not want a specific tab to ever unload.\n\nFirefox already has internal rules that generally work well, but sometimes they miss tabs you care about. This extension examines open tabs, matches them against user-defined rules, and marks matching tabs so they are not eligible for unloading.\n\nYou can verify the effect using about:unloads."
+  },
+  "categories": {
+    "firefox": [
+      "tabs"
+    ]
+  },
+  "homepage": {
+    "en-US": "https://stevesaus.com"
+  },
+  "version": {
+    "license": "MIT"
+  }
+}
