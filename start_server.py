@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import http.server
 import json
 import urllib.parse
@@ -13,9 +14,14 @@ from pathlib import Path
 LOG_DIR = Path("server_logs")
 CLIENT_LOG_FILE = LOG_DIR / "client-events.log"
 RECORDING_DIR = Path("recording_tests")
+REQUEST_LOGGING_ENABLED = False
 
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        if REQUEST_LOGGING_ENABLED:
+            super().log_message(format, *args)
+
     def end_headers(self):
         self.send_my_headers()
         http.server.SimpleHTTPRequestHandler.end_headers(self)
@@ -107,13 +113,16 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(response_body)
 
 
-def run(server_class=HTTPServer, handler_class=MyHTTPRequestHandler):
+def run(server_class=HTTPServer, handler_class=MyHTTPRequestHandler, enable_request_logging=False):
+    global REQUEST_LOGGING_ENABLED
+    REQUEST_LOGGING_ENABLED = enable_request_logging
     server_address = ("", 5500)
     print(
         f"Launching HTTP Server for current directory at {server_address[0]}:{server_address[1]}"
     )
     print(f"Client event log file: {CLIENT_LOG_FILE.resolve()}")
     print(f"Recording chunk output dir: {RECORDING_DIR.resolve()}")
+    print(f"Request logging: {'enabled' if REQUEST_LOGGING_ENABLED else 'disabled'}")
     httpd = server_class(server_address, handler_class)
     try:
         httpd.serve_forever()
@@ -124,4 +133,11 @@ def run(server_class=HTTPServer, handler_class=MyHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--log-requests",
+        action="store_true",
+        help="Enable HTTP request logging to stderr.",
+    )
+    args = parser.parse_args()
+    run(enable_request_logging=args.log_requests)

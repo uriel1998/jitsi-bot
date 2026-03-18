@@ -35,6 +35,12 @@ python3 start_server.py
 
 You can also use a more sophisticated web server (for example Nginx or Caddy), as long as it serves this repository root.
 
+The helper server keeps HTTP request logging off by default. To enable request logs for debugging, run:
+
+```bash
+python3 start_server.py --log-requests
+```
+
 3. Open the launcher page:
 
 ```text
