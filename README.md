@@ -14,9 +14,6 @@ It includes browser-based bots for Jitsi Meet:
 These are active issues and should be treated as current limitations:
 
 - Chrome/Chromium recording is unreliable. Firefox is currently the browser to use for the Recording Bot.
-- Both the Streaming Bot and Recording Bot appear to stop or disconnect after roughly one hour of runtime in current testing.
-- Current debugging also includes checking whether automatic browser tab unloading is causing the one-hour stop/disconnect behavior.
-- The Chrome/Chromium recording problem and the roughly one-hour bot disconnect problem are both tracked in the project issue tracker.
 
 ## Quick Start
 
