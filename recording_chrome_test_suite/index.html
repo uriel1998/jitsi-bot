@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chrome Recording Test Suite</title>
+    <link rel="stylesheet" href="../recording/recording.css" />
+    <style>
+      .suite-controls {
+        background: var(--bg-alt);
+        border: 1px solid var(--surface);
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .suite-controls form {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .suite-controls input[type='url'] {
+        min-width: min(48rem, 100%);
+        flex: 1 1 28rem;
+      }
+
+      .suite-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .suite-panel {
+        background: var(--bg-alt);
+        border: 1px solid var(--surface);
+        border-radius: 6px;
+        padding: 0.75rem;
+      }
+
+      .suite-panel iframe {
+        width: 100%;
+        min-height: 42rem;
+        border: 1px solid var(--surface);
+        border-radius: 4px;
+        background: var(--bg);
+      }
+
+      .suite-panel h3 {
+        margin-top: 0;
+      }
+
+      @media (max-width: 1200px) {
+        .suite-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="suite-controls">
+      <h1>Chrome Recording Test Suite</h1>
+      <p>This page loads all test variants in parallel. Enter a conference URL once and push it into every iframe.</p>
+      <form id="suiteForm">
+        <label for="suiteTargetJitsi">Conference URL:</label>
+        <input
+          id="suiteTargetJitsi"
+          type="url"
+          placeholder="https://meet.example.com/YourRoom"
+        />
+        <button type="submit">Load Conference URL Into All Tests</button>
+        <button id="startAllBots" type="button">Load All Bots</button>
+        <button id="startAllProbes" type="button">Start All Tests</button>
+        <button id="stopAllTests" type="button">Stop All Tests</button>
+      </form>
+    </section>
+
+    <section class="suite-grid">
+      <div class="suite-panel">
+        <h3>Raw Stream Test</h3>
+        <iframe
+          data-test-page="raw_stream_probe.html"
+          src="raw_stream_probe.html"
+        ></iframe>
+      </div>
+      <div class="suite-panel">
+        <h3>Hidden Audio Playback Test</h3>
+        <iframe
+          data-test-page="hidden_audio_playback_probe.html"
+          src="hidden_audio_playback_probe.html"
+        ></iframe>
+      </div>
+      <div class="suite-panel">
+        <h3>Hidden Audio Recapture Test</h3>
+        <iframe
+          data-test-page="hidden_audio_recapture_probe.html"
+          src="hidden_audio_recapture_probe.html"
+        ></iframe>
+      </div>
+      <div class="suite-panel">
+        <h3>Output Sink Test</h3>
+        <iframe
+          data-test-page="output_sink_probe.html"
+          src="output_sink_probe.html"
+        ></iframe>
+      </div>
+    </section>
+
+    <script>
+      const suiteInput = document.querySelector('#suiteTargetJitsi')
+      const suiteForm = document.querySelector('#suiteForm')
+      const startAllBotsButton = document.querySelector('#startAllBots')
+      const startAllProbesButton = document.querySelector('#startAllProbes')
+      const stopAllTestsButton = document.querySelector('#stopAllTests')
+      const suiteFrames = [...document.querySelectorAll('iframe[data-test-page]')]
+
+      function updateFrames(targetJitsi) {
+        for (const frame of suiteFrames) {
+          const page = frame.dataset.testPage
+          const url = new URL(page, window.location.href)
+          if (targetJitsi) {
+            url.searchParams.set('targetJitsi', targetJitsi)
+          }
+          frame.src = url.toString()
+        }
+      }
+
+      function triggerFrameButton(frame, selector) {
+        const frameWindow = frame.contentWindow
+        const frameDocument = frameWindow?.document
+        if (!frameDocument) {
+          return false
+        }
+
+        const button = frameDocument.querySelector(selector)
+        if (!button || button.disabled) {
+          return false
+        }
+
+        button.click()
+        return true
+      }
+
+      function runAcrossFrames(selector) {
+        for (const frame of suiteFrames) {
+          try {
+            triggerFrameButton(frame, selector)
+          } catch (error) {
+            console.error(`Failed to trigger ${selector} for ${frame.dataset.testPage}`, error)
+          }
+        }
+      }
+
+      suiteForm.addEventListener('submit', (event) => {
+        event.preventDefault()
+        const targetJitsi = suiteInput.value.trim()
+        updateFrames(targetJitsi)
+
+        const pageUrl = new URL(window.location.href)
+        if (targetJitsi) {
+          pageUrl.searchParams.set('targetJitsi', targetJitsi)
+        } else {
+          pageUrl.searchParams.delete('targetJitsi')
+        }
+        window.history.replaceState({}, '', pageUrl.toString())
+      })
+
+      const currentUrl = new URL(window.location.href)
+      const initialTargetJitsi = currentUrl.searchParams.get('targetJitsi') || ''
+      if (initialTargetJitsi) {
+        suiteInput.value = initialTargetJitsi
+        updateFrames(initialTargetJitsi)
+      }
+
+      startAllBotsButton.addEventListener('click', () => {
+        runAcrossFrames('#start_bot_button')
+      })
+
+      startAllProbesButton.addEventListener('click', () => {
+        runAcrossFrames('#start_recording_button')
+      })
+
+      stopAllTestsButton.addEventListener('click', () => {
+        runAcrossFrames('#stop_bot_button')
+      })
+    </script>
+  </body>
+</html>

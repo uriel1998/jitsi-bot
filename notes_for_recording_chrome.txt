@@ -108,3 +108,78 @@ Feasibility summary
 - This approach is more plausible in Chromium than the current in-page re-capture attempts.
 - The browser would handle playback routing only.
 - The operating system or another local program would handle the actual recording/capture.
+
+Current state as of 2026-03-19
+------------------------------
+
+Chrome-specific page status
+- `index.html` and `recording/recording_loader.html` now divert Chromium-based browsers to `recording/recording_chrome.html`.
+- The Firefox-oriented `/recording` flow still exists in parallel.
+- The Chrome page currently uses `recording/recording_chrome.js` and `recording/conferenceInit_chrome.js`.
+
+What the Chrome test suite established
+- A dedicated suite was added under `recording_chrome_test_suite/` to retest each prior assumption.
+- `raw_stream_probe` and `hidden_audio_recapture_probe` both produced repeated non-empty MediaRecorder chunks in the suite logs.
+- `hidden_audio_playback_probe` proved Chromium could play hidden remote audio successfully.
+- `output_sink_probe` proved local playback was possible, but did not prove routing into the named virtual devices.
+- `start_silent_probe` remained a failure mode and was removed from the suite index.
+
+Important refinement from later testing
+- The test-suite result "non-empty MediaRecorder chunks" was not sufficient proof of usable audio.
+- When the direct-stream approach was applied to `recording/recording_chrome.html`, the page produced saved `.webm` files and non-empty `dataavailable` events, but the Chrome recorder meter remained pinned at `0%`.
+- That means the Chrome page was able to write byteful output while still effectively recording silence.
+- In other words:
+  - non-empty chunks in Chromium do not necessarily mean meaningful captured audio
+  - the recorder page must be judged by audible output or meter activity, not chunk size alone
+
+Latest observed recorder-page behavior
+- The direct `getOriginalStream()` Chrome variant did NOT produce usable recorded audio.
+- Logs from `server_logs/client-events.log` showed:
+  - remote audio tracks connected
+  - recorder started
+  - non-empty chunks were saved
+  - `lastMeterPercent` stayed at `0`
+- This strongly suggests the direct-stream branch in Chromium can look alive while remaining silent.
+
+Hidden-audio recapture status on the Chrome page
+- The Chrome page was then switched to a hidden-audio recapture approach.
+- User-observed behavior at that point:
+  - remote audio was clearly audible through local speakers/output
+  - the recorder still did not capture that audio
+- This is a stronger signal than the earlier raw-stream attempt:
+  - Chromium is definitely decoding and rendering the audio
+  - but the recorder tap was still not on a branch that received usable samples
+
+Current implementation direction
+- The Chrome page has now been adjusted again to try capturing from the playing hidden audio element via `audioElement.captureStream()` and feed that captured stream into the recording mix.
+- This change is present in:
+  - `recording/recording_chrome.js`
+  - `recording/recording_chrome.html`
+- At the time of this note, that newest `captureStream()`-based change has been implemented and syntax-checked, but not yet confirmed as working in a live browser test.
+
+What is currently known versus unknown
+- Known:
+  - Firefox recording works.
+  - Chromium can join the room.
+  - Chromium can receive remote audio.
+  - Chromium can play remote audio audibly through local output.
+  - Chromium can produce non-empty recorder chunks that are still silent/useless.
+- Unknown:
+  - whether `audioElement.captureStream()` will expose the actually audible playback path to the recorder in this app
+  - whether Chromium will permit that captured element stream to contain usable audio samples for MediaRecorder here
+
+Current best summary
+- The main problem is no longer "can Chrome hear the room?"
+- Chrome can hear and play the room audio.
+- The current problem is: how to tap the Chromium playback/capture pipeline at a point that yields real recorded audio rather than silent-but-nonempty output.
+- Treat every Chrome change as needing validation by:
+  - audible inspection of the resulting recording, or
+  - a recorder/input meter that clearly rises above zero on the real recording page
+
+Immediate next diagnostic target
+- Re-test `recording/recording_chrome.html` after the `audioElement.captureStream()` change.
+- In logs, look specifically for:
+  - hidden audio play success
+  - whether `captureStream()` exposes audio tracks
+  - whether the recording meter rises above `0%`
+  - whether saved output is actually audible

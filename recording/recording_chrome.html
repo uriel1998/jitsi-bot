@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="recording.css" />
+  <title>Ritson (Chrome)</title>
+  <meta http-equiv="Content-Security-Policy" content="worker-src 'self'; media-src *">
+  <meta charset="UTF-8" />
+</head>
+
+<body>
+  <div class="wrapper">
+    <section id="logOuter">
+      <label for="targetJitsi">Conference URL: </label>
+      <input style="width: 35vw;" type="url" id="targetJitsi" />
+      <br />
+      <br />
+      <button id="start_bot_button">Start Bot.</button>
+      <button id="start_recording_button" disabled>Start Recording</button>
+	  <button id="stop_bot_button">Stop Recording</button>      
+      <br />
+      <br />
+      <a href="recording_loader.html"><button>Reset Bot</button></a>
+      <br />
+    </section>
+    <aside id="participantsOuter">
+		<div class="infobox">
+		<div class="left-side">
+			<h1>Ritson (Chrome)</h1>
+			This is the Chrome/Chromium recording variant. It keeps a separate script path from the Firefox-oriented recorder.
+		</div>
+	    <div class="right-side">
+			<img width=100% src="../images/switchboard_icon.png" title="Chatbot" />
+		</div>
+		</div>
+    </aside>
+  </div>
+  <section id="recordingMeterOuter" aria-live="polite">
+    <div class="meter-header">
+      <strong>Recording Input Level</strong>
+      <span id="recordingLevelValue">0%</span>
+    </div>
+    <div id="recordingLevelTrack" role="meter" aria-label="Recording input level">
+      <div id="recordingLevelBar"></div>
+    </div>
+  </section>
+  <div id="hiddenAudioContainer" hidden></div>
+  <br />
+  <div class="wrapper">
+    <section id="logOuter">
+      <h3>Jitsi Bot Log</h3>
+      <button id="clearLog">Clear Log</button>
+      <p></p>
+      <div id="log" style="white-space: pre-wrap"></div>
+    </section>
+    <aside id="participantsOuter">
+      <h3>Participants</h3>
+      <div id="participantsInner"></div>
+    </aside>
+  </div>
+</body>
+<script id="libJitsiMeet"></script>
+<script id="jitsiConfig"></script>
+<script>
+  window.confInitScriptName = 'conferenceInit_chrome.js'
+</script>
+<script src="../jitsi-bot/defaults.js"></script>
+<script src="recording_chrome.js"></script>
+<script src="../jitsi-bot/pageParams.js"></script>
+<script id="confInit"></script>
+
+</html>

@@ -44,7 +44,8 @@ const mountConfInit = () => {
     return
   }
   log('JitsiMeetJS loaded')
-  document.querySelector('#confInit').src = 'conferenceInit.js'
+  document.querySelector('#confInit').src =
+    window.confInitScriptName || 'conferenceInit.js'
 }
 
 const toAbsoluteUrl = (value, baseUrl) => {
