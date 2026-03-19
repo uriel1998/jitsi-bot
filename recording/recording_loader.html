@@ -6,6 +6,10 @@
   <title>Loading: Ritson</title>
   <meta http-equiv="Content-Security-Policy" content="worker-src 'self'; media-src *">
   <meta charset="UTF-8" />
+  <script src="browserDetection.js"></script>
+  <script>
+    window.redirectToChromeRecordingVariant?.()
+  </script>
   <style>
     .loader-layout {
       display: flex;

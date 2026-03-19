@@ -125,8 +125,15 @@
       <!-- Row 2, right: switchboard -->
       <div class="panel">
 
-        <iframe src="recording/recording_loader.html"></iframe>
+        <iframe id="recordingFrame" src="recording/recording_loader.html"></iframe>
       </div>
     </div>
+    <script src="recording/browserDetection.js"></script>
+    <script>
+      const recordingFrame = document.querySelector('#recordingFrame')
+      if (recordingFrame && window.isChromiumRecordingBrowser?.()) {
+        recordingFrame.src = 'recording/recording_chrome.html'
+      }
+    </script>
   </body>
 </html>
