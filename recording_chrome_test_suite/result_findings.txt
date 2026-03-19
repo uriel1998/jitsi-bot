@@ -43,4 +43,20 @@ Best overall conclusion
 
 Recommended next step
 - Inspect one of the raw_stream_probe or hidden_audio_recapture_probe outputs with an audio-aware validation step, or add server-side waveform / ffprobe-style inspection, because the current logs still leave open the main question: non-empty bytes versus actual usable audio.
+## 2026-03-19 11:15:31 EDT
 
+Refined summary based on bot event logs in `server_logs/client-events.log`.
+
+- `raw_stream_probe` recorded data successfully. It produced repeated `MediaRecorder test chunk` entries and stopped with `16` chunks totaling `17816` bytes.
+- `hidden_audio_recapture_probe` recorded data successfully. It produced repeated `MediaRecorder test chunk` entries and stopped with `16` chunks totaling `17704` bytes.
+- `hidden_audio_playback_probe` did not record data. Playback succeeded (`Audio element play() resolved`), but the recorder remained inactive and ended with `0` chunks and `0` bytes.
+- `output_sink_probe` did not record data. Playback succeeded locally, but the recorder remained inactive and ended with `0` chunks and `0` bytes.
+- `output_sink_probe` also did not show successful virtual-device routing. The logs did not show `Applied output sink to audio element`, and heartbeats still showed `selectedOutputSink: ""` and `selectedRecordSource: ""`.
+- Historical `start_silent_probe` logs still show complete failure: `trackedEntries: 0` and repeated `0`-byte recorder chunks, indicating no usable conference audio reached the bot.
+
+Current interpretation:
+
+- Working recorder paths: `raw_stream_probe`, `hidden_audio_recapture_probe`
+- Playback-only paths with no recorder output: `hidden_audio_playback_probe`, `output_sink_probe`
+- Failed path: `start_silent_probe`
+- Current blocker: routing audio into `virt_ritson_playback_sink` / `virt_ritson_record_source`, not basic Chromium playback
