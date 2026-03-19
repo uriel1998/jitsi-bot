@@ -243,8 +243,8 @@ const disconnectBotFromConference = () => {
 const stopRecordingFromUi = async () => {
   try {
     await window.stopAutomatedRecordingFlow?.()
-    recordingConferenceWarn('Stop probe requested from UI.')
-    room?.sendMessage(`Probe stopped from ${suiteSlug}.`)
+    recordingConferenceWarn('Stop test requested from UI.')
+    room?.sendMessage(`Test stopped from ${suiteSlug}.`)
     document.querySelector('#start_recording_button')?.removeAttribute('disabled')
     document.querySelector('#connectionStatus') &&
       (document.querySelector('#connectionStatus').textContent = 'disconnecting')
@@ -263,8 +263,8 @@ const startRecordingFromUi = async () => {
   try {
     const started = await window.startAutomatedRecordingFlow?.()
     if (started) {
-      recordingConferenceLog('Probe started from UI.')
-      room?.sendMessage(`Probe started from ${suiteSlug}.`)
+      recordingConferenceLog('Test started from UI.')
+      room?.sendMessage(`Test started from ${suiteSlug}.`)
       document
         .querySelector('#start_recording_button')
         ?.setAttribute('disabled', 'disabled')

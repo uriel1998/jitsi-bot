@@ -61,7 +61,7 @@
   <body>
     <section class="suite-controls">
       <h1>Chrome Recording Test Suite</h1>
-      <p>This page loads all probe variants in parallel. Enter a conference URL once and push it into every iframe.</p>
+      <p>This page loads all test variants in parallel. Enter a conference URL once and push it into every iframe.</p>
       <form id="suiteForm">
         <label for="suiteTargetJitsi">Conference URL:</label>
         <input
@@ -69,44 +69,37 @@
           type="url"
           placeholder="https://meet.example.com/YourRoom"
         />
-        <button type="submit">Load All Tests</button>
-        <button id="startAllBots" type="button">Start All Bots</button>
-        <button id="startAllProbes" type="button">Start All Probes</button>
+        <button type="submit">Load Conference URL Into All Tests</button>
+        <button id="startAllBots" type="button">Load All Bots</button>
+        <button id="startAllProbes" type="button">Start All Tests</button>
         <button id="stopAllTests" type="button">Stop All Tests</button>
       </form>
     </section>
 
     <section class="suite-grid">
       <div class="suite-panel">
-        <h3>Raw Stream Probe</h3>
+        <h3>Raw Stream Test</h3>
         <iframe
           data-test-page="raw_stream_probe.html"
           src="raw_stream_probe.html"
         ></iframe>
       </div>
       <div class="suite-panel">
-        <h3>Hidden Audio Playback Probe</h3>
+        <h3>Hidden Audio Playback Test</h3>
         <iframe
           data-test-page="hidden_audio_playback_probe.html"
           src="hidden_audio_playback_probe.html"
         ></iframe>
       </div>
       <div class="suite-panel">
-        <h3>Hidden Audio Recapture Probe</h3>
+        <h3>Hidden Audio Recapture Test</h3>
         <iframe
           data-test-page="hidden_audio_recapture_probe.html"
           src="hidden_audio_recapture_probe.html"
         ></iframe>
       </div>
       <div class="suite-panel">
-        <h3>startSilent Probe</h3>
-        <iframe
-          data-test-page="start_silent_probe.html"
-          src="start_silent_probe.html"
-        ></iframe>
-      </div>
-      <div class="suite-panel">
-        <h3>Output Sink Probe</h3>
+        <h3>Output Sink Test</h3>
         <iframe
           data-test-page="output_sink_probe.html"
           src="output_sink_probe.html"

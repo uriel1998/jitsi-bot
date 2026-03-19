@@ -1,6 +1,6 @@
 const chromeTestConfig = {
   slug: 'unnamed_probe',
-  name: 'Unnamed probe',
+  name: 'Unnamed test',
   description: '',
   attachAudioElements: false,
   analyzeOriginalStream: true,
@@ -23,6 +23,8 @@ const mixLevelBar = document.querySelector('#mixLevelBar')
 const mixLevelValue = document.querySelector('#mixLevelValue')
 const diagnosticsElement = document.querySelector('#trackDiagnostics')
 const hiddenAudioContainer = document.querySelector('#hiddenAudioContainer')
+const VIRTUAL_PLAYBACK_SINK_LABEL = 'virt_ritson_playback_sink'
+const VIRTUAL_RECORD_SOURCE_LABEL = 'virt_ritson_record_source'
 
 let probeAudioContext = undefined
 let mixDestination = undefined
@@ -34,6 +36,7 @@ let mediaRecorderProbe = undefined
 let recorderFlushIntervalId = undefined
 let healthIntervalId = undefined
 let selectedOutputSink = undefined
+let selectedRecordSource = undefined
 let lastRawPercent = 0
 let lastElementPercent = 0
 let lastMixPercent = 0
@@ -160,8 +163,6 @@ function summarizeCapabilities() {
     userAgent: navigator.userAgent,
     brands: navigator.userAgentData?.brands || [],
     mediaRecorder: Boolean(window.MediaRecorder),
-    audioOutputSelection:
-      typeof navigator.mediaDevices?.selectAudioOutput === 'function',
     setSinkId:
       typeof HTMLMediaElement !== 'undefined' &&
       typeof HTMLMediaElement.prototype?.setSinkId === 'function',
@@ -180,7 +181,8 @@ function summarizeProbeState() {
     recorderChunkCount,
     recorderByteCount,
     recorderLastChunkSize,
-    selectedOutputSink: selectedOutputSink?.deviceId || '',
+    selectedOutputSink: selectedOutputSink?.label || selectedOutputSink?.deviceId || '',
+    selectedRecordSource: selectedRecordSource?.label || selectedRecordSource?.deviceId || '',
     lastRawPercent,
     lastElementPercent,
     lastMixPercent,
@@ -253,7 +255,7 @@ function renderDiagnostics() {
       `raw=${entry.rawConnected ? 'yes' : 'no'}`,
       `audioEl=${entry.audioElement ? 'yes' : 'no'}`,
       `elementSource=${entry.elementSourceNode ? 'yes' : 'no'}`,
-      `sink=${entry.audioElement?.sinkId || selectedOutputSink?.deviceId || 'default'}`,
+      `sink=${entry.audioElement?.sinkId || selectedOutputSink?.label || 'default'}`,
       `play=${entry.lastPlaybackEvent || 'none'}`,
     ]
     item.textContent = states.join(' | ')
@@ -322,6 +324,55 @@ function attachMediaElementListeners(entry, audioElement) {
   }
 }
 
+async function detectVirtualDevices() {
+  try {
+    const devices = await navigator.mediaDevices?.enumerateDevices?.()
+    if (!devices) {
+      return
+    }
+
+    selectedOutputSink =
+      devices.find(
+        (device) =>
+          device.kind === 'audiooutput' &&
+          device.label === VIRTUAL_PLAYBACK_SINK_LABEL
+      ) || undefined
+
+    selectedRecordSource =
+      devices.find(
+        (device) =>
+          device.kind === 'audioinput' &&
+          device.label === VIRTUAL_RECORD_SOURCE_LABEL
+      ) || undefined
+
+    setText(
+      '#sinkSupportStatus',
+      selectedOutputSink
+        ? `sink found: ${selectedOutputSink.label}`
+        : `sink missing: ${VIRTUAL_PLAYBACK_SINK_LABEL}`
+    )
+    setText(
+      '#selectedSinkStatus',
+      selectedRecordSource
+        ? `source found: ${selectedRecordSource.label}`
+        : `source missing: ${VIRTUAL_RECORD_SOURCE_LABEL}`
+    )
+
+    suiteLog('Detected virtual audio devices', {
+      expectedPlaybackSink: VIRTUAL_PLAYBACK_SINK_LABEL,
+      expectedRecordSource: VIRTUAL_RECORD_SOURCE_LABEL,
+      selectedOutputSink: selectedOutputSink?.label || '',
+      selectedRecordSource: selectedRecordSource?.label || '',
+    })
+  } catch (error) {
+    suiteWarn('Failed to enumerate media devices for virtual device detection', {
+      error: error?.message || String(error),
+      expectedPlaybackSink: VIRTUAL_PLAYBACK_SINK_LABEL,
+      expectedRecordSource: VIRTUAL_RECORD_SOURCE_LABEL,
+    })
+  }
+}
+
 async function applySinkToAudioElement(audioElement) {
   if (!audioElement || !selectedOutputSink?.deviceId) {
     return
@@ -333,7 +384,7 @@ async function applySinkToAudioElement(audioElement) {
 
   try {
     await audioElement.setSinkId(selectedOutputSink.deviceId)
-    setText('#selectedSinkStatus', selectedOutputSink.label || selectedOutputSink.deviceId)
+    setText('#sinkSupportStatus', `sink applied: ${selectedOutputSink.label || selectedOutputSink.deviceId}`)
     suiteLog('Applied output sink to audio element', {
       sinkId: selectedOutputSink.deviceId,
       sinkLabel: selectedOutputSink.label || '',
@@ -492,7 +543,7 @@ function startRecorderProbe() {
     return
   }
   if (!mixDestination?.stream) {
-    suiteWarn('Recorder probe requested but mix destination is unavailable.')
+    suiteWarn('Recorder test requested but mix destination is unavailable.')
     setText('#recorderStatus', 'unavailable')
     return
   }
@@ -519,15 +570,15 @@ function startRecorderProbe() {
 
   mediaRecorderProbe.addEventListener('start', () => {
     setText('#recorderStatus', `recording (${mimeType || 'default'})`)
-    suiteLog('MediaRecorder probe started', summarizeProbeState())
+    suiteLog('MediaRecorder test started', summarizeProbeState())
   })
   mediaRecorderProbe.addEventListener('stop', () => {
     setText('#recorderStatus', 'stopped')
-    suiteLog('MediaRecorder probe stopped', summarizeProbeState())
+    suiteLog('MediaRecorder test stopped', summarizeProbeState())
   })
   mediaRecorderProbe.addEventListener('error', (event) => {
     setText('#recorderStatus', 'error')
-    suiteWarn('MediaRecorder probe error', {
+    suiteWarn('MediaRecorder test error', {
       error: event.error?.message || String(event.error || 'unknown'),
       probe: summarizeProbeState(),
     })
@@ -540,7 +591,7 @@ function startRecorderProbe() {
       '#chunkStatus',
       `${recorderChunkCount} chunks / ${recorderByteCount} bytes / last ${recorderLastChunkSize}`
     )
-    suiteLog('MediaRecorder probe chunk', {
+    suiteLog('MediaRecorder test chunk', {
       size: recorderLastChunkSize,
       type: event.data?.type || '',
       probe: summarizeProbeState(),
@@ -588,7 +639,7 @@ function startHealthLogging() {
     clearInterval(healthIntervalId)
   }
   healthIntervalId = setInterval(() => {
-    suiteLog('Probe heartbeat', summarizeProbeState())
+    suiteLog('Test heartbeat', summarizeProbeState())
   }, 15000)
 }
 
@@ -630,7 +681,7 @@ window.registerRemoteAudioTrackForRecording = (track) => {
   const entry = createTrackedEntry(track)
   trackedAudioEntries.set(track, entry)
   pendingAudioTracks.add(track)
-  suiteLog('Registered remote audio track for probe', {
+  suiteLog('Registered remote audio track for test', {
     track: summarizeTrack(track),
     probe: summarizeProbeState(),
   })
@@ -696,7 +747,7 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
   }
 
   trackedAudioEntries.delete(track)
-  suiteLog('Unregistered remote audio track from probe', {
+  suiteLog('Unregistered remote audio track from test', {
     participantId: entry.participantId,
     probe: summarizeProbeState(),
   })
@@ -706,7 +757,7 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
 async function startAutomatedRecordingFlow() {
   ensureAudioContext()
   if (probeActive) {
-    suiteWarn('Probe start ignored because the probe is already active.', summarizeProbeState())
+    suiteWarn('Test start ignored because the test is already active.', summarizeProbeState())
     return false
   }
 
@@ -715,7 +766,7 @@ async function startAutomatedRecordingFlow() {
     await probeAudioContext.resume()
   }
 
-  suiteLog('Starting probe', {
+  suiteLog('Starting test', {
     config: chromeTestConfig,
     capabilities: summarizeCapabilities(),
   })
@@ -739,35 +790,7 @@ async function stopAutomatedRecordingFlow() {
   stopHealthLogging()
   await stopRecorderProbe()
   setText('#probeStatus', 'inactive')
-  suiteLog('Stopped probe', summarizeProbeState())
-}
-
-async function chooseOutputDevice() {
-  if (typeof navigator.mediaDevices?.selectAudioOutput !== 'function') {
-    suiteWarn('MediaDevices.selectAudioOutput is not available.', summarizeCapabilities())
-    return
-  }
-
-  try {
-    selectedOutputSink = await navigator.mediaDevices.selectAudioOutput()
-    setText(
-      '#selectedSinkStatus',
-      selectedOutputSink.label || selectedOutputSink.deviceId || 'selected'
-    )
-    suiteLog('Selected output sink', {
-      sinkId: selectedOutputSink.deviceId,
-      sinkLabel: selectedOutputSink.label || '',
-    })
-
-    for (const entry of trackedAudioEntries.values()) {
-      await applySinkToAudioElement(entry.audioElement)
-    }
-    renderDiagnostics()
-  } catch (error) {
-    suiteWarn('Output sink selection failed or was cancelled', {
-      error: error?.message || String(error),
-    })
-  }
+  suiteLog('Stopped test', summarizeProbeState())
 }
 
 function initUi() {
@@ -779,17 +802,8 @@ function initUi() {
   setText('#probeStatus', 'inactive')
   setText('#recorderStatus', chromeTestConfig.enableMediaRecorderProbe ? 'ready' : 'disabled')
   setText('#chunkStatus', '0 chunks / 0 bytes / last 0')
-  setText(
-    '#sinkSupportStatus',
-    chromeTestConfig.exposeOutputRouting
-      ? typeof navigator.mediaDevices?.selectAudioOutput === 'function' &&
-        typeof HTMLMediaElement !== 'undefined' &&
-        typeof HTMLMediaElement.prototype?.setSinkId === 'function'
-        ? 'available'
-        : 'partial or unavailable'
-      : 'not used in this test'
-  )
-  setText('#selectedSinkStatus', 'default')
+  setText('#sinkSupportStatus', chromeTestConfig.exposeOutputRouting ? 'detecting virtual sink' : 'not used in this test')
+  setText('#selectedSinkStatus', chromeTestConfig.exposeOutputRouting ? 'detecting virtual source' : 'not used in this test')
 
   if (!chromeTestConfig.analyzeAudioElement && !chromeTestConfig.connectAudioElementToMix) {
     document.querySelector('#elementMeterOuter')?.setAttribute('hidden', 'hidden')
@@ -797,14 +811,10 @@ function initUi() {
   if (!chromeTestConfig.connectOriginalStreamToMix && !chromeTestConfig.connectAudioElementToMix) {
     document.querySelector('#mixMeterOuter')?.setAttribute('hidden', 'hidden')
   }
-  if (!chromeTestConfig.exposeOutputRouting) {
-    document.querySelector('#select_output_button')?.setAttribute('hidden', 'hidden')
-  }
 }
 
 window.startAutomatedRecordingFlow = startAutomatedRecordingFlow
 window.stopAutomatedRecordingFlow = stopAutomatedRecordingFlow
-window.chooseChromeTestOutputDevice = chooseOutputDevice
 window.getChromeProbeState = summarizeProbeState
 window.persistRecordingLog = persistSuiteLog
 window.printParticipants = printParticipants
@@ -827,10 +837,11 @@ window.addEventListener('unhandledrejection', (event) => {
   })
 })
 
-document.querySelector('#select_output_button')?.addEventListener('click', chooseOutputDevice)
-
 initUi()
-suiteLog('Chrome recording probe harness loaded', {
+if (chromeTestConfig.exposeOutputRouting) {
+  void detectVirtualDevices()
+}
+suiteLog('Chrome recording test harness loaded', {
   config: chromeTestConfig,
   capabilities: summarizeCapabilities(),
 })

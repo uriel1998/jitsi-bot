@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="worker-src 'self'; media-src *" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Start Silent Probe</title>
+    <title>startSilent Test</title>
     <link rel="stylesheet" href="../recording/recording.css" />
     <style>
       .status-grid {
@@ -37,7 +37,7 @@
     <script>
       window.chromeTestConfig = {
         slug: 'start_silent_probe',
-        name: 'startSilent probe',
+        name: 'startSilent test',
         description:
           'Retests the claim that startSilent=true prevents the bot from receiving room audio. This otherwise follows the raw-stream path, but never saves data.',
         attachAudioElements: false,
@@ -60,10 +60,9 @@
         <input style="width: 35vw" type="url" id="targetJitsi" />
         <br />
         <br />
-        <button id="start_bot_button">Start Bot</button>
-        <button id="start_recording_button" disabled>Start Probe</button>
-        <button id="stop_bot_button">Disconnect Bot</button>
-        <button id="select_output_button" type="button">Select Output Sink</button>
+        <button id="start_bot_button">Load Bot</button>
+        <button id="start_recording_button" disabled>Start Test</button>
+        <button id="stop_bot_button">Stop Test</button>
         <br />
         <br />
         <a href="index.html"><button type="button">Back to Suite</button></a>
@@ -71,11 +70,11 @@
       <aside id="participantsOuter">
         <div class="infobox">
           <div class="left-side">
-            <h1 id="testName">Chrome Probe</h1>
+            <h1 id="testName">Chrome Test</h1>
             <div id="testDescription"></div>
           </div>
           <div class="right-side">
-            <img width="100%" src="../images/switchboard_icon.png" title="Recording Probe" />
+            <img width="100%" src="../images/switchboard_icon.png" title="Recording Test" />
           </div>
         </div>
       </aside>
@@ -87,7 +86,7 @@
         <div class="status-grid">
           <div><strong>Test Slug:</strong> <span id="testSlug"></span></div>
           <div><strong>Connection:</strong> <span id="connectionStatus"></span></div>
-          <div><strong>Probe:</strong> <span id="probeStatus"></span></div>
+          <div><strong>Test:</strong> <span id="probeStatus"></span></div>
           <div><strong>Recorder:</strong> <span id="recorderStatus"></span></div>
           <div><strong>Output API:</strong> <span id="sinkSupportStatus"></span></div>
           <div><strong>Selected Sink:</strong> <span id="selectedSinkStatus"></span></div>
@@ -141,7 +140,7 @@
 
     <div class="wrapper">
       <section id="logOuter">
-        <h3>Probe Log</h3>
+        <h3>Test Log</h3>
         <button id="clearLog">Clear Log</button>
         <div id="log" style="white-space: pre-wrap"></div>
       </section>
