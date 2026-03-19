@@ -3,9 +3,11 @@
  */
 
 window.recordingVariant = 'chrome'
+window.recordingChromeCaptureMode = 'hidden_audio_recapture'
 
 const recordingLevelBar = document.querySelector('#recordingLevelBar')
 const recordingLevelValue = document.querySelector('#recordingLevelValue')
+const hiddenAudioContainer = document.querySelector('#hiddenAudioContainer')
 
 let recordingContext = undefined
 let recordingDestStream = undefined
@@ -24,6 +26,7 @@ let isStoppingSegmentRecorder = false
 let segmentSaveChain = Promise.resolve()
 const remoteAudioNodes = new Map()
 const pendingRemoteAudioTracks = new Set()
+const connectingRemoteAudioTracks = new Map()
 let connectedRemoteAudioTrackCount = 0
 let activePerSpeakerRecorderCount = 0
 let recordingLevelAnalyser = undefined
@@ -67,6 +70,8 @@ function summarizeDestStream() {
 
 function summarizeRecorderState() {
   return {
+    recordingVariant: window.recordingVariant || 'default',
+    captureMode: window.recordingChromeCaptureMode || 'unknown',
     recordingSessionStarted,
     segmentRecordingActive,
     isStoppingSegmentRecorder,
@@ -82,6 +87,28 @@ function summarizeRecorderState() {
     msSinceLastChunk: lastChunkTimestamp ? Date.now() - lastChunkTimestamp : null,
     destStream: summarizeDestStream(),
     memory: summarizeMemory(),
+  }
+}
+
+function summarizeRemoteAudioTrack(track) {
+  if (!track) {
+    return {}
+  }
+
+  const originalStream = track.getOriginalStream?.()
+  const originalAudioTrack = originalStream?.getAudioTracks?.()?.[0]
+  return {
+    participantId: track.getParticipantId?.() || 'unknownParticipant',
+    trackId: track.getTrackId?.() || '',
+    type: track.getType?.() || '',
+    isMuted: track.isMuted?.() ?? null,
+    isLocal: track.isLocal?.() ?? null,
+    hasOriginalStream: Boolean(originalStream),
+    originalAudioTrackCount: originalStream?.getAudioTracks?.()?.length ?? 0,
+    originalReadyState: originalAudioTrack?.readyState ?? null,
+    originalMuted: originalAudioTrack?.muted ?? null,
+    originalEnabled: originalAudioTrack?.enabled ?? null,
+    originalLabel: originalAudioTrack?.label || '',
   }
 }
 
@@ -542,6 +569,7 @@ function createPerSpeakerRecorderEntry(track, sourceNode, gainNode) {
     label: getParticipantRecordingLabel(track),
     sourceNode,
     gainNode,
+    audioElement: undefined,
     individualDest: undefined,
     recorder: undefined,
     target: undefined,
@@ -550,6 +578,76 @@ function createPerSpeakerRecorderEntry(track, sourceNode, gainNode) {
     saveChain: Promise.resolve(),
     startedAtMs: 0,
   }
+}
+
+function attachAudioElementListeners(audioElement, track) {
+  const eventNames = [
+    'play',
+    'playing',
+    'pause',
+    'waiting',
+    'stalled',
+    'suspend',
+    'loadedmetadata',
+    'loadeddata',
+    'canplay',
+    'canplaythrough',
+    'ended',
+    'error',
+  ]
+
+  for (const eventName of eventNames) {
+    audioElement.addEventListener(eventName, () => {
+      verboseLog('Chrome hidden audio element event', {
+        eventName,
+        participantId: track.getParticipantId?.() || 'unknownParticipant',
+        readyState: audioElement.readyState,
+        paused: audioElement.paused,
+        currentTime: audioElement.currentTime,
+      })
+    })
+  }
+}
+
+async function ensureHiddenAudioElement(track) {
+  const audioElement = document.createElement('audio')
+  audioElement.autoplay = true
+  audioElement.playsInline = true
+  audioElement.controls = false
+  audioElement.muted = true
+  audioElement.defaultMuted = true
+  audioElement.volume = 0
+  audioElement.dataset.participantId = track.getParticipantId?.() || 'unknownParticipant'
+  audioElement.style.display = 'none'
+  hiddenAudioContainer?.appendChild(audioElement)
+  attachAudioElementListeners(audioElement, track)
+
+  track.attach(audioElement)
+  verboseLog('Attached remote track to hidden audio element', {
+    participantId: track.getParticipantId?.() || 'unknownParticipant',
+    track: summarizeRemoteAudioTrack(track),
+  })
+
+  await audioElement.play()
+  verboseLog('Hidden audio element play() resolved', {
+    participantId: track.getParticipantId?.() || 'unknownParticipant',
+    readyState: audioElement.readyState,
+    paused: audioElement.paused,
+    muted: audioElement.muted,
+    volume: audioElement.volume,
+  })
+
+  return audioElement
+}
+
+function getAudioElementCaptureStream(audioElement) {
+  if (typeof audioElement.captureStream === 'function') {
+    return audioElement.captureStream()
+  }
+  if (typeof audioElement.mozCaptureStream === 'function') {
+    return audioElement.mozCaptureStream()
+  }
+  return undefined
 }
 
 function startPerSpeakerRecorder(entry) {
@@ -713,6 +811,7 @@ async function startAutomatedRecordingFlow() {
       segmentRecordingActive = false
       return false
     }
+    await flushPendingRemoteAudioTracks()
     const started = startMediaRecorder()
     if (!started) {
       recordingSessionStarted = false
@@ -884,7 +983,7 @@ function printParticipants() {
 window.startAutomatedRecordingFlow = startAutomatedRecordingFlow
 window.stopAutomatedRecordingFlow = stopAutomatedRecordingFlow
 
-function connectRemoteAudioTrack(track) {
+async function connectRemoteAudioTrack(track) {
   if (!recordingContext || !recordingDestStream?.stream || !track) {
     return false
   }
@@ -895,52 +994,101 @@ function connectRemoteAudioTrack(track) {
   if (remoteAudioNodes.has(track)) {
     return true
   }
+  if (connectingRemoteAudioTracks.has(track)) {
+    return connectingRemoteAudioTracks.get(track)
+  }
 
   const originalStream = track.getOriginalStream?.()
   if (!originalStream || originalStream.getAudioTracks().length === 0) {
     warningLog('Remote audio track has no original audio stream.', {
-      participantId: track.getParticipantId?.() || 'unknownParticipant',
+      track: summarizeRemoteAudioTrack(track),
+      recorder: summarizeRecorderState(),
     })
     return false
   }
 
-  try {
-    const sourceNode = recordingContext.createMediaStreamSource(originalStream)
+  const connectPromise = (async () => {
+    const originalAudioTrack = originalStream.getAudioTracks()[0]
+    const audioElement = await ensureHiddenAudioElement(track)
+    const capturedElementStream = getAudioElementCaptureStream(audioElement)
+    const capturedAudioTracks = capturedElementStream?.getAudioTracks?.() || []
+    if (!capturedElementStream || capturedAudioTracks.length === 0) {
+      warningLog('Hidden audio element captureStream produced no audio tracks.', {
+        participantId: track.getParticipantId?.() || 'unknownParticipant',
+        track: summarizeRemoteAudioTrack(track),
+        recorder: summarizeRecorderState(),
+      })
+      return false
+    }
+
+    const sourceNode = recordingContext.createMediaStreamSource(capturedElementStream)
     const gainNode = recordingContext.createGain()
     const participantId = track.getParticipantId?.() || 'unknownParticipant'
     gainNode.gain.value = 1
 
+    originalAudioTrack?.addEventListener?.('ended', () => {
+      warningLog('Original remote audio track ended', {
+        track: summarizeRemoteAudioTrack(track),
+        recorder: summarizeRecorderState(),
+      })
+    })
+    originalAudioTrack?.addEventListener?.('mute', () => {
+      warningLog('Original remote audio track muted', {
+        track: summarizeRemoteAudioTrack(track),
+        recorder: summarizeRecorderState(),
+      })
+    })
+    originalAudioTrack?.addEventListener?.('unmute', () => {
+      verboseLog('Original remote audio track unmuted', {
+        track: summarizeRemoteAudioTrack(track),
+        recorder: summarizeRecorderState(),
+      })
+    })
+
     sourceNode.connect(gainNode)
     gainNode.connect(recordingDestStream)
     const entry = createPerSpeakerRecorderEntry(track, sourceNode, gainNode)
+    entry.audioElement = audioElement
     remoteAudioNodes.set(track, entry)
     connectedRemoteAudioTrackCount += 1
     if (recordingSessionStarted) {
       startPerSpeakerRecorder(entry)
     }
     verboseLog('Connected remote audio track to recording mix', {
+      captureMode: window.recordingChromeCaptureMode,
       participantId,
-      trackId: track.getTrackId?.() || '',
       label: entry.label,
+      capturedAudioTrackCount: capturedAudioTracks.length,
+      track: summarizeRemoteAudioTrack(track),
       recorder: summarizeRecorderState(),
     })
     return true
-  } catch (error) {
+  })()
+    .catch((error) => {
     warningLog('Failed to connect remote audio track', {
       error: error?.message || String(error),
-      participantId: track.getParticipantId?.() || 'unknownParticipant',
+      track: summarizeRemoteAudioTrack(track),
+      recorder: summarizeRecorderState(),
     })
     return false
-  }
+    })
+    .finally(() => {
+      connectingRemoteAudioTracks.delete(track)
+    })
+
+  connectingRemoteAudioTracks.set(track, connectPromise)
+  return connectPromise
 }
 
-function flushPendingRemoteAudioTracks() {
+async function flushPendingRemoteAudioTracks() {
   if (!recordingContext || !recordingDestStream?.stream || pendingRemoteAudioTracks.size === 0) {
     return
   }
 
-  for (const track of [...pendingRemoteAudioTracks]) {
-    if (connectRemoteAudioTrack(track)) {
+  const tracks = [...pendingRemoteAudioTracks]
+  for (const track of tracks) {
+    const connected = await connectRemoteAudioTrack(track)
+    if (connected) {
       pendingRemoteAudioTracks.delete(track)
     }
   }
@@ -953,12 +1101,13 @@ window.registerRemoteAudioTrackForRecording = (track) => {
   if (!initDone || !recordingContext || !recordingDestStream?.stream) {
     pendingRemoteAudioTracks.add(track)
     warningLog('Queued remote audio track because recording audio is not ready yet.', {
-      participantId: track.getParticipantId?.() || 'unknownParticipant',
+      track: summarizeRemoteAudioTrack(track),
       pendingRemoteAudioTracks: pendingRemoteAudioTracks.size,
+      recorder: summarizeRecorderState(),
     })
     return
   }
-  connectRemoteAudioTrack(track)
+  void connectRemoteAudioTrack(track)
 }
 
 window.unregisterRemoteAudioTrackForRecording = (track) => {
@@ -966,6 +1115,7 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
     return
   }
   pendingRemoteAudioTracks.delete(track)
+  connectingRemoteAudioTracks.delete(track)
   const entry = remoteAudioNodes.get(track)
   if (!entry) {
     return
@@ -986,6 +1136,14 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
         console.log('Failed to disconnect remote source node', error)
       }
       try {
+        if (entry.audioElement) {
+          entry.track.detach?.(entry.audioElement)
+          entry.audioElement.remove()
+        }
+      } catch (error) {
+        console.log('Failed to detach hidden audio element', error)
+      }
+      try {
         entry.gainNode.disconnect()
       } catch (error) {
         console.log('Failed to disconnect remote gain node', error)
@@ -1003,5 +1161,5 @@ window.unregisterRemoteAudioTrackForRecording = (track) => {
 attachCrashSignalLogging()
 initAudio()
 warningLog(
-  'Chrome/Chromium recording variant loaded. This path is kept separate from the default recorder for browser-specific changes.'
+  'Chrome/Chromium recording variant loaded. Using hidden audio element recapture into the standard recording mix.'
 )

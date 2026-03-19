@@ -7,9 +7,6 @@
   <meta http-equiv="Content-Security-Policy" content="worker-src 'self'; media-src *">
   <meta charset="UTF-8" />
   <script src="browserDetection.js"></script>
-  <script>
-    window.redirectToChromeRecordingVariant?.()
-  </script>
   <style>
     .loader-layout {
       display: flex;
@@ -50,13 +47,28 @@
     <div class="right-side">
       <h1>Ritson</h1>
       <p>Press to load Ritson, the recording bot.</p>
-      <a href="recording.html"><button>In an iFrame</button></a>
-      <a href="recording.html" target="blank"><button>In a new window/tab</button></a>
+      <a id="recordingIframeLink" href="recording.html"><button>In an iFrame</button></a>
+      <a id="recordingWindowLink" href="recording.html" target="blank"><button>In a new window/tab</button></a>
     </div>
     <div class="left-side">
       <img src="../images/switchboard_icon.png" title="Recording" />
     </div>
   </div>
+  <script>
+    const targetRecordingPage = window.isChromiumRecordingBrowser?.()
+      ? 'recording_chrome.html'
+      : 'recording.html'
+
+    const iframeLink = document.querySelector('#recordingIframeLink')
+    const windowLink = document.querySelector('#recordingWindowLink')
+
+    if (iframeLink) {
+      iframeLink.href = targetRecordingPage
+    }
+    if (windowLink) {
+      windowLink.href = targetRecordingPage
+    }
+  </script>
 </body>
 
 </html>
