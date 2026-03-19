@@ -1,0 +1,46 @@
+=== 2026-03-19 11:02:12 EDT ===
+
+Summary of logged test results
+
+1. raw_stream_probe and hidden_audio_recapture_probe both showed successful capture-path activity in Chrome during this run.
+- Each joined the room.
+- Each registered 1 remote audio track.
+- Each produced repeated non-empty MediaRecorder chunks for about 45 seconds.
+- raw_stream_probe ended at about 11.6 KB over 11 chunks.
+- hidden_audio_recapture_probe ended at about 11.5 KB over 11 chunks.
+
+2. start_silent_probe behaved materially differently.
+- It registered 0 remote tracks for the full run.
+- Its MediaRecorder emitted only empty or near-empty chunks.
+- Logged chunk sizes were repeatedly 0 bytes, with a final tiny chunk of 5 bytes on stop.
+- This supports the earlier conclusion that startSilent=true prevents usable room-audio reception in this setup.
+
+3. hidden_audio_playback_probe confirmed hidden audio playback in Chrome, but not recapture.
+- Hidden audio attachment succeeded.
+- play() resolved.
+- play, playing, loadedmetadata, loadeddata, canplay, and canplaythrough events all fired.
+- readyState reached 4 and paused was false.
+- That confirms Chromium played the hidden audio element in this run.
+
+4. output_sink_probe confirmed only part of the output-routing workaround.
+- Hidden audio playback worked.
+- setSinkId capability was present.
+- navigator.mediaDevices.selectAudioOutput was unavailable in this browser/session.
+- No output sink was selected.
+- That leaves the output-routing workaround unproven in this run.
+
+Important caveat
+- All tests reported lastRawPercent=0, lastElementPercent=0, and lastMixPercent=0 in heartbeats.
+- That remained true even when raw_stream_probe and hidden_audio_recapture_probe were producing non-empty MediaRecorder chunks.
+- Therefore, the logs prove that MediaRecorder received non-empty data, but do not prove that the data contained useful audible speech.
+
+Best overall conclusion
+- startSilent still appears to be a hard failure mode for receiving room audio.
+- Hidden audio playback definitely works in Chrome here.
+- Raw-stream and hidden-audio-recature paths both produced recorder data in this run, which is better than the earlier silence-only outcome.
+- However, because every meter remained pinned at 0%, the logs do not yet establish that those chunks contained meaningful audio rather than low-information or silent WebM output.
+- Output-sink routing remains inconclusive because sink selection was unavailable and never exercised.
+
+Recommended next step
+- Inspect one of the raw_stream_probe or hidden_audio_recapture_probe outputs with an audio-aware validation step, or add server-side waveform / ffprobe-style inspection, because the current logs still leave open the main question: non-empty bytes versus actual usable audio.
+
